@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>管理者画面 ─ 用語解説</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  background: #f0f2f5;
+  color: #333;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* ── ヘッダー ── */
+header {
+  background: linear-gradient(135deg, #117a65, #48c9b0);
+  color: #fff;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+header h1 { font-size: 1.1em; letter-spacing: .05em; }
+.header-right { display: flex; gap: 10px; align-items: center; }
+.header-btn {
+  padding: 6px 16px;
+  border: 1px solid rgba(255,255,255,.5);
+  border-radius: 6px;
+  background: transparent;
+  color: #fff;
+  font-size: .85em;
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: none;
+}
+.header-btn:hover { background: rgba(255,255,255,.15); }
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px 16px;
+}
+
+/* ── 登録フォーム ── */
+.form-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  padding: 28px 24px;
+  margin-bottom: 24px;
+}
+.form-card h2 {
+  font-size: 1.1em;
+  color: #117a65;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #d1f2eb;
+}
+
+.field { margin-bottom: 16px; }
+.field label {
+  display: block;
+  font-size: .88em;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 5px;
+}
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: .95em;
+  font-family: inherit;
+  line-height: 1.6;
+}
+.field textarea { resize: vertical; min-height: 120px; }
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  outline: none;
+  border-color: #48c9b0;
+  box-shadow: 0 0 0 2px rgba(72,201,176,.2);
+}
+
+.field-row { display: flex; gap: 16px; }
+.field-row .field { flex: 1; }
+
+.btn-row { display: flex; gap: 12px; margin-top: 20px; }
+.btn {
+  padding: 12px 32px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity .15s;
+}
+.btn:hover { opacity: .85; }
+.btn-register {
+  background: linear-gradient(135deg, #117a65, #48c9b0);
+  color: #fff;
+}
+.btn-clear { background: #eee; color: #666; }
+
+/* ── Excelアップロード ── */
+.upload-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.upload-card h2 {
+  font-size: 1.1em;
+  color: #117a65;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #d1f2eb;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.upload-card .hint {
+  font-size: .82em;
+  color: #666;
+  background: #f5fef9;
+  padding: 10px 14px;
+  border-left: 3px solid #48c9b0;
+  border-radius: 4px;
+  margin-bottom: 14px;
+  line-height: 1.7;
+}
+.upload-card .hint code {
+  background: #fff;
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid #d5dbdb;
+  font-size: .9em;
+}
+.upload-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.file-input-label {
+  display: inline-block;
+  padding: 9px 20px;
+  background: #48c9b0;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: .9em;
+  font-weight: bold;
+}
+.file-input-label:hover { opacity: .85; }
+.file-input-label input { display: none; }
+.file-name {
+  color: #666;
+  font-size: .9em;
+}
+.preview-table-wrap {
+  max-height: 340px;
+  overflow: auto;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  margin-bottom: 14px;
+}
+.preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .85em;
+}
+.preview-table th,
+.preview-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+  vertical-align: top;
+}
+.preview-table th {
+  background: #f5fef9;
+  color: #117a65;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  border-bottom: 2px solid #48c9b0;
+}
+.preview-table td.invalid { background: #fdedec; color: #c0392b; }
+.preview-table .row-num {
+  color: #999;
+  width: 40px;
+  text-align: center;
+}
+.preview-summary {
+  font-size: .9em;
+  color: #555;
+  margin-bottom: 10px;
+}
+.preview-summary .ok { color: #117a65; font-weight: bold; }
+.preview-summary .ng { color: #c0392b; font-weight: bold; }
+
+/* ── 一覧 ── */
+.list-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  padding: 24px;
+}
+.list-card h2 {
+  font-size: 1.1em;
+  color: #117a65;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #d1f2eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.list-card h2 .count {
+  font-size: .8em;
+  font-weight: normal;
+  color: #888;
+}
+
+.list-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.list-filters select,
+.list-filters input {
+  padding: 7px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: .85em;
+  font-family: inherit;
+  background: #fff;
+}
+.list-filters select { flex: 1; min-width: 120px; }
+.list-filters input { flex: 2; min-width: 180px; }
+.filter-clear-btn {
+  padding: 7px 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  color: #666;
+  font-size: .85em;
+  cursor: pointer;
+  font-family: inherit;
+}
+.filter-clear-btn:hover { background: #f5f5f5; }
+
+.term-item {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.term-item:last-child { border-bottom: none; }
+.term-item:hover { background: #fafafa; }
+.term-num {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  background: #d1f2eb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .8em;
+  font-weight: bold;
+  color: #117a65;
+}
+.term-body { flex: 1; min-width: 0; }
+.term-name {
+  font-size: 1em;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 2px;
+}
+.term-desc {
+  font-size: .85em;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+.term-meta {
+  font-size: .8em;
+  color: #999;
+}
+.term-meta .tag {
+  display: inline-block;
+  background: #eafaf1;
+  color: #117a65;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: .9em;
+}
+.term-actions { flex-shrink: 0; display: flex; gap: 6px; }
+.term-actions button {
+  padding: 5px 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: #fff;
+  font-size: .8em;
+  cursor: pointer;
+  font-family: inherit;
+}
+.term-actions .edit-btn:hover { border-color: #48c9b0; color: #117a65; }
+.term-actions .delete-btn { color: #e74c3c; }
+.term-actions .delete-btn:hover { border-color: #e74c3c; background: #fdedec; }
+
+/* ── 一括操作 ── */
+.bulk-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  background: #f8f9fa;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  flex-wrap: wrap;
+}
+.bulk-actions .selected-count { font-size: .85em; color: #666; }
+.bulk-toggle-btn {
+  padding: 7px 14px;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  background: #fff;
+  color: #555;
+  cursor: pointer;
+  font-size: .85em;
+  font-weight: bold;
+  font-family: inherit;
+}
+.bulk-toggle-btn:hover { background: #f0f0f0; }
+.bulk-delete-btn {
+  padding: 7px 16px;
+  border: 1px solid #e74c3c;
+  border-radius: 5px;
+  background: #fff;
+  color: #e74c3c;
+  cursor: pointer;
+  font-size: .85em;
+  font-weight: bold;
+  font-family: inherit;
+  margin-left: auto;
+}
+.bulk-delete-btn:hover { background: #fdedec; }
+.bulk-delete-btn:disabled { opacity: .4; cursor: not-allowed; }
+.item-checkbox {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 12px;
+  cursor: pointer;
+  accent-color: #117a65;
+}
+
+/* ── バックアップ ── */
+.backup-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  padding: 18px 20px;
+  margin-bottom: 20px;
+}
+.backup-card h2 {
+  font-size: 1em;
+  color: #555;
+  margin-bottom: 8px;
+}
+.backup-card .hint {
+  font-size: .82em;
+  color: #777;
+  margin-bottom: 12px;
+  line-height: 1.7;
+}
+.backup-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.backup-btn {
+  padding: 8px 18px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  color: #333;
+  font-size: .88em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.backup-btn:hover { background: #f8f8f8; }
+.backup-btn.export { border-color: #2e86c1; color: #2e86c1; }
+.backup-btn.export:hover { background: #eaf2f8; }
+.backup-btn.import { border-color: #27ae60; color: #27ae60; }
+.backup-btn.import:hover { background: #eafaf1; }
+.backup-btn.delete-all { border-color: #e74c3c; color: #e74c3c; margin-left: auto; }
+.backup-btn.delete-all:hover { background: #fdedec; }
+.backup-btn input[type="file"] { display: none; }
+
+.empty-msg {
+  text-align: center;
+  padding: 30px;
+  color: #aaa;
+  font-size: .95em;
+}
+
+/* ── トースト ── */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: #333;
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: .9em;
+  opacity: 0;
+  transition: all .3s;
+  z-index: 999;
+  pointer-events: none;
+}
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+@media (max-width: 600px) {
+  header { flex-wrap: wrap; gap: 8px; }
+  header h1 { font-size: 1em; }
+  .form-card, .list-card { padding: 18px 16px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>管理者画面（用語解説）</h1>
+  <div class="header-right">
+    <span id="totalInfo" style="font-size:.85em;opacity:.8;"></span>
+    <a href="admin-index.html" class="header-btn">管理者画面ホーム</a>
+    <a href="glossary.html" class="header-btn">用語解説</a>
+    <a href="index.html" class="header-btn">過去問演習</a>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- データの引き継ぎ -->
+  <div class="backup-card">
+    <h2>データの引き継ぎ</h2>
+    <p class="hint">用語データをJSONファイルで書き出し／読み込みできます。別のPC・ブラウザへの移行や、バックアップ用途にご利用ください。</p>
+    <div class="backup-row">
+      <button class="backup-btn export" onclick="exportTerms()">⬇ エクスポート（JSONダウンロード）</button>
+      <label class="backup-btn import">
+        ⬆ インポート（JSON読み込み）
+        <input type="file" accept=".json,application/json" onchange="importTerms(event)">
+      </label>
+      <button class="backup-btn delete-all" onclick="deleteAllTerms()">🗑 全削除</button>
+    </div>
+  </div>
+
+  <!-- Excel読み込み -->
+  <div class="upload-card">
+    <h2>Excelから読み込む</h2>
+    <div class="hint">
+      1行目に見出し <code>用語</code> <code>読み仮名</code> <code>解説</code> <code>種別</code> <code>分野</code> を入れた Excel ファイル（.xlsx / .xls / .csv）をアップロードしてください。2行目以降の各行が1件の用語として登録されます。列の順序は問いません。<br>
+      <small>※「種別」は <code>事項</code> / <code>人名</code> のいずれか（省略時は「事項」）。</small>
+    </div>
+    <div class="upload-row">
+      <label class="file-input-label">
+        ファイルを選択
+        <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" onchange="handleExcelFile(event)">
+      </label>
+      <span class="file-name" id="fileName">ファイルが選択されていません</span>
+    </div>
+
+    <div id="previewArea" style="display:none;">
+      <div class="preview-summary" id="previewSummary"></div>
+      <div class="preview-table-wrap">
+        <table class="preview-table" id="previewTable"></table>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-register" onclick="importExcel()">登録</button>
+        <button class="btn btn-clear" onclick="cancelExcel()">キャンセル</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 登録フォーム -->
+  <div class="form-card">
+    <h2 id="formTitle">用語を登録</h2>
+
+    <div class="field-row">
+      <div class="field">
+        <label>用語</label>
+        <input type="text" id="inputTerm" placeholder="例: 学習指導要領">
+      </div>
+      <div class="field">
+        <label>読み仮名（50音順ソート用・ひらがな推奨）</label>
+        <input type="text" id="inputReading" placeholder="例: がくしゅうしどうようりょう">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>解説</label>
+      <textarea id="inputDescription" rows="6" placeholder="解説を入力してください&#10;※ __テキスト__ でアンダーラインが引けます"></textarea>
+      <div style="font-size:.8em;color:#999;margin-top:4px;">※ <code>__テキスト__</code> で囲むとアンダーラインが表示されます。</div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>種別</label>
+        <select id="inputType">
+          <option value="事項">事項</option>
+          <option value="人名">人名</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>分野</label>
+        <select id="inputCategory">
+          <option value="">選択してください</option>
+          <option value="教育原理">教育原理</option>
+          <option value="学習指導要領">学習指導要領</option>
+          <option value="教育心理">教育心理</option>
+          <option value="教育史">教育史</option>
+          <option value="教育法規">教育法規</option>
+          <option value="教育時事">教育時事</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-register" onclick="registerTerm()">登録</button>
+      <button class="btn btn-clear" onclick="clearForm()">クリア</button>
+    </div>
+  </div>
+
+  <!-- 登録済み用語一覧 -->
+  <div class="list-card">
+    <h2>登録済み用語 <span class="count" id="listCount"></span></h2>
+    <div class="list-filters">
+      <select id="listFilterType" onchange="renderList()">
+        <option value="">全種別</option>
+        <option value="事項">事項</option>
+        <option value="人名">人名</option>
+      </select>
+      <select id="listFilterCategory" onchange="renderList()">
+        <option value="">全分野</option>
+        <option value="教育原理">教育原理</option>
+        <option value="学習指導要領">学習指導要領</option>
+        <option value="教育心理">教育心理</option>
+        <option value="教育史">教育史</option>
+        <option value="教育法規">教育法規</option>
+        <option value="教育時事">教育時事</option>
+      </select>
+      <input type="text" id="listFilterSearch" placeholder="用語・解説で検索…" oninput="renderList()">
+      <button class="filter-clear-btn" onclick="clearListFilters()">クリア</button>
+    </div>
+    <div class="bulk-actions">
+      <button class="bulk-toggle-btn" onclick="toggleCheckAll()">全てチェックする</button>
+      <span class="selected-count" id="selectedCount">0 件 選択中</span>
+      <button class="bulk-delete-btn" id="bulkDeleteBtn" onclick="deleteSelected()" disabled>選択削除</button>
+    </div>
+    <div id="termList"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var STORAGE_KEY = 'kyosai_glossary';
+var terms = [];
+var checkedSet = {}; // 一括選択用 (idx => true)
+var editingIndex = -1;
+
+function loadTerms() {
+  try {
+    var data = localStorage.getItem(STORAGE_KEY);
+    terms = data ? JSON.parse(data) : [];
+  } catch (e) {
+    terms = [];
+  }
+  // 既存データ（type未設定）を「人名」に一括移行（初回のみ）
+  var MIGRATION_FLAG = 'kyosai_glossary_migrated_person_v1';
+  if (!localStorage.getItem(MIGRATION_FLAG) && terms.length > 0) {
+    var changed = false;
+    terms.forEach(function(t) {
+      if (!t.type) { t.type = '人名'; changed = true; }
+    });
+    if (changed) localStorage.setItem(STORAGE_KEY, JSON.stringify(terms));
+    localStorage.setItem(MIGRATION_FLAG, '1');
+  }
+
+  // 『』『」』等でくくられた人名を、括弧を外して「事項」に変更（初回のみ）
+  var MIGRATION_FLAG2 = 'kyosai_glossary_migrated_brackets_v2';
+  if (!localStorage.getItem(MIGRATION_FLAG2) && terms.length > 0) {
+    var changed2 = false;
+    var changedCount = 0;
+    var pairs = [['『','』'], ['「','」'], ['｢','｣'], ['"','"'], ['"','"']];
+    terms.forEach(function(t) {
+      if (t.type !== '人名' || !t.term) return;
+      var name = t.term.trim();
+      for (var i = 0; i < pairs.length; i++) {
+        var open = pairs[i][0], close = pairs[i][1];
+        if (name.charAt(0) === open && name.charAt(name.length - 1) === close && name.length >= 2) {
+          t.term = name.substring(1, name.length - 1).trim();
+          t.type = '事項';
+          changed2 = true;
+          changedCount++;
+          break;
+        }
+      }
+    });
+    if (changed2) localStorage.setItem(STORAGE_KEY, JSON.stringify(terms));
+    localStorage.setItem(MIGRATION_FLAG2, '1');
+    if (changedCount > 0) {
+      // 管理画面でのみ通知（loadTerms完了後にトーストが使えないので、setTimeoutで遅延）
+      setTimeout(function() { showToast(changedCount + ' 件を「事項」に変換しました'); }, 300);
+    }
+  }
+
+  // 読み仮名から『』「」を一括削除（初回のみ）
+  var MIGRATION_FLAG3 = 'kyosai_glossary_migrated_reading_brackets_v1';
+  if (!localStorage.getItem(MIGRATION_FLAG3) && terms.length > 0) {
+    var changed3 = false;
+    var changedCount3 = 0;
+    terms.forEach(function(t) {
+      if (t.reading && /[『』「」]/.test(t.reading)) {
+        t.reading = t.reading.replace(/[『』「」]/g, '').trim();
+        changed3 = true;
+        changedCount3++;
+      }
+    });
+    if (changed3) localStorage.setItem(STORAGE_KEY, JSON.stringify(terms));
+    localStorage.setItem(MIGRATION_FLAG3, '1');
+    if (changedCount3 > 0) {
+      setTimeout(function() { showToast(changedCount3 + ' 件の読み仮名から括弧を削除しました'); }, 600);
+    }
+  }
+}
+
+function saveTerms() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(terms));
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toHalfWidthNumbers(str) {
+  return str.replace(/[０-９]/g, function(ch) {
+    return String.fromCharCode(ch.charCodeAt(0) - 0xFEE0);
+  });
+}
+
+function showToast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(function() { el.classList.remove('show'); }, 2500);
+}
+
+function updateInfo() {
+  document.getElementById('totalInfo').textContent = '全 ' + terms.length + ' 語';
+}
+
+// ── フォーム操作 ──
+function clearForm() {
+  document.getElementById('inputTerm').value = '';
+  document.getElementById('inputReading').value = '';
+  document.getElementById('inputDescription').value = '';
+  document.getElementById('inputType').value = '事項';
+  document.getElementById('inputCategory').value = '';
+  editingIndex = -1;
+  document.getElementById('formTitle').textContent = '用語を登録';
+}
+
+function registerTerm() {
+  var term = document.getElementById('inputTerm').value.trim();
+  var reading = document.getElementById('inputReading').value.trim();
+  var description = toHalfWidthNumbers(document.getElementById('inputDescription').value.trim());
+  var type = document.getElementById('inputType').value || '事項';
+  var category = document.getElementById('inputCategory').value;
+
+  if (!term) {
+    showToast('用語を入力してください');
+    return;
+  }
+  if (!description) {
+    showToast('解説を入力してください');
+    return;
+  }
+
+  var obj = {
+    term: term,
+    reading: reading,
+    description: description,
+    type: type,
+    category: category
+  };
+
+  if (editingIndex >= 0) {
+    terms[editingIndex] = obj;
+    showToast('用語を更新しました');
+  } else {
+    terms.push(obj);
+    showToast('用語を登録しました');
+  }
+
+  saveTerms();
+  clearForm();
+  updateInfo();
+  renderList();
+}
+
+// ── 一覧 ──
+function clearListFilters() {
+  document.getElementById('listFilterType').value = '';
+  document.getElementById('listFilterCategory').value = '';
+  document.getElementById('listFilterSearch').value = '';
+  renderList();
+}
+
+function renderList() {
+  var container = document.getElementById('termList');
+  if (terms.length === 0) {
+    container.innerHTML = '<div class="empty-msg">登録された用語はありません</div>';
+    document.getElementById('listCount').textContent = '';
+    return;
+  }
+
+  var typeF = document.getElementById('listFilterType').value;
+  var catF = document.getElementById('listFilterCategory').value;
+  var searchF = document.getElementById('listFilterSearch').value.trim().toLowerCase();
+
+  var filtered = terms
+    .map(function(t, idx) { return { t: t, idx: idx }; })
+    .filter(function(item) {
+      var t = item.t;
+      if (typeF && (t.type || '事項') !== typeF) return false;
+      if (catF && t.category !== catF) return false;
+      if (searchF) {
+        var hay = (t.term + ' ' + t.description + ' ' + (t.reading || '')).toLowerCase();
+        if (hay.indexOf(searchF) === -1) return false;
+      }
+      return true;
+    });
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="empty-msg">条件に合う用語はありません</div>';
+    document.getElementById('listCount').textContent = '0 / ' + terms.length + ' 語';
+    return;
+  }
+
+  document.getElementById('listCount').textContent =
+    (typeF || catF || searchF) ? filtered.length + ' / ' + terms.length + ' 語' : terms.length + ' 語';
+
+  var html = '';
+  filtered.forEach(function(item) {
+    var t = item.t;
+    var idx = item.idx;
+    html +=
+      '<div class="term-item">' +
+        '<input type="checkbox" class="item-checkbox" data-idx="' + idx + '" onchange="toggleItemCheck(' + idx + ')"' + (checkedSet[idx] ? ' checked' : '') + '>' +
+        '<div class="term-num">' + (idx + 1) + '</div>' +
+        '<div class="term-body">' +
+          '<div class="term-name">' + escapeHtml(t.term) +
+            (t.reading ? ' <span style="font-size:.75em;color:#999;font-weight:normal;">（' + escapeHtml(t.reading) + '）</span>' : '') +
+          '</div>' +
+          '<div class="term-desc">' + escapeHtml(t.description.replace(/\n/g, ' ')) + '</div>' +
+          '<div class="term-meta">' +
+            '<span class="tag" style="background:#fef9e7;color:#9a7d0a;">' + escapeHtml(t.type || '事項') + '</span> ' +
+            (t.category ? '<span class="tag">' + escapeHtml(t.category) + '</span>' : '') +
+          '</div>' +
+        '</div>' +
+        '<div class="term-actions">' +
+          '<button class="edit-btn" onclick="editTerm(' + idx + ')">編集</button>' +
+          '<button class="delete-btn" onclick="deleteTerm(' + idx + ')">削除</button>' +
+        '</div>' +
+      '</div>';
+  });
+  container.innerHTML = html;
+  updateBulkUI();
+}
+
+// ── 一括選択 ──
+function toggleItemCheck(idx) {
+  if (checkedSet[idx]) delete checkedSet[idx];
+  else checkedSet[idx] = true;
+  updateBulkUI();
+}
+
+function getVisibleIndices() {
+  var typeF = document.getElementById('listFilterType').value;
+  var catF = document.getElementById('listFilterCategory').value;
+  var searchF = document.getElementById('listFilterSearch').value.trim().toLowerCase();
+  var visible = [];
+  terms.forEach(function(t, i) {
+    if (typeF && (t.type || '事項') !== typeF) return;
+    if (catF && t.category !== catF) return;
+    if (searchF) {
+      var hay = (t.term + ' ' + t.description + ' ' + (t.reading || '')).toLowerCase();
+      if (hay.indexOf(searchF) === -1) return;
+    }
+    visible.push(i);
+  });
+  return visible;
+}
+
+function toggleCheckAll() {
+  var visible = getVisibleIndices();
+  if (visible.length === 0) return;
+  var allChecked = visible.every(function(i) { return checkedSet[i]; });
+  if (allChecked) {
+    visible.forEach(function(i) { delete checkedSet[i]; });
+  } else {
+    visible.forEach(function(i) { checkedSet[i] = true; });
+  }
+  renderList();
+}
+
+function updateBulkUI() {
+  var count = Object.keys(checkedSet).length;
+  document.getElementById('selectedCount').textContent = count + ' 件 選択中';
+  var btn = document.getElementById('bulkDeleteBtn');
+  btn.disabled = count === 0;
+  btn.textContent = count > 0 ? ('選択削除（' + count + '件）') : '選択削除';
+
+  var visible = getVisibleIndices();
+  var allChecked = visible.length > 0 && visible.every(function(i) { return checkedSet[i]; });
+  var toggleBtn = document.querySelector('.bulk-toggle-btn');
+  if (toggleBtn) toggleBtn.textContent = allChecked ? '全て解除する' : '全てチェックする';
+}
+
+function deleteSelected() {
+  var indices = Object.keys(checkedSet).map(Number);
+  if (indices.length === 0) return;
+  if (!confirm(indices.length + ' 件の用語を削除します。本当によろしいですか？')) return;
+
+  indices.sort(function(a, b) { return b - a; });
+  indices.forEach(function(i) { terms.splice(i, 1); });
+  checkedSet = {};
+  saveTerms();
+  updateInfo();
+  renderList();
+  showToast(indices.length + ' 件を削除しました');
+}
+
+function editTerm(idx) {
+  var t = terms[idx];
+  editingIndex = idx;
+  document.getElementById('formTitle').textContent = '用語 #' + (idx + 1) + ' を編集';
+  document.getElementById('inputTerm').value = t.term;
+  document.getElementById('inputReading').value = t.reading || '';
+  document.getElementById('inputDescription').value = t.description;
+  document.getElementById('inputType').value = t.type || '事項';
+  document.getElementById('inputCategory').value = t.category || '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function deleteTerm(idx) {
+  if (!confirm('本当に削除しますか？')) return;
+  terms.splice(idx, 1);
+  saveTerms();
+  updateInfo();
+  renderList();
+  showToast('削除しました');
+  if (editingIndex === idx) clearForm();
+  else if (editingIndex > idx) editingIndex--;
+}
+
+// ── Excel読み込み ──
+var VALID_CATEGORIES = ['教育原理','学習指導要領','教育心理','教育史','教育法規','教育時事'];
+var VALID_TYPES = ['事項','人名'];
+var HEADER_ALIASES = {
+  term: ['用語','用語名','term','Term','名称'],
+  reading: ['読み仮名','読み','ふりがな','フリガナ','reading','Reading','よみ'],
+  description: ['解説','説明','description','Description','内容'],
+  type: ['種別','タイプ','type','Type','区分'],
+  category: ['分野','カテゴリ','category','Category']
+};
+var excelPreviewRows = []; // {term, reading, description, category, valid, reason}
+
+function normalizeHeader(h) {
+  return String(h || '').replace(/\s+/g, '').toLowerCase();
+}
+
+function resolveHeaderMap(headers) {
+  var map = { term: -1, reading: -1, description: -1, type: -1, category: -1 };
+  for (var i = 0; i < headers.length; i++) {
+    var h = normalizeHeader(headers[i]);
+    Object.keys(HEADER_ALIASES).forEach(function(key) {
+      if (map[key] !== -1) return;
+      if (HEADER_ALIASES[key].some(function(a) { return normalizeHeader(a) === h; })) {
+        map[key] = i;
+      }
+    });
+  }
+  return map;
+}
+
+function handleExcelFile(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  document.getElementById('fileName').textContent = file.name;
+
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = new Uint8Array(e.target.result);
+      var wb = XLSX.read(data, { type: 'array' });
+      var sheet = wb.Sheets[wb.SheetNames[0]];
+      var rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+
+      if (!rows || rows.length < 2) {
+        showToast('データがありません（見出し行＋1行以上必要）');
+        cancelExcel();
+        return;
+      }
+
+      var map = resolveHeaderMap(rows[0]);
+      if (map.term === -1 || map.description === -1) {
+        showToast('「用語」「解説」の見出しが見つかりません');
+        cancelExcel();
+        return;
+      }
+
+      excelPreviewRows = [];
+      for (var r = 1; r < rows.length; r++) {
+        var row = rows[r];
+        var term = String(row[map.term] || '').trim();
+        var reading = map.reading !== -1 ? String(row[map.reading] || '').trim() : '';
+        var description = map.description !== -1 ? String(row[map.description] || '').trim() : '';
+        var type = map.type !== -1 ? String(row[map.type] || '').trim() : '';
+        var category = map.category !== -1 ? String(row[map.category] || '').trim() : '';
+
+        if (!term && !description) continue; // 完全な空行はスキップ
+
+        if (!type) type = '事項';
+
+        var valid = true;
+        var reason = '';
+        if (!term) { valid = false; reason = '用語が空'; }
+        else if (!description) { valid = false; reason = '解説が空'; }
+        else if (VALID_TYPES.indexOf(type) === -1) {
+          valid = false;
+          reason = '種別が不正（' + type + '）';
+        }
+        else if (category && VALID_CATEGORIES.indexOf(category) === -1) {
+          valid = false;
+          reason = '分野が不正（' + category + '）';
+        }
+
+        excelPreviewRows.push({
+          term: term,
+          reading: reading,
+          description: toHalfWidthNumbers(description),
+          type: type,
+          category: category,
+          valid: valid,
+          reason: reason
+        });
+      }
+
+      renderPreview();
+    } catch (err) {
+      showToast('ファイルの読み込みに失敗しました');
+      cancelExcel();
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function renderPreview() {
+  var area = document.getElementById('previewArea');
+  var table = document.getElementById('previewTable');
+  var summary = document.getElementById('previewSummary');
+
+  if (excelPreviewRows.length === 0) {
+    area.style.display = 'none';
+    return;
+  }
+
+  var okCount = excelPreviewRows.filter(function(r) { return r.valid; }).length;
+  var ngCount = excelPreviewRows.length - okCount;
+  summary.innerHTML =
+    '読み込み結果: <span class="ok">登録可能 ' + okCount + ' 件</span>' +
+    (ngCount > 0 ? ' / <span class="ng">エラー ' + ngCount + ' 件（登録されません）</span>' : '');
+
+  var html = '<thead><tr>' +
+    '<th class="row-num">#</th>' +
+    '<th>用語</th>' +
+    '<th>読み仮名</th>' +
+    '<th>解説</th>' +
+    '<th>種別</th>' +
+    '<th>分野</th>' +
+    '<th>状態</th>' +
+    '</tr></thead><tbody>';
+  excelPreviewRows.forEach(function(r, i) {
+    var desc = r.description.length > 60 ? r.description.substring(0, 60) + '…' : r.description;
+    html += '<tr>' +
+      '<td class="row-num">' + (i + 1) + '</td>' +
+      '<td' + (!r.term ? ' class="invalid"' : '') + '>' + escapeHtml(r.term) + '</td>' +
+      '<td>' + escapeHtml(r.reading) + '</td>' +
+      '<td' + (!r.description ? ' class="invalid"' : '') + '>' + escapeHtml(desc) + '</td>' +
+      '<td' + (VALID_TYPES.indexOf(r.type) === -1 ? ' class="invalid"' : '') + '>' +
+        escapeHtml(r.type) + '</td>' +
+      '<td' + (r.category && VALID_CATEGORIES.indexOf(r.category) === -1 ? ' class="invalid"' : '') + '>' +
+        escapeHtml(r.category) + '</td>' +
+      '<td' + (!r.valid ? ' class="invalid"' : '') + '>' +
+        (r.valid ? 'OK' : escapeHtml(r.reason)) + '</td>' +
+    '</tr>';
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+  area.style.display = 'block';
+}
+
+function importExcel() {
+  var valid = excelPreviewRows.filter(function(r) { return r.valid; });
+  if (valid.length === 0) {
+    showToast('登録可能なデータがありません');
+    return;
+  }
+  if (!confirm(valid.length + ' 件を登録します。よろしいですか？')) return;
+
+  valid.forEach(function(r) {
+    terms.push({
+      term: r.term,
+      reading: r.reading,
+      description: r.description,
+      type: r.type,
+      category: r.category
+    });
+  });
+
+  saveTerms();
+  updateInfo();
+  renderList();
+  cancelExcel();
+  showToast(valid.length + ' 件を登録しました');
+}
+
+function cancelExcel() {
+  excelPreviewRows = [];
+  document.getElementById('previewArea').style.display = 'none';
+  document.getElementById('excelFile').value = '';
+  document.getElementById('fileName').textContent = 'ファイルが選択されていません';
+}
+
+// ── エクスポート／インポート ──
+function exportTerms() {
+  if (terms.length === 0) {
+    showToast('用語が登録されていません');
+    return;
+  }
+  var blob = new Blob([JSON.stringify(terms, null, 2)], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  var date = new Date();
+  var ts = date.getFullYear() + String(date.getMonth()+1).padStart(2,'0') + String(date.getDate()).padStart(2,'0');
+  a.href = url;
+  a.download = 'kyosai_glossary_' + ts + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('エクスポートしました（' + terms.length + '語）');
+}
+
+function deleteAllTerms() {
+  if (terms.length === 0) {
+    showToast('登録されている用語はありません');
+    return;
+  }
+  if (!confirm('登録されている ' + terms.length + ' 件の用語をすべて削除します。\n本当によろしいですか？\n\n（この操作は取り消せません）')) {
+    return;
+  }
+  // 2段階目の確認
+  var typed = prompt('確認のため「削除」と入力してください。');
+  if (typed !== '削除') {
+    showToast('削除をキャンセルしました');
+    return;
+  }
+  terms = [];
+  saveTerms();
+  localStorage.removeItem('kyosai_glossary_migrated_person_v1');
+  updateInfo();
+  renderList();
+  showToast('全用語を削除しました');
+}
+
+function importTerms(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      if (!Array.isArray(data)) throw new Error('配列ではありません');
+      var invalid = data.find(function(t) {
+        return !t.term || !t.description;
+      });
+      if (invalid) throw new Error('データ形式が不正です');
+
+      var msg = 'インポートを実行します。\n\n' +
+        '現在: ' + terms.length + ' 語\n' +
+        'ファイル: ' + data.length + ' 語\n\n' +
+        '既存データは上書きされます。よろしいですか？';
+      if (!confirm(msg)) {
+        event.target.value = '';
+        return;
+      }
+
+      terms = data;
+      saveTerms();
+      updateInfo();
+      renderList();
+      showToast('インポートしました（' + data.length + '語）');
+    } catch (err) {
+      showToast('読み込みに失敗しました: ' + err.message);
+    }
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+// ── 初期化 ──
+function initGlossaryAdmin() {
+  loadTerms();
+  updateInfo();
+  renderList();
+}
+
+(function bootstrap() {
+  function isEmpty() {
+    try {
+      var s = localStorage.getItem(STORAGE_KEY);
+      if (!s) return true;
+      var arr = JSON.parse(s);
+      return !Array.isArray(arr) || arr.length === 0;
+    } catch (e) { return true; }
+  }
+  if (!isEmpty()) { initGlossaryAdmin(); return; }
+  fetch('glossary-data.json', { cache: 'no-cache' })
+    .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+    .then(function(data) {
+      if (Array.isArray(data) && data.length > 0) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      }
+    })
+    .catch(function() {})
+    .then(function() { initGlossaryAdmin(); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>管理者画面 ─ 教育法規スコープ</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  background: #f0f2f5;
+  color: #333;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+header {
+  background: linear-gradient(135deg, #5d4037, #8d6e63);
+  color: #fff;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+header h1 { font-size: 1.1em; letter-spacing: .05em; }
+.header-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.header-btn {
+  padding: 6px 14px;
+  border: 1px solid rgba(255,255,255,.5);
+  border-radius: 6px;
+  background: transparent;
+  color: #fff;
+  font-size: .82em;
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: none;
+}
+.header-btn:hover { background: rgba(255,255,255,.15); }
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px 16px;
+}
+
+/* ── バックアップ ── */
+.backup-card,
+.upload-card,
+.form-card,
+.list-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+.backup-card h2,
+.upload-card h2,
+.form-card h2,
+.list-card h2 {
+  font-size: 1.05em;
+  color: #5d4037;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e8d8c4;
+}
+.list-card h2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.list-card h2 .count {
+  font-size: .8em;
+  font-weight: normal;
+  color: #888;
+}
+
+.hint {
+  font-size: .82em;
+  color: #777;
+  margin-bottom: 12px;
+  line-height: 1.7;
+}
+.hint code {
+  background: #fdf6ec;
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid #e8d8c4;
+  font-size: .9em;
+}
+
+.btn-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 12px;
+}
+.btn {
+  padding: 9px 22px;
+  border: none;
+  border-radius: 6px;
+  font-size: .92em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity .15s;
+}
+.btn:hover { opacity: .85; }
+.btn-register {
+  background: linear-gradient(135deg, #5d4037, #8d6e63);
+  color: #fff;
+}
+.btn-clear { background: #eee; color: #555; }
+.btn-export {
+  border: 1px solid #2e86c1; color: #2e86c1; background: #fff;
+  padding: 8px 16px; font-weight: bold; font-size: .85em;
+  border-radius: 6px; cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-export:hover { background: #eaf2f8; }
+.btn-import {
+  border: 1px solid #27ae60; color: #27ae60; background: #fff;
+  padding: 8px 16px; font-weight: bold; font-size: .85em;
+  border-radius: 6px; cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-import:hover { background: #eafaf1; }
+.btn-import input[type="file"] { display: none; }
+.btn-reset {
+  border: 1px solid #e67e22; color: #e67e22; background: #fff;
+  padding: 8px 16px; font-weight: bold; font-size: .85em;
+  border-radius: 6px; cursor: pointer; font-family: inherit;
+}
+.btn-reset:hover { background: #fef5e7; }
+.btn-deleteall {
+  border: 1px solid #e74c3c; color: #e74c3c; background: #fff;
+  padding: 8px 16px; font-weight: bold; font-size: .85em;
+  border-radius: 6px; cursor: pointer; font-family: inherit;
+  margin-left: auto;
+}
+.btn-deleteall:hover { background: #fdedec; }
+
+/* ── フォーム ── */
+.field { margin-bottom: 14px; }
+.field label {
+  display: block;
+  font-size: .85em;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 4px;
+}
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: .92em;
+  font-family: inherit;
+  line-height: 1.6;
+}
+.field textarea { resize: vertical; min-height: 100px; }
+.field input:focus, .field textarea:focus {
+  outline: none;
+  border-color: #8d6e63;
+  box-shadow: 0 0 0 2px rgba(141,110,99,.2);
+}
+.field-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.field-row .field { flex: 1; min-width: 200px; }
+
+.related-group {
+  background: #fdf6ec;
+  border: 1px solid #e8d8c4;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 14px;
+}
+.related-group h3 {
+  font-size: .9em;
+  color: #5d4037;
+  margin-bottom: 10px;
+}
+.related-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.related-row label {
+  flex-shrink: 0;
+  width: 110px;
+  font-size: .82em;
+  color: #888;
+}
+.related-row input { flex: 1; }
+
+/* ── 一覧 ── */
+.list-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.list-filters select,
+.list-filters input {
+  padding: 7px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: .85em;
+  font-family: inherit;
+  background: #fff;
+}
+.list-filters select { flex: 1; min-width: 160px; }
+.list-filters input { flex: 2; min-width: 180px; }
+.filter-clear-btn {
+  padding: 7px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  color: #666;
+  font-size: .82em;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.entry-item {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.entry-item:last-child { border-bottom: none; }
+.entry-item:hover { background: #fafafa; }
+.entry-num {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  background: #fdf6ec;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .78em;
+  font-weight: bold;
+  color: #5d4037;
+}
+.entry-body { flex: 1; min-width: 0; }
+.entry-heading {
+  font-size: .92em;
+  font-weight: bold;
+  color: #5d4037;
+  margin-bottom: 3px;
+}
+.entry-text {
+  font-size: .82em;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.entry-actions { flex-shrink: 0; display: flex; gap: 6px; }
+.entry-actions button {
+  padding: 5px 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: #fff;
+  font-size: .8em;
+  cursor: pointer;
+  font-family: inherit;
+}
+.edit-btn:hover { border-color: #8d6e63; color: #5d4037; }
+.delete-btn { color: #e74c3c; }
+.delete-btn:hover { border-color: #e74c3c; background: #fdedec; }
+
+/* ── 一括操作 ── */
+.bulk-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  background: #f8f9fa;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  flex-wrap: wrap;
+}
+.bulk-actions .selected-count { font-size: .85em; color: #666; }
+.bulk-toggle-btn {
+  padding: 7px 14px;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  background: #fff;
+  color: #555;
+  cursor: pointer;
+  font-size: .85em;
+  font-weight: bold;
+  font-family: inherit;
+}
+.bulk-toggle-btn:hover { background: #f0f0f0; }
+.bulk-delete-btn {
+  padding: 7px 16px;
+  border: 1px solid #e74c3c;
+  border-radius: 5px;
+  background: #fff;
+  color: #e74c3c;
+  cursor: pointer;
+  font-size: .85em;
+  font-weight: bold;
+  font-family: inherit;
+  margin-left: auto;
+}
+.bulk-delete-btn:hover { background: #fdedec; }
+.bulk-delete-btn:disabled { opacity: .4; cursor: not-allowed; }
+.item-checkbox {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 12px;
+  cursor: pointer;
+  accent-color: #5d4037;
+}
+
+.empty-msg {
+  text-align: center;
+  padding: 30px;
+  color: #aaa;
+  font-size: .92em;
+}
+
+/* Excel プレビュー */
+.preview-table-wrap {
+  max-height: 300px;
+  overflow: auto;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+.preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .82em;
+}
+.preview-table th, .preview-table td {
+  padding: 7px 9px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+  vertical-align: top;
+}
+.preview-table th {
+  background: #fdf6ec;
+  color: #5d4037;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  border-bottom: 2px solid #8d6e63;
+}
+.preview-table td.invalid { background: #fdedec; color: #c0392b; }
+.preview-summary {
+  font-size: .88em;
+  color: #555;
+  margin-bottom: 10px;
+}
+.preview-summary .ok { color: #27ae60; font-weight: bold; }
+.preview-summary .ng { color: #c0392b; font-weight: bold; }
+
+.file-input-label {
+  display: inline-block;
+  padding: 8px 18px;
+  background: #8d6e63;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: .88em;
+  font-weight: bold;
+}
+.file-input-label:hover { opacity: .88; }
+.file-input-label input { display: none; }
+.file-name { color: #666; font-size: .88em; }
+
+/* ── トースト ── */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: #333;
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: .9em;
+  opacity: 0;
+  transition: all .3s;
+  z-index: 999;
+  pointer-events: none;
+}
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>管理者画面（教育法規スコープ）</h1>
+  <div class="header-right">
+    <span id="totalInfo" style="font-size:.82em;opacity:.85;"></span>
+    <a href="admin-index.html" class="header-btn">管理者画面ホーム</a>
+    <a href="houki-scope.html" class="header-btn">教育法規スコープへ</a>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- データの引き継ぎ -->
+  <div class="backup-card">
+    <h2>データの引き継ぎ</h2>
+    <p class="hint">条文データをJSONファイルで書き出し／読み込みできます。別のPC・ブラウザへの移行や、バックアップ用途にご利用ください。</p>
+    <div class="btn-row">
+      <button class="btn-export" onclick="exportData()">⬇ エクスポート（JSON）</button>
+      <label class="btn-import">
+        ⬆ インポート（JSON）
+        <input type="file" accept=".json,application/json" onchange="importData(event)">
+      </label>
+      <button class="btn-reset" onclick="resetToBundled()">🔄 バンドル版データに戻す</button>
+    </div>
+  </div>
+
+  <!-- Excel読み込み -->
+  <div class="upload-card">
+    <h2>Excelから読み込む</h2>
+    <p class="hint">
+      1行目に見出し <code>法律名</code> <code>条</code> <code>条文タイトル</code> <code>条文</code> <code>関連法令等①</code>〜<code>⑤</code> を入れた Excel（.xlsx / .xls / .csv）をアップロードします。<br>
+      <small>※ 取り込み時はlocalStorage上の既存データを置き換えます（バンドル版データには影響なし）。</small>
+    </p>
+    <div class="btn-row">
+      <label class="file-input-label">
+        ファイルを選択
+        <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" onchange="handleExcelFile(event)">
+      </label>
+      <span class="file-name" id="fileName">ファイルが選択されていません</span>
+    </div>
+
+    <div id="previewArea" style="display:none; margin-top:14px;">
+      <div class="preview-summary" id="previewSummary"></div>
+      <div class="preview-table-wrap">
+        <table class="preview-table" id="previewTable"></table>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-register" onclick="importExcel()">登録（既存を置換）</button>
+        <button class="btn btn-clear" onclick="cancelExcel()">キャンセル</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 登録フォーム -->
+  <div class="form-card">
+    <h2 id="formTitle">条文を登録</h2>
+
+    <div class="field-row">
+      <div class="field">
+        <label>法律名</label>
+        <input type="text" id="inputLaw" list="lawList" placeholder="例: 日本国憲法">
+        <datalist id="lawList"></datalist>
+      </div>
+      <div class="field">
+        <label>条</label>
+        <input type="text" id="inputArticle" placeholder="例: 第14条">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>条文タイトル</label>
+      <input type="text" id="inputTitle" placeholder="例: 法の下の平等">
+    </div>
+
+    <div class="field">
+      <label>条文</label>
+      <textarea id="inputText" rows="5" placeholder="例: すべて国民は，＊法の下に平等＊であつて，..."></textarea>
+      <div style="font-size:.78em;color:#888;margin-top:3px;">※ <code>＊...＊</code> で囲んだ部分は青色でハイライト表示されます。</div>
+    </div>
+
+    <div class="related-group">
+      <h3>関連法令等（任意・最大5件）</h3>
+      <div class="related-row">
+        <label>関連法令等①</label>
+        <input type="text" id="inputRel1" placeholder="例: 教育基本法第4条第1項">
+      </div>
+      <div class="related-row">
+        <label>関連法令等②</label>
+        <input type="text" id="inputRel2">
+      </div>
+      <div class="related-row">
+        <label>関連法令等③</label>
+        <input type="text" id="inputRel3">
+      </div>
+      <div class="related-row">
+        <label>関連法令等④</label>
+        <input type="text" id="inputRel4">
+      </div>
+      <div class="related-row">
+        <label>関連法令等⑤</label>
+        <input type="text" id="inputRel5">
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-register" onclick="registerEntry()">登録</button>
+      <button class="btn btn-clear" onclick="clearForm()">クリア</button>
+    </div>
+  </div>
+
+  <!-- 登録済み一覧 -->
+  <div class="list-card">
+    <h2>登録済み条文 <span class="count" id="listCount"></span></h2>
+    <div class="list-filters">
+      <select id="listFilterLaw" onchange="renderList()">
+        <option value="">全法令</option>
+      </select>
+      <input type="text" id="listFilterSearch" placeholder="条文・タイトルで検索…" oninput="renderList()">
+      <button class="filter-clear-btn" onclick="clearListFilters()">クリア</button>
+      <button class="btn-deleteall" onclick="deleteAllEntries()">🗑 全削除</button>
+    </div>
+    <div class="bulk-actions">
+      <button class="bulk-toggle-btn" onclick="toggleCheckAll()">全てチェックする</button>
+      <span class="selected-count" id="selectedCount">0 件 選択中</span>
+      <button class="bulk-delete-btn" id="bulkDeleteBtn" onclick="deleteSelected()" disabled>選択削除</button>
+    </div>
+    <div id="entryList"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="houki-scope-data.js"></script>
+<script>
+var STORAGE_KEY = 'kyosai_houki_data';
+var entries = [];
+var checkedSet = {}; // 一括選択用 (idx => true)
+var editingIndex = -1;
+var excelPreviewRows = [];
+
+function loadEntries() {
+  try {
+    var stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      var parsed = JSON.parse(stored);
+      if (Array.isArray(parsed)) { entries = parsed; return; }
+    }
+  } catch (e) {}
+  // バンドル版を初期データとして使用（編集前の状態）
+  entries = (typeof HOUKI_DATA !== 'undefined' && Array.isArray(HOUKI_DATA))
+    ? HOUKI_DATA.slice().map(function(d) { return {
+        law: d.law || '',
+        article: d.article || '',
+        title: d.title || '',
+        text: d.text || '',
+        related: (d.related || []).slice()
+      }; })
+    : [];
+}
+
+function saveEntries() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showToast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(function() { el.classList.remove('show'); }, 2500);
+}
+
+function updateInfo() {
+  document.getElementById('totalInfo').textContent = '全 ' + entries.length + ' 件';
+}
+
+function getUniqueLaws() {
+  var laws = [];
+  entries.forEach(function(e) {
+    if (e.law && laws.indexOf(e.law) === -1) laws.push(e.law);
+  });
+  return laws;
+}
+
+// ── フォーム ──
+function clearForm() {
+  document.getElementById('inputLaw').value = '';
+  document.getElementById('inputArticle').value = '';
+  document.getElementById('inputTitle').value = '';
+  document.getElementById('inputText').value = '';
+  for (var i = 1; i <= 5; i++) document.getElementById('inputRel' + i).value = '';
+  editingIndex = -1;
+  document.getElementById('formTitle').textContent = '条文を登録';
+}
+
+function registerEntry() {
+  var law = document.getElementById('inputLaw').value.trim();
+  var article = document.getElementById('inputArticle').value.trim();
+  var title = document.getElementById('inputTitle').value.trim();
+  var text = document.getElementById('inputText').value.trim();
+  var related = [];
+  for (var i = 1; i <= 5; i++) {
+    var v = document.getElementById('inputRel' + i).value.trim();
+    if (v) related.push(v);
+  }
+
+  if (!law) { showToast('法律名を入力してください'); return; }
+  if (!article) { showToast('条を入力してください'); return; }
+  if (!text) { showToast('条文を入力してください'); return; }
+
+  var obj = { law: law, article: article, title: title, text: text, related: related };
+
+  if (editingIndex >= 0) {
+    entries[editingIndex] = obj;
+    showToast('条文を更新しました');
+  } else {
+    entries.push(obj);
+    showToast('条文を登録しました');
+  }
+
+  saveEntries();
+  clearForm();
+  updateInfo();
+  populateLawDatalist();
+  populateLawFilter();
+  renderList();
+}
+
+function editEntry(idx) {
+  var e = entries[idx];
+  editingIndex = idx;
+  document.getElementById('formTitle').textContent = '条文 #' + (idx + 1) + ' を編集';
+  document.getElementById('inputLaw').value = e.law || '';
+  document.getElementById('inputArticle').value = e.article || '';
+  document.getElementById('inputTitle').value = e.title || '';
+  document.getElementById('inputText').value = e.text || '';
+  var rel = e.related || [];
+  for (var i = 1; i <= 5; i++) {
+    document.getElementById('inputRel' + i).value = rel[i - 1] || '';
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function deleteEntry(idx) {
+  if (!confirm('本当に削除しますか？')) return;
+  entries.splice(idx, 1);
+  saveEntries();
+  updateInfo();
+  populateLawDatalist();
+  populateLawFilter();
+  renderList();
+  showToast('削除しました');
+  if (editingIndex === idx) clearForm();
+  else if (editingIndex > idx) editingIndex--;
+}
+
+function deleteAllEntries() {
+  if (entries.length === 0) { showToast('削除する条文はありません'); return; }
+  if (!confirm('登録されている ' + entries.length + ' 件の条文をすべて削除します。本当によろしいですか？')) return;
+  if (prompt('確認のため「削除」と入力してください。') !== '削除') {
+    showToast('キャンセルしました');
+    return;
+  }
+  entries = [];
+  saveEntries();
+  updateInfo();
+  populateLawDatalist();
+  populateLawFilter();
+  renderList();
+  showToast('全条文を削除しました');
+}
+
+function resetToBundled() {
+  if (!confirm('編集内容を破棄して、バンドル版（教育法規スコープ.xlsx 由来の初期データ）に戻します。よろしいですか？')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  loadEntries();
+  saveEntries();
+  updateInfo();
+  populateLawDatalist();
+  populateLawFilter();
+  renderList();
+  showToast('バンドル版データに戻しました');
+}
+
+// ── 一覧 ──
+function populateLawDatalist() {
+  var laws = getUniqueLaws();
+  var dl = document.getElementById('lawList');
+  dl.innerHTML = '';
+  laws.forEach(function(l) {
+    var opt = document.createElement('option');
+    opt.value = l;
+    dl.appendChild(opt);
+  });
+}
+
+function populateLawFilter() {
+  var laws = getUniqueLaws();
+  var sel = document.getElementById('listFilterLaw');
+  var current = sel.value;
+  sel.innerHTML = '<option value="">全法令</option>';
+  laws.forEach(function(l) {
+    var opt = document.createElement('option');
+    opt.value = l;
+    opt.textContent = l;
+    sel.appendChild(opt);
+  });
+  sel.value = current;
+}
+
+function clearListFilters() {
+  document.getElementById('listFilterLaw').value = '';
+  document.getElementById('listFilterSearch').value = '';
+  renderList();
+}
+
+function renderList() {
+  var container = document.getElementById('entryList');
+  if (entries.length === 0) {
+    container.innerHTML = '<div class="empty-msg">登録された条文はありません</div>';
+    document.getElementById('listCount').textContent = '';
+    return;
+  }
+
+  var lawF = document.getElementById('listFilterLaw').value;
+  var searchF = document.getElementById('listFilterSearch').value.trim().toLowerCase();
+
+  var filtered = entries
+    .map(function(e, idx) { return { e: e, idx: idx }; })
+    .filter(function(item) {
+      var e = item.e;
+      if (lawF && e.law !== lawF) return false;
+      if (searchF) {
+        var hay = ((e.text || '') + ' ' + (e.title || '') + ' ' + (e.article || '') + ' ' + (e.law || '')).toLowerCase();
+        if (hay.indexOf(searchF) === -1) return false;
+      }
+      return true;
+    });
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="empty-msg">条件に合う条文はありません</div>';
+    document.getElementById('listCount').textContent = '0 / ' + entries.length + ' 件';
+    return;
+  }
+
+  document.getElementById('listCount').textContent =
+    (lawF || searchF) ? filtered.length + ' / ' + entries.length + ' 件' : entries.length + ' 件';
+
+  var html = '';
+  filtered.forEach(function(item) {
+    var e = item.e;
+    var idx = item.idx;
+    var heading =
+      escapeHtml(e.law) +
+      (e.article ? '　' + escapeHtml(e.article) : '') +
+      (e.title ? ' 〔' + escapeHtml(e.title) + '〕' : '');
+    html +=
+      '<div class="entry-item">' +
+        '<input type="checkbox" class="item-checkbox" data-idx="' + idx + '" onchange="toggleItemCheck(' + idx + ')"' + (checkedSet[idx] ? ' checked' : '') + '>' +
+        '<div class="entry-num">' + (idx + 1) + '</div>' +
+        '<div class="entry-body">' +
+          '<div class="entry-heading">' + heading + '</div>' +
+          '<div class="entry-text">' + escapeHtml((e.text || '').replace(/\n/g, ' ')) + '</div>' +
+        '</div>' +
+        '<div class="entry-actions">' +
+          '<button class="edit-btn" onclick="editEntry(' + idx + ')">編集</button>' +
+          '<button class="delete-btn" onclick="deleteEntry(' + idx + ')">削除</button>' +
+        '</div>' +
+      '</div>';
+  });
+  container.innerHTML = html;
+  updateBulkUI();
+}
+
+// ── 一括選択 ──
+function toggleItemCheck(idx) {
+  if (checkedSet[idx]) delete checkedSet[idx];
+  else checkedSet[idx] = true;
+  updateBulkUI();
+}
+
+function getVisibleIndices() {
+  var lawF = document.getElementById('listFilterLaw').value;
+  var searchF = document.getElementById('listFilterSearch').value.trim().toLowerCase();
+  var visible = [];
+  entries.forEach(function(e, i) {
+    if (lawF && e.law !== lawF) return;
+    if (searchF) {
+      var hay = ((e.text || '') + ' ' + (e.title || '') + ' ' + (e.article || '') + ' ' + (e.law || '')).toLowerCase();
+      if (hay.indexOf(searchF) === -1) return;
+    }
+    visible.push(i);
+  });
+  return visible;
+}
+
+function toggleCheckAll() {
+  var visible = getVisibleIndices();
+  if (visible.length === 0) return;
+  var allChecked = visible.every(function(i) { return checkedSet[i]; });
+  if (allChecked) {
+    visible.forEach(function(i) { delete checkedSet[i]; });
+  } else {
+    visible.forEach(function(i) { checkedSet[i] = true; });
+  }
+  renderList();
+}
+
+function updateBulkUI() {
+  var count = Object.keys(checkedSet).length;
+  document.getElementById('selectedCount').textContent = count + ' 件 選択中';
+  var btn = document.getElementById('bulkDeleteBtn');
+  btn.disabled = count === 0;
+  btn.textContent = count > 0 ? ('選択削除（' + count + '件）') : '選択削除';
+
+  var visible = getVisibleIndices();
+  var allChecked = visible.length > 0 && visible.every(function(i) { return checkedSet[i]; });
+  var toggleBtn = document.querySelector('.bulk-toggle-btn');
+  if (toggleBtn) toggleBtn.textContent = allChecked ? '全て解除する' : '全てチェックする';
+}
+
+function deleteSelected() {
+  var indices = Object.keys(checkedSet).map(Number);
+  if (indices.length === 0) return;
+  if (!confirm(indices.length + ' 件の条文を削除します。本当によろしいですか？')) return;
+
+  indices.sort(function(a, b) { return b - a; });
+  indices.forEach(function(i) { entries.splice(i, 1); });
+  checkedSet = {};
+  saveEntries();
+  updateInfo();
+  populateLawDatalist();
+  populateLawFilter();
+  renderList();
+  showToast(indices.length + ' 件を削除しました');
+}
+
+// ── エクスポート／インポート（JSON）──
+function exportData() {
+  if (entries.length === 0) { showToast('データがありません'); return; }
+  var blob = new Blob([JSON.stringify(entries, null, 2)], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  var d = new Date();
+  var ts = d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+  a.href = url;
+  a.download = 'kyosai_houki_' + ts + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('エクスポートしました（' + entries.length + '件）');
+}
+
+function importData(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      if (!Array.isArray(data)) throw new Error('配列ではありません');
+      var invalid = data.find(function(d) { return !d.law || !d.text; });
+      if (invalid) throw new Error('データ形式が不正です（law と text は必須）');
+
+      var msg = 'インポートを実行します。\n\n' +
+        '現在: ' + entries.length + ' 件\n' +
+        'ファイル: ' + data.length + ' 件\n\n' +
+        '既存データは上書きされます。よろしいですか？';
+      if (!confirm(msg)) {
+        event.target.value = '';
+        return;
+      }
+
+      entries = data.map(function(d) {
+        return {
+          law: d.law || '',
+          article: d.article || '',
+          title: d.title || '',
+          text: d.text || '',
+          related: Array.isArray(d.related) ? d.related : []
+        };
+      });
+      saveEntries();
+      updateInfo();
+      populateLawDatalist();
+      populateLawFilter();
+      renderList();
+      showToast('インポートしました（' + entries.length + '件）');
+    } catch (err) {
+      showToast('読み込みに失敗しました: ' + err.message);
+    }
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+// ── Excel読み込み ──
+var HEADER_ALIASES = {
+  law:     ['法律名','法令名','law','Law'],
+  article: ['条','article','Article','条番号'],
+  title:   ['条文タイトル','タイトル','title','Title'],
+  text:    ['条文','本文','text','Text'],
+  rel1:    ['関連法令等①','関連法令①','rel1','related1'],
+  rel2:    ['関連法令等②','関連法令②','rel2','related2'],
+  rel3:    ['関連法令等③','関連法令③','rel3','related3'],
+  rel4:    ['関連法令等④','関連法令④','rel4','related4'],
+  rel5:    ['関連法令等⑤','関連法令⑤','rel5','related5']
+};
+
+function normalizeHeader(h) {
+  return String(h || '').replace(/\s+/g, '').toLowerCase();
+}
+
+function resolveHeaderMap(headers) {
+  var map = {};
+  Object.keys(HEADER_ALIASES).forEach(function(k) { map[k] = -1; });
+  for (var i = 0; i < headers.length; i++) {
+    var h = normalizeHeader(headers[i]);
+    Object.keys(HEADER_ALIASES).forEach(function(key) {
+      if (map[key] !== -1) return;
+      if (HEADER_ALIASES[key].some(function(a) { return normalizeHeader(a) === h; })) {
+        map[key] = i;
+      }
+    });
+  }
+  return map;
+}
+
+function handleExcelFile(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  document.getElementById('fileName').textContent = file.name;
+
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = new Uint8Array(e.target.result);
+      var wb = XLSX.read(data, { type: 'array' });
+      var sheet = wb.Sheets[wb.SheetNames[0]];
+      var rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+
+      // 見出し行を検索（最初の20行から）
+      var headerRow = -1, headerMap = null;
+      for (var r = 0; r < Math.min(20, rows.length); r++) {
+        var m = resolveHeaderMap(rows[r]);
+        if (m.law !== -1 && m.text !== -1) { headerRow = r; headerMap = m; break; }
+      }
+      if (headerRow === -1) {
+        showToast('「法律名」「条文」の見出し行が見つかりません');
+        cancelExcel();
+        return;
+      }
+
+      excelPreviewRows = [];
+      for (var rr = headerRow + 1; rr < rows.length; rr++) {
+        var row = rows[rr];
+        var law = String(row[headerMap.law] || '').trim();
+        var article = headerMap.article !== -1 ? String(row[headerMap.article] || '').trim() : '';
+        var title = headerMap.title !== -1 ? String(row[headerMap.title] || '').trim() : '';
+        var text = String(row[headerMap.text] || '').trim();
+        var rels = [];
+        ['rel1','rel2','rel3','rel4','rel5'].forEach(function(k) {
+          if (headerMap[k] === -1) return;
+          var v = String(row[headerMap[k]] || '').trim();
+          if (v) rels.push(v);
+        });
+        if (!law && !text) continue;
+
+        var valid = true, reason = '';
+        if (!law) { valid = false; reason = '法律名が空'; }
+        else if (!text) { valid = false; reason = '条文が空'; }
+
+        excelPreviewRows.push({
+          law: law, article: article, title: title, text: text, related: rels,
+          valid: valid, reason: reason
+        });
+      }
+      renderPreview();
+    } catch (err) {
+      showToast('ファイル読み込み失敗: ' + err.message);
+      cancelExcel();
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function renderPreview() {
+  var area = document.getElementById('previewArea');
+  if (excelPreviewRows.length === 0) { area.style.display = 'none'; return; }
+
+  var ok = excelPreviewRows.filter(function(r) { return r.valid; }).length;
+  var ng = excelPreviewRows.length - ok;
+  document.getElementById('previewSummary').innerHTML =
+    '読み込み結果: <span class="ok">登録可能 ' + ok + ' 件</span>' +
+    (ng > 0 ? ' / <span class="ng">エラー ' + ng + ' 件</span>' : '');
+
+  var html = '<thead><tr>' +
+    '<th>#</th><th>法律名</th><th>条</th><th>タイトル</th><th>条文</th><th>関連</th><th>状態</th>' +
+    '</tr></thead><tbody>';
+  excelPreviewRows.forEach(function(r, i) {
+    var t = r.text.length > 50 ? r.text.substring(0, 50) + '…' : r.text;
+    html += '<tr>' +
+      '<td>' + (i + 1) + '</td>' +
+      '<td' + (!r.law ? ' class="invalid"' : '') + '>' + escapeHtml(r.law) + '</td>' +
+      '<td>' + escapeHtml(r.article) + '</td>' +
+      '<td>' + escapeHtml(r.title) + '</td>' +
+      '<td' + (!r.text ? ' class="invalid"' : '') + '>' + escapeHtml(t) + '</td>' +
+      '<td>' + r.related.length + '件</td>' +
+      '<td' + (!r.valid ? ' class="invalid"' : '') + '>' + (r.valid ? 'OK' : escapeHtml(r.reason)) + '</td>' +
+    '</tr>';
+  });
+  html += '</tbody>';
+  document.getElementById('previewTable').innerHTML = html;
+  area.style.display = 'block';
+}
+
+function importExcel() {
+  var valid = excelPreviewRows.filter(function(r) { return r.valid; });
+  if (valid.length === 0) { showToast('登録可能なデータがありません'); return; }
+  if (!confirm('既存の ' + entries.length + ' 件を破棄し、Excelの ' + valid.length + ' 件で置き換えます。よろしいですか？')) return;
+
+  entries = valid.map(function(r) {
+    return { law: r.law, article: r.article, title: r.title, text: r.text, related: r.related };
+  });
+  saveEntries();
+  updateInfo();
+  populateLawDatalist();
+  populateLawFilter();
+  renderList();
+  cancelExcel();
+  showToast(valid.length + ' 件を登録しました');
+}
+
+function cancelExcel() {
+  excelPreviewRows = [];
+  document.getElementById('previewArea').style.display = 'none';
+  document.getElementById('excelFile').value = '';
+  document.getElementById('fileName').textContent = 'ファイルが選択されていません';
+}
+
+// ── 初期化 ──
+loadEntries();
+updateInfo();
+populateLawDatalist();
+populateLawFilter();
+renderList();
+</script>
+</body>
+</html>

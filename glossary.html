@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>教員採用試験 用語解説</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  background: #f0f2f5;
+  color: #333;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+header {
+  background: linear-gradient(135deg, #117a65, #48c9b0);
+  color: #fff;
+  padding: 16px 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+}
+header h1 { font-size: 1.2em; letter-spacing: .05em; }
+.header-links { margin-top: 6px; }
+.header-links a {
+  color: rgba(255,255,255,.85);
+  font-size: .85em;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,.4);
+  padding: 4px 14px;
+  border-radius: 5px;
+  margin: 0 4px;
+}
+.header-links a:hover { background: rgba(255,255,255,.15); }
+
+.container {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 20px 16px;
+}
+
+/* ── タブ ── */
+.tabs {
+  display: flex;
+  background: #fff;
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+.tab-btn {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  background: #fff;
+  cursor: pointer;
+  font-size: .95em;
+  font-family: inherit;
+  color: #888;
+  border-bottom: 3px solid transparent;
+  transition: all .15s;
+}
+.tab-btn:hover { background: #f8f9fa; }
+.tab-btn.active {
+  color: #117a65;
+  border-bottom-color: #117a65;
+  font-weight: bold;
+  background: #f5fef9;
+}
+
+/* ── カード ── */
+.panel {
+  background: #fff;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  padding: 20px;
+}
+
+/* ── 目次（50音） ── */
+.gojuon-rows {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.gojuon-btn {
+  padding: 8px 14px;
+  border: 1px solid #d5dbdb;
+  border-radius: 6px;
+  background: #fff;
+  font-size: .95em;
+  cursor: pointer;
+  font-family: inherit;
+  color: #555;
+  transition: all .15s;
+}
+.gojuon-btn:hover:not(:disabled) {
+  border-color: #48c9b0;
+  background: #eafaf1;
+  color: #117a65;
+}
+.gojuon-btn.active {
+  background: #117a65;
+  color: #fff;
+  border-color: #117a65;
+  font-weight: bold;
+}
+.gojuon-btn:disabled {
+  color: #ccc;
+  cursor: default;
+  background: #f8f9fa;
+}
+
+/* ── キーワード検索 ── */
+.search-box {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.search-box input {
+  flex: 1;
+  padding: 12px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1em;
+  font-family: inherit;
+}
+.search-box input:focus {
+  outline: none;
+  border-color: #48c9b0;
+  box-shadow: 0 0 0 3px rgba(72,201,176,.2);
+}
+.category-filter {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: .9em;
+  font-family: inherit;
+  background: #fff;
+  margin-bottom: 16px;
+  min-width: 150px;
+}
+
+/* ── 用語リスト ── */
+.term-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.term-card {
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: all .15s;
+  background: #fff;
+}
+.term-card:hover {
+  border-color: #48c9b0;
+  background: #f5fef9;
+  box-shadow: 0 2px 8px rgba(72,201,176,.15);
+}
+.term-card.expanded {
+  border-color: #117a65;
+  background: #f5fef9;
+  cursor: default;
+}
+.term-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.term-card .term-name {
+  font-size: 1.05em;
+  font-weight: bold;
+  color: #117a65;
+}
+.term-card .term-reading {
+  font-size: .8em;
+  color: #999;
+  font-weight: normal;
+  margin-left: 8px;
+}
+.term-card .tag {
+  display: inline-block;
+  background: #eafaf1;
+  color: #117a65;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-size: .75em;
+  flex-shrink: 0;
+}
+.term-card .desc {
+  display: none;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed #bbb;
+  font-size: .95em;
+  color: #444;
+  white-space: pre-wrap;
+  line-height: 1.8;
+}
+.term-card.expanded .desc { display: block; }
+
+.related-quiz {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed #bbb;
+  text-align: right;
+}
+.related-quiz-btn {
+  display: inline-block;
+  padding: 8px 20px;
+  background: linear-gradient(135deg, #2e86c1, #1a5276);
+  color: #fff !important;
+  border: none;
+  border-radius: 6px;
+  font-size: .88em;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: inherit;
+}
+.related-quiz-btn:hover { opacity: .88; }
+.related-quiz-btn::before { content: '▶ '; font-size: .8em; }
+
+.term-link {
+  color: #117a65;
+  background: rgba(72,201,176,.08);
+  padding: 0 3px;
+  border-radius: 3px;
+  text-decoration: underline;
+  text-decoration-color: rgba(17,122,101,.4);
+  cursor: pointer;
+}
+.term-link:hover {
+  background: rgba(72,201,176,.22);
+  text-decoration-color: #117a65;
+}
+
+@keyframes flash-highlight {
+  0%   { background: #fff7d6; }
+  100% { background: transparent; }
+}
+.term-card.flash {
+  animation: flash-highlight 1.6s ease-out;
+}
+
+.empty-msg {
+  text-align: center;
+  padding: 40px 20px;
+  color: #aaa;
+  font-size: .95em;
+}
+.info-msg {
+  text-align: center;
+  padding: 30px 20px;
+  color: #666;
+  font-size: .9em;
+}
+.count-info {
+  font-size: .85em;
+  color: #888;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 600px) {
+  header h1 { font-size: 1.05em; }
+  .panel { padding: 16px; }
+  .gojuon-btn { padding: 6px 10px; font-size: .9em; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>教員採用試験 用語解説</h1>
+  <div class="header-links">
+    <a href="index.html">過去問演習</a>
+    <a href="houki-scope.html">教育法規スコープ</a>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-person"  onclick="switchTab('person')">人名検索</button>
+    <button class="tab-btn"        id="tab-matter"  onclick="switchTab('matter')">事項検索</button>
+    <button class="tab-btn"        id="tab-keyword" onclick="switchTab('keyword')">キーワード検索</button>
+  </div>
+
+  <!-- 人名検索 -->
+  <div class="panel" id="panel-person">
+    <div class="gojuon-rows" data-rows-for="person"></div>
+    <select class="category-filter" data-cat-for="person">
+      <option value="">全分野</option>
+      <option value="教育原理">教育原理</option>
+      <option value="学習指導要領">学習指導要領</option>
+      <option value="教育心理">教育心理</option>
+      <option value="教育史">教育史</option>
+      <option value="教育法規">教育法規</option>
+      <option value="教育時事">教育時事</option>
+    </select>
+    <div class="count-info" data-count-for="person"></div>
+    <div class="term-list" data-list-for="person"></div>
+  </div>
+
+  <!-- 事項検索 -->
+  <div class="panel" id="panel-matter" style="display:none;">
+    <div class="gojuon-rows" data-rows-for="matter"></div>
+    <select class="category-filter" data-cat-for="matter">
+      <option value="">全分野</option>
+      <option value="教育原理">教育原理</option>
+      <option value="学習指導要領">学習指導要領</option>
+      <option value="教育心理">教育心理</option>
+      <option value="教育史">教育史</option>
+      <option value="教育法規">教育法規</option>
+      <option value="教育時事">教育時事</option>
+    </select>
+    <div class="count-info" data-count-for="matter"></div>
+    <div class="term-list" data-list-for="matter"></div>
+  </div>
+
+  <!-- キーワード検索 -->
+  <div class="panel" id="panel-keyword" style="display:none;">
+    <div class="search-box">
+      <input type="text" id="keywordInput" placeholder="用語または解説のキーワードで検索…" oninput="renderKeywordList()">
+    </div>
+    <select class="category-filter" id="keywordCategory" onchange="renderKeywordList()">
+      <option value="">全分野</option>
+      <option value="教育原理">教育原理</option>
+      <option value="学習指導要領">学習指導要領</option>
+      <option value="教育心理">教育心理</option>
+      <option value="教育史">教育史</option>
+      <option value="教育法規">教育法規</option>
+      <option value="教育時事">教育時事</option>
+    </select>
+    <select class="category-filter" id="keywordType" onchange="renderKeywordList()" style="margin-left:8px;">
+      <option value="">全種別</option>
+      <option value="事項">事項</option>
+      <option value="人名">人名</option>
+    </select>
+    <div class="count-info" id="keywordCount"></div>
+    <div class="term-list" id="keywordList"></div>
+  </div>
+
+</div>
+
+<script>
+var STORAGE_KEY = 'kyosai_glossary';
+var allTerms = [];
+
+// タブ種別 → 用語の type 値
+var TAB_TYPES = {
+  person:  '人名',
+  matter:  '事項'
+};
+
+// 各タブの選択状態（50音行）
+var selectedRows = { person: 'all', matter: 'all' };
+
+// 50音行の定義
+var ROWS = [
+  { label: '全て', key: 'all', chars: '' },
+  { label: 'あ行', key: 'a',  chars: 'あいうえおぁぃぅぇぉアイウエオァィゥェォ' },
+  { label: 'か行', key: 'ka', chars: 'かきくけこがぎぐげごカキクケコガギグゲゴ' },
+  { label: 'さ行', key: 'sa', chars: 'さしすせそざじずぜぞサシスセソザジズゼゾ' },
+  { label: 'た行', key: 'ta', chars: 'たちつてとだぢづでどっタチツテトダヂヅデドッ' },
+  { label: 'な行', key: 'na', chars: 'なにぬねのナニヌネノ' },
+  { label: 'は行', key: 'ha', chars: 'はひふへほばびぶべぼぱぴぷぺぽハヒフヘホバビブベボパピプペポ' },
+  { label: 'ま行', key: 'ma', chars: 'まみむめもマミムメモ' },
+  { label: 'や行', key: 'ya', chars: 'やゆよゃゅょヤユヨャュョ' },
+  { label: 'ら行', key: 'ra', chars: 'らりるれろラリルレロ' },
+  { label: 'わ行', key: 'wa', chars: 'わをんワヲン' },
+  { label: 'その他', key: 'other', chars: '' }
+];
+
+function loadTerms() {
+  try {
+    var data = localStorage.getItem(STORAGE_KEY);
+    allTerms = data ? JSON.parse(data) : [];
+  } catch (e) {
+    allTerms = [];
+  }
+  // 既存データ（type未設定）を「人名」に一括移行（初回のみ）
+  var MIGRATION_FLAG = 'kyosai_glossary_migrated_person_v1';
+  if (!localStorage.getItem(MIGRATION_FLAG) && allTerms.length > 0) {
+    var changed = false;
+    allTerms.forEach(function(t) {
+      if (!t.type) { t.type = '人名'; changed = true; }
+    });
+    if (changed) localStorage.setItem(STORAGE_KEY, JSON.stringify(allTerms));
+    localStorage.setItem(MIGRATION_FLAG, '1');
+  }
+
+  // 『』『」』等でくくられた人名を、括弧を外して「事項」に変更（初回のみ）
+  var MIGRATION_FLAG2 = 'kyosai_glossary_migrated_brackets_v2';
+  if (!localStorage.getItem(MIGRATION_FLAG2) && allTerms.length > 0) {
+    var changed2 = false;
+    var pairs = [['『','』'], ['「','」'], ['｢','｣'], ['"','"'], ['"','"']];
+    allTerms.forEach(function(t) {
+      if (t.type !== '人名' || !t.term) return;
+      var name = t.term.trim();
+      for (var i = 0; i < pairs.length; i++) {
+        var open = pairs[i][0], close = pairs[i][1];
+        if (name.charAt(0) === open && name.charAt(name.length - 1) === close && name.length >= 2) {
+          t.term = name.substring(1, name.length - 1).trim();
+          t.type = '事項';
+          changed2 = true;
+          break;
+        }
+      }
+    });
+    if (changed2) localStorage.setItem(STORAGE_KEY, JSON.stringify(allTerms));
+    localStorage.setItem(MIGRATION_FLAG2, '1');
+  }
+
+  // 読み仮名から『』「」を一括削除（初回のみ）
+  var MIGRATION_FLAG3 = 'kyosai_glossary_migrated_reading_brackets_v1';
+  if (!localStorage.getItem(MIGRATION_FLAG3) && allTerms.length > 0) {
+    var changed3 = false;
+    allTerms.forEach(function(t) {
+      if (t.reading && /[『』「」]/.test(t.reading)) {
+        t.reading = t.reading.replace(/[『』「」]/g, '').trim();
+        changed3 = true;
+      }
+    });
+    if (changed3) localStorage.setItem(STORAGE_KEY, JSON.stringify(allTerms));
+    localStorage.setItem(MIGRATION_FLAG3, '1');
+  }
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderWithUnderline(str) {
+  return escapeHtml(str).replace(/__(.+?)__/g, '<u>$1</u>');
+}
+
+function escapeRegex(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function stripWrappingBrackets(name) {
+  if (!name) return name;
+  var s = String(name).trim();
+  var pairs = [['『','』'], ['「','」'], ['｢','｣'], ['"','"'], ['"','"']];
+  for (var i = 0; i < pairs.length; i++) {
+    var open = pairs[i][0], close = pairs[i][1];
+    if (s.length >= 2 && s.charAt(0) === open && s.charAt(s.length - 1) === close) {
+      return s.substring(1, s.length - 1).trim();
+    }
+  }
+  return s;
+}
+
+// 解説本文を描画（HTMLエスケープ＋自動リンク＋アンダーライン）
+function renderDescription(text, currentTerm) {
+  var escaped = escapeHtml(text);
+
+  // 自分自身を除いた用語を、長い順にソート
+  var others = allTerms
+    .filter(function(t) { return t.term && t.term !== currentTerm; })
+    .sort(function(a, b) { return b.term.length - a.term.length; });
+
+  // プレースホルダで置換（後段の処理で誤マッチしないように）
+  var placeholders = [];
+  others.forEach(function(t) {
+    var escapedTerm = escapeHtml(t.term);
+    var pattern = new RegExp(escapeRegex(escapedTerm), 'g');
+    escaped = escaped.replace(pattern, function() {
+      var idx = placeholders.length;
+      placeholders.push(t.term);
+      return 'TL' + idx + '';
+    });
+  });
+
+  // アンダーライン記法
+  escaped = escaped.replace(/__(.+?)__/g, '<u>$1</u>');
+
+  // プレースホルダ → リンクHTML
+  for (var i = 0; i < placeholders.length; i++) {
+    var marker = 'TL' + i + '';
+    var name = placeholders[i];
+    var link = '<a class="term-link" data-term="' + escapeHtml(name) + '">' + escapeHtml(name) + '</a>';
+    escaped = escaped.split(marker).join(link);
+  }
+
+  return escaped;
+}
+
+// 用語の先頭文字から行キーを判定（読みがなを優先）
+function getRowKey(term) {
+  var s = (term.reading && term.reading.length > 0) ? term.reading : term.term;
+  if (!s) return 'other';
+  var c = s.charAt(0);
+  for (var i = 1; i < ROWS.length - 1; i++) {
+    if (ROWS[i].chars.indexOf(c) !== -1) return ROWS[i].key;
+  }
+  return 'other';
+}
+
+// 50音順ソート用キー
+function sortKey(term) {
+  var s = (term.reading && term.reading.length > 0) ? term.reading : term.term;
+  return s;
+}
+
+function switchTab(name) {
+  ['person', 'matter', 'keyword'].forEach(function(n) {
+    document.getElementById('tab-' + n).classList.toggle('active', n === name);
+    document.getElementById('panel-' + n).style.display = n === name ? 'block' : 'none';
+  });
+}
+
+// ── タイプ別の目次検索（人名／事項共通） ──
+function getTabTerms(tab) {
+  var typeName = TAB_TYPES[tab];
+  return allTerms.filter(function(t) {
+    return (t.type || '事項') === typeName;
+  });
+}
+
+function renderGojuonRowsFor(tab) {
+  var container = document.querySelector('[data-rows-for="' + tab + '"]');
+  container.innerHTML = '';
+
+  var tabTerms = getTabTerms(tab);
+  var counts = { all: tabTerms.length };
+  ROWS.forEach(function(r) { counts[r.key] = 0; });
+  counts.all = 0;
+  tabTerms.forEach(function(t) {
+    var k = getRowKey(t);
+    counts[k] = (counts[k] || 0) + 1;
+    counts.all++;
+  });
+
+  ROWS.forEach(function(r) {
+    var btn = document.createElement('button');
+    btn.className = 'gojuon-btn' + (selectedRows[tab] === r.key ? ' active' : '');
+    btn.textContent = r.label + (counts[r.key] ? '（' + counts[r.key] + '）' : '');
+    if (!counts[r.key] && r.key !== 'all') btn.disabled = true;
+    btn.onclick = function() {
+      selectedRows[tab] = r.key;
+      renderGojuonRowsFor(tab);
+      renderIndexListFor(tab);
+    };
+    container.appendChild(btn);
+  });
+}
+
+function renderIndexListFor(tab) {
+  var container = document.querySelector('[data-list-for="' + tab + '"]');
+  var countEl = document.querySelector('[data-count-for="' + tab + '"]');
+  var catSel = document.querySelector('[data-cat-for="' + tab + '"]');
+  var category = catSel.value;
+  var typeLabel = TAB_TYPES[tab];
+
+  var tabTerms = getTabTerms(tab);
+  if (tabTerms.length === 0) {
+    container.innerHTML = '<div class="empty-msg">登録された' + typeLabel + 'はありません</div>';
+    countEl.textContent = '';
+    return;
+  }
+
+  var filtered = tabTerms.slice();
+  if (selectedRows[tab] !== 'all') {
+    filtered = filtered.filter(function(t) { return getRowKey(t) === selectedRows[tab]; });
+  }
+  if (category) {
+    filtered = filtered.filter(function(t) { return t.category === category; });
+  }
+  filtered.sort(function(a, b) {
+    return sortKey(a).localeCompare(sortKey(b), 'ja');
+  });
+
+  countEl.textContent = filtered.length + ' 語';
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="empty-msg">該当する' + typeLabel + 'はありません</div>';
+    return;
+  }
+
+  container.innerHTML = filtered.map(function(t, i) { return termCardHtml(t, tab + '-' + i); }).join('');
+  bindCards(container);
+}
+
+// ── キーワード検索 ──
+function renderKeywordList() {
+  var kw = document.getElementById('keywordInput').value.trim().toLowerCase();
+  var category = document.getElementById('keywordCategory').value;
+  var typeF = document.getElementById('keywordType').value;
+  var container = document.getElementById('keywordList');
+
+  if (allTerms.length === 0) {
+    container.innerHTML = '<div class="empty-msg">登録された用語はありません</div>';
+    document.getElementById('keywordCount').textContent = '';
+    return;
+  }
+
+  if (!kw && !category && !typeF) {
+    container.innerHTML = '<div class="info-msg">キーワードを入力、または分野・種別を選択してください</div>';
+    document.getElementById('keywordCount').textContent = '';
+    return;
+  }
+
+  var filtered = allTerms.slice();
+  if (typeF) {
+    filtered = filtered.filter(function(t) { return (t.type || '事項') === typeF; });
+  }
+  if (category) {
+    filtered = filtered.filter(function(t) { return t.category === category; });
+  }
+  if (kw) {
+    filtered = filtered.filter(function(t) {
+      var hay = (t.term + ' ' + t.description + ' ' + (t.reading || '')).toLowerCase();
+      return hay.indexOf(kw) !== -1;
+    });
+  }
+  filtered.sort(function(a, b) {
+    return sortKey(a).localeCompare(sortKey(b), 'ja');
+  });
+
+  document.getElementById('keywordCount').textContent = filtered.length + ' 語';
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="empty-msg">該当する用語はありません</div>';
+    return;
+  }
+
+  container.innerHTML = filtered.map(function(t, i) { return termCardHtml(t, 'kw-' + i); }).join('');
+  bindCards(container);
+}
+
+// ── カードHTML生成 ──
+function termCardHtml(t, id) {
+  var type = t.type || '事項';
+  var encoded = encodeURIComponent(stripWrappingBrackets(t.term));
+  return '<div class="term-card" data-id="' + id + '">' +
+    '<div class="term-card-header">' +
+      '<div><span class="term-name">' + escapeHtml(t.term) + '</span>' +
+      (t.reading ? '<span class="term-reading">（' + escapeHtml(t.reading) + '）</span>' : '') +
+      '</div>' +
+      '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
+        '<span class="tag" style="background:#fef9e7;color:#9a7d0a;">' + escapeHtml(type) + '</span>' +
+        (t.category ? '<span class="tag">' + escapeHtml(t.category) + '</span>' : '') +
+      '</div>' +
+    '</div>' +
+    '<div class="desc">' + renderDescription(t.description, t.term) +
+      '<div class="related-quiz">' +
+        '<a href="index.html?term=' + encoded + '" class="related-quiz-btn">関連過去問を解く</a>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function bindCards(container) {
+  container.querySelectorAll('.term-card').forEach(function(card) {
+    card.onclick = function(e) {
+      // 関連過去問ボタン → 明示的にナビゲーション
+      var quizBtn = e.target.closest('.related-quiz-btn');
+      if (quizBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        var href = quizBtn.getAttribute('href');
+        if (href) window.location.href = href;
+        return;
+      }
+      // 用語リンククリック → ジャンプ（カードの開閉はしない）
+      var link = e.target.closest('.term-link');
+      if (link) {
+        e.preventDefault();
+        e.stopPropagation();
+        var name = link.getAttribute('data-term');
+        if (name) jumpToTerm(name);
+        return;
+      }
+      card.classList.toggle('expanded');
+    };
+  });
+}
+
+function jumpToTerm(termName) {
+  var target = null;
+  for (var i = 0; i < allTerms.length; i++) {
+    if (allTerms[i].term === termName) { target = allTerms[i]; break; }
+  }
+  if (!target) return;
+
+  var type = target.type || '事項';
+  var tab;
+  if (type === '人名') tab = 'person';
+  else tab = 'matter';
+
+  // 該当タブの絞り込み解除（必ず表示されるように）
+  selectedRows[tab] = 'all';
+  document.querySelector('[data-cat-for="' + tab + '"]').value = '';
+
+  switchTab(tab);
+  renderGojuonRowsFor(tab);
+  renderIndexListFor(tab);
+
+  // 描画後にスクロール＆ハイライト
+  setTimeout(function() {
+    var container = document.querySelector('[data-list-for="' + tab + '"]');
+    if (!container) return;
+    var cards = container.querySelectorAll('.term-card');
+    cards.forEach(function(card) {
+      var nameEl = card.querySelector('.term-name');
+      if (nameEl && nameEl.textContent === termName) {
+        card.classList.add('expanded');
+        // アニメーション再開のため一旦removeしてから付け直す
+        card.classList.remove('flash');
+        void card.offsetWidth;
+        card.classList.add('flash');
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  }, 80);
+}
+
+// ── 初期化 ──
+function initGlossary() {
+  loadTerms();
+  ['person', 'matter'].forEach(function(tab) {
+    renderGojuonRowsFor(tab);
+    renderIndexListFor(tab);
+    document.querySelector('[data-cat-for="' + tab + '"]').onchange = function() {
+      renderIndexListFor(tab);
+    };
+  });
+}
+
+(function bootstrap() {
+  function isEmpty() {
+    try {
+      var s = localStorage.getItem(STORAGE_KEY);
+      if (!s) return true;
+      var arr = JSON.parse(s);
+      return !Array.isArray(arr) || arr.length === 0;
+    } catch (e) { return true; }
+  }
+  if (!isEmpty()) { initGlossary(); return; }
+  fetch('glossary-data.json', { cache: 'no-cache' })
+    .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+    .then(function(data) {
+      if (Array.isArray(data) && data.length > 0) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      }
+    })
+    .catch(function() {})
+    .then(function() { initGlossary(); });
+})();
+</script>
+</body>
+</html>
