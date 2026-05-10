@@ -695,8 +695,8 @@ header h1 { font-size: 1.1em; letter-spacing: .05em; }
   <div class="upload-card">
     <h2>Excelから読み込む</h2>
     <div class="hint">
-      1行目に見出し <code>年度</code> <code>自治体</code> <code>分野</code> <code>問題文</code> <code>選択肢1</code>〜<code>選択肢6</code> <code>解答</code> <code>解説</code> を入れた Excel ファイル（.xlsx / .xls / .csv）をアップロードしてください。<br>
-      <small>※ <code>解答</code> は正解の選択肢番号（1〜6）。<code>分野</code> は <code>教育原理</code> / <code>学習指導要領</code> / <code>教育心理</code> / <code>教育史</code> / <code>教育法規</code> / <code>教育時事</code> / <code>ローカル問題</code> のいずれか。<br>
+      1行目に見出し <code>年度</code> <code>自治体</code> <code>分野</code> <code>問題文</code> <code>選択肢1</code>〜<code>選択肢8</code> <code>解答</code> <code>解説</code> を入れた Excel ファイル（.xlsx / .xls / .csv）をアップロードしてください。<br>
+      <small>※ <code>解答</code> は正解の選択肢番号（1〜8）。<code>分野</code> は <code>教育原理</code> / <code>学習指導要領</code> / <code>教育心理</code> / <code>教育史</code> / <code>教育法規</code> / <code>教育時事</code> / <code>ローカル問題</code> のいずれか。<br>
       ※ 取り込んだ問題は既存データに<strong>追加</strong>されます（置き換えではなく追加登録）。</small>
     </div>
     <div class="upload-row">
@@ -755,6 +755,14 @@ header h1 { font-size: 1.1em; letter-spacing: .05em; }
         <label>選択肢6</label>
         <input type="text" id="inputChoice6" placeholder="選択肢6（任意）">
       </div>
+      <div class="choice-row">
+        <label>選択肢7</label>
+        <input type="text" id="inputChoice7" placeholder="選択肢7（任意）">
+      </div>
+      <div class="choice-row">
+        <label>選択肢8</label>
+        <input type="text" id="inputChoice8" placeholder="選択肢8（任意）">
+      </div>
       <div style="font-size:.8em;color:#999;margin-top:6px;">※ 各選択肢内でも <code>__テキスト__</code> で囲むとアンダーラインが表示されます。</div>
     </div>
 
@@ -768,6 +776,8 @@ header h1 { font-size: 1.1em; letter-spacing: .05em; }
         <option value="4">選択肢4</option>
         <option value="5">選択肢5</option>
         <option value="6">選択肢6</option>
+        <option value="7">選択肢7</option>
+        <option value="8">選択肢8</option>
       </select>
     </div>
 
@@ -908,7 +918,7 @@ function updateInfo() {
 // ── フォーム操作 ──
 function clearForm() {
   document.getElementById('inputQuestion').value = '';
-  for (var i = 1; i <= 6; i++) {
+  for (var i = 1; i <= 8; i++) {
     document.getElementById('inputChoice' + i).value = '';
   }
   document.getElementById('inputAnswer').value = '';
@@ -923,7 +933,7 @@ function clearForm() {
 function registerQuestion() {
   var question = toHalfWidthNumbers(document.getElementById('inputQuestion').value.trim());
   var choices = [];
-  for (var i = 1; i <= 6; i++) {
+  for (var i = 1; i <= 8; i++) {
     choices.push(toHalfWidthNumbers(document.getElementById('inputChoice' + i).value.trim()));
   }
   var answer = parseInt(document.getElementById('inputAnswer').value);
@@ -1163,7 +1173,7 @@ function previewForm() {
     return;
   }
   var rawChoices = [];
-  for (var i = 1; i <= 6; i++) {
+  for (var i = 1; i <= 8; i++) {
     rawChoices.push(toHalfWidthNumbers(document.getElementById('inputChoice' + i).value.trim()));
   }
   var filled = rawChoices.filter(function(c) { return c !== ''; });
@@ -1303,7 +1313,7 @@ function editQuestion(idx) {
 
   document.getElementById('formTitle').textContent = '問題 #' + (idx + 1) + ' を編集';
   document.getElementById('inputQuestion').value = q.question;
-  for (var i = 0; i < 6; i++) {
+  for (var i = 0; i < 8; i++) {
     document.getElementById('inputChoice' + (i + 1)).value = q.choices[i] || '';
   }
   document.getElementById('inputAnswer').value = q.answer;
@@ -1398,6 +1408,8 @@ var QUIZ_HEADER_ALIASES = {
   choice4:     ['選択肢4','選択肢４','選択肢四','choice4','C4'],
   choice5:     ['選択肢5','選択肢５','選択肢五','choice5','C5'],
   choice6:     ['選択肢6','選択肢６','選択肢六','choice6','C6'],
+  choice7:     ['選択肢7','選択肢７','選択肢七','choice7','C7'],
+  choice8:     ['選択肢8','選択肢８','選択肢八','choice8','C8'],
   answer:      ['解答','正解','answer','Answer'],
   explanation: ['解説','説明','explanation','Explanation']
 };
@@ -1458,7 +1470,7 @@ function handleExcelFile(event) {
           ? toHalfWidthNumbers(String(row[headerMap.explanation] || '').trim())
           : '';
         var choices = [];
-        for (var c = 1; c <= 6; c++) {
+        for (var c = 1; c <= 8; c++) {
           var key = 'choice' + c;
           if (headerMap[key] !== -1) {
             choices.push(toHalfWidthNumbers(String(row[headerMap[key]] || '').trim()));
@@ -1475,7 +1487,7 @@ function handleExcelFile(event) {
         var filledCount = choices.filter(function(c) { return c !== ''; }).length;
         if (!question) { valid = false; reason = '問題文が空'; }
         else if (filledCount < 2) { valid = false; reason = '選択肢が2つ未満'; }
-        else if (!answer || isNaN(answer) || answer < 1 || answer > 6) {
+        else if (!answer || isNaN(answer) || answer < 1 || answer > 8) {
           valid = false;
           reason = '解答が不正（' + answerRaw + '）';
         }
