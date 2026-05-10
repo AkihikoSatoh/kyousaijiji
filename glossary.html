@@ -250,7 +250,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 .related-quiz-btn::before { content: '▶ '; font-size: .8em; }
 .related-quiz-count {
   display: inline-block;
-  margin-right: 12px;
+  margin-left: 12px;
   padding: 4px 10px;
   background: #eaf2f8;
   color: #1976d2;
@@ -707,8 +707,8 @@ function termCardHtml(t, id) {
     '</div>' +
     '<div class="desc">' + renderDescription(t.description, t.term) +
       '<div class="related-quiz">' +
-        '<span class="related-quiz-count">該当問題' + countRelatedQuestions(t.term) + '問</span>' +
         '<a href="index.html?term=' + encoded + '" class="related-quiz-btn">関連過去問を解く</a>' +
+        '<span class="related-quiz-count">該当問題' + countRelatedQuestions(t.term) + '問</span>' +
       '</div>' +
     '</div>' +
   '</div>';
