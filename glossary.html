@@ -248,6 +248,17 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 }
 .related-quiz-btn:hover { opacity: .88; }
 .related-quiz-btn::before { content: '▶ '; font-size: .8em; }
+.related-quiz-count {
+  display: inline-block;
+  margin-right: 12px;
+  padding: 4px 10px;
+  background: #eaf2f8;
+  color: #1976d2;
+  border-radius: 12px;
+  font-size: .82em;
+  font-weight: bold;
+  vertical-align: middle;
+}
 
 .term-link {
   color: #117a65;
@@ -373,7 +384,9 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 
 <script>
 var STORAGE_KEY = 'kyosai_glossary';
+var QUIZ_STORAGE_KEY = 'kyosai_questions';
 var allTerms = [];
+var allQuizQuestions = [];
 
 // タブ種別 → 用語の type 値
 var TAB_TYPES = {
@@ -478,6 +491,26 @@ function stripWrappingBrackets(name) {
     }
   }
   return s;
+}
+
+function loadQuizQuestions() {
+  try {
+    var s = localStorage.getItem(QUIZ_STORAGE_KEY);
+    if (s) {
+      var arr = JSON.parse(s);
+      if (Array.isArray(arr)) allQuizQuestions = arr;
+    }
+  } catch (e) {}
+}
+
+function countRelatedQuestions(termName) {
+  if (!allQuizQuestions || allQuizQuestions.length === 0) return 0;
+  var keyword = stripWrappingBrackets(termName);
+  if (!keyword) return 0;
+  return allQuizQuestions.filter(function(q) {
+    if ((q.question || '').indexOf(keyword) !== -1) return true;
+    return (q.choices || []).some(function(c) { return c && c.indexOf(keyword) !== -1; });
+  }).length;
 }
 
 // 解説本文を描画（HTMLエスケープ＋自動リンク＋アンダーライン）
@@ -674,6 +707,7 @@ function termCardHtml(t, id) {
     '</div>' +
     '<div class="desc">' + renderDescription(t.description, t.term) +
       '<div class="related-quiz">' +
+        '<span class="related-quiz-count">該当問題' + countRelatedQuestions(t.term) + '問</span>' +
         '<a href="index.html?term=' + encoded + '" class="related-quiz-btn">関連過去問を解く</a>' +
       '</div>' +
     '</div>' +
@@ -758,24 +792,43 @@ function initGlossary() {
 }
 
 (function bootstrap() {
-  function isEmpty() {
+  function isEmpty(key) {
     try {
-      var s = localStorage.getItem(STORAGE_KEY);
+      var s = localStorage.getItem(key);
       if (!s) return true;
       var arr = JSON.parse(s);
       return !Array.isArray(arr) || arr.length === 0;
     } catch (e) { return true; }
   }
-  if (!isEmpty()) { initGlossary(); return; }
-  fetch('glossary-data.json', { cache: 'no-cache' })
-    .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
-    .then(function(data) {
-      if (Array.isArray(data) && data.length > 0) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      }
-    })
-    .catch(function() {})
-    .then(function() { initGlossary(); });
+
+  // 用語データの読み込み（localStorage が空なら glossary-data.json を取得）
+  var glossaryPromise = isEmpty(STORAGE_KEY)
+    ? fetch('glossary-data.json', { cache: 'no-cache' })
+        .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+        .then(function(data) {
+          if (Array.isArray(data) && data.length > 0) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+          }
+        })
+        .catch(function() {})
+    : Promise.resolve();
+
+  // 過去問データの読み込み（該当問題数の表示に使用）
+  var quizPromise = isEmpty(QUIZ_STORAGE_KEY)
+    ? fetch('questions-data.json', { cache: 'no-cache' })
+        .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+        .then(function(data) {
+          if (Array.isArray(data) && data.length > 0) {
+            localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify(data));
+          }
+        })
+        .catch(function() {})
+    : Promise.resolve();
+
+  Promise.all([glossaryPromise, quizPromise]).then(function() {
+    loadQuizQuestions();
+    initGlossary();
+  });
 })();
 </script>
 </body>
