@@ -26,14 +26,37 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 .header-links { margin-top: 6px; }
 .header-links a {
   color: rgba(255,255,255,.85);
-  font-size: .85em;
+  font-size: .98em;
   text-decoration: none;
   border: 1px solid rgba(255,255,255,.4);
-  padding: 4px 14px;
-  border-radius: 5px;
+  padding: 9px 20px;
+  border-radius: 7px;
   margin: 0 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: bold;
 }
+.header-links a .link-icon { font-size: 1.15em; line-height: 1; }
 .header-links a:hover { background: rgba(255,255,255,.15); }
+.header-links a.link-glossary {
+  background: #2ecc71;
+  border-color: #2ecc71;
+  color: #fff;
+}
+.header-links a.link-glossary:hover { background: #27ae60; }
+.header-links a.link-houki {
+  background: #8d6e63;
+  border-color: #8d6e63;
+  color: #fff;
+}
+.header-links a.link-houki:hover { background: #5d4037; }
+.header-links a.link-quiz {
+  background: #2196f3;
+  border-color: #2196f3;
+  color: #fff;
+}
+.header-links a.link-quiz:hover { background: #1976d2; }
 
 .container {
   max-width: 780px;
@@ -278,8 +301,8 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 <header>
   <h1>教員採用試験 用語解説</h1>
   <div class="header-links">
-    <a href="index.html">過去問演習</a>
-    <a href="houki-scope.html">教育法規スコープ</a>
+    <a href="index.html" class="link-quiz"><span class="link-icon">📝</span>過去問演習</a>
+    <a href="houki-scope.html" class="link-houki"><span class="link-icon">⚖️</span>教育法規スコープ</a>
   </div>
 </header>
 

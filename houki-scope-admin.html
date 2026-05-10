@@ -33,17 +33,32 @@ header {
 header h1 { font-size: 1.1em; letter-spacing: .05em; }
 .header-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .header-btn {
-  padding: 6px 14px;
+  padding: 9px 20px;
   border: 1px solid rgba(255,255,255,.5);
-  border-radius: 6px;
+  border-radius: 7px;
   background: transparent;
   color: #fff;
-  font-size: .82em;
+  font-size: .95em;
   cursor: pointer;
   font-family: inherit;
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: bold;
 }
 .header-btn:hover { background: rgba(255,255,255,.15); }
+.header-btn .link-icon { font-size: 1.15em; line-height: 1; }
+.header-btn.link-glossary {
+  background: #16a085;
+  border-color: #16a085;
+}
+.header-btn.link-glossary:hover { background: #117a65; }
+.header-btn.link-houki {
+  background: #8d6e63;
+  border-color: #8d6e63;
+}
+.header-btn.link-houki:hover { background: #5d4037; }
 
 .container {
   max-width: 900px;
@@ -416,7 +431,7 @@ header h1 { font-size: 1.1em; letter-spacing: .05em; }
   <div class="header-right">
     <span id="totalInfo" style="font-size:.82em;opacity:.85;"></span>
     <a href="admin-index.html" class="header-btn">管理者画面ホーム</a>
-    <a href="houki-scope.html" class="header-btn">教育法規スコープへ</a>
+    <a href="houki-scope.html" class="header-btn link-houki"><span class="link-icon">⚖️</span>教育法規スコープへ</a>
   </div>
 </header>
 

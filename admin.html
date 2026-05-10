@@ -32,17 +32,27 @@ header {
 header h1 { font-size: 1.1em; letter-spacing: .05em; }
 .header-right { display: flex; gap: 10px; align-items: center; }
 .header-btn {
-  padding: 6px 16px;
+  padding: 9px 20px;
   border: 1px solid rgba(255,255,255,.5);
-  border-radius: 6px;
+  border-radius: 7px;
   background: transparent;
   color: #fff;
-  font-size: .85em;
+  font-size: .95em;
   cursor: pointer;
   font-family: inherit;
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: bold;
 }
 .header-btn:hover { background: rgba(255,255,255,.15); }
+.header-btn .link-icon { font-size: 1.15em; line-height: 1; }
+.header-btn.link-quiz {
+  background: #2196f3;
+  border-color: #2196f3;
+}
+.header-btn.link-quiz:hover { background: #1976d2; }
 
 .container {
   max-width: 800px;
@@ -662,7 +672,7 @@ header h1 { font-size: 1.1em; letter-spacing: .05em; }
   <div class="header-right">
     <span id="totalInfo" style="font-size:.85em;opacity:.8;"></span>
     <a href="admin-index.html" class="header-btn">管理者画面ホーム</a>
-    <a href="index.html" class="header-btn">過去問演習</a>
+    <a href="index.html" class="header-btn link-quiz"><span class="link-icon">📝</span>過去問演習</a>
   </div>
 </header>
 

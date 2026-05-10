@@ -28,13 +28,30 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 }
 .header-links a {
   color: rgba(255,255,255,.85);
-  font-size: .85em;
+  font-size: .98em;
   text-decoration: none;
   border: 1px solid rgba(255,255,255,.4);
-  padding: 4px 14px;
-  border-radius: 5px;
+  padding: 9px 20px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: bold;
 }
+.header-links a .link-icon { font-size: 1.15em; line-height: 1; }
 .header-links a:hover { background: rgba(255,255,255,.15); }
+.header-links a.link-glossary {
+  background: #2ecc71;
+  border-color: #2ecc71;
+  color: #fff;
+}
+.header-links a.link-glossary:hover { background: #27ae60; }
+.header-links a.link-houki {
+  background: #8d6e63;
+  border-color: #8d6e63;
+  color: #fff;
+}
+.header-links a.link-houki:hover { background: #5d4037; }
 
 .container {
   max-width: 720px;
@@ -848,8 +865,8 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
     <span>不正解 <strong id="wrongCount">0</strong></span>
   </div>
   <div class="header-links" id="headerLinks">
-    <a href="glossary.html">用語解説</a>
-    <a href="houki-scope.html">教育法規スコープ</a>
+    <a href="glossary.html" class="link-glossary"><span class="link-icon">📚</span>用語解説</a>
+    <a href="houki-scope.html" class="link-houki"><span class="link-icon">⚖️</span>教育法規スコープ</a>
   </div>
 </header>
 
