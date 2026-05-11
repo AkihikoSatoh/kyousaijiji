@@ -84,6 +84,8 @@ header p {
 .admin-card.glossary .admin-icon { background: linear-gradient(135deg, #16a085, #1abc9c); }
 .admin-card.houki { --accent: #8d6e63; }
 .admin-card.houki .admin-icon { background: linear-gradient(135deg, #8d6e63, #5d4037); }
+.admin-card.mondai { --accent: #f39c12; }
+.admin-card.mondai .admin-icon { background: linear-gradient(135deg, #f39c12, #e67e22); }
 
 .admin-body { flex: 1; min-width: 0; }
 .admin-title {
@@ -176,6 +178,16 @@ header p {
   border-color: #1976d2;
   color: #fff;
 }
+.back-section a.link-mondai {
+  border-color: #f39c12;
+  color: #fff;
+  background: #f39c12;
+}
+.back-section a.link-mondai:hover {
+  background: #e67e22;
+  border-color: #e67e22;
+  color: #fff;
+}
 
 @media (max-width: 600px) {
   header h1 { font-size: 1.1em; }
@@ -205,6 +217,15 @@ header p {
       <div class="admin-arrow">›</div>
     </a>
 
+    <a href="mondai-admin.html" class="admin-card mondai">
+      <div class="admin-icon">💡</div>
+      <div class="admin-body">
+        <div class="admin-title">問題演習　管理者画面</div>
+        <div class="admin-desc">予想問題の登録・編集・JSON/Excel入出力</div>
+      </div>
+      <div class="admin-arrow">›</div>
+    </a>
+
     <a href="glossary-admin.html" class="admin-card glossary">
       <div class="admin-icon">📚</div>
       <div class="admin-body">
@@ -226,6 +247,7 @@ header p {
 
   <div class="back-section">
     <a href="index.html" class="link-quiz"><span class="link-icon">📝</span>過去問演習</a>
+    <a href="mondai.html" class="link-mondai"><span class="link-icon">💡</span>問題演習</a>
     <a href="glossary.html" class="link-glossary"><span class="link-icon">📚</span>用語解説</a>
     <a href="houki-scope.html" class="link-houki"><span class="link-icon">⚖️</span>教育法規スコープ</a>
   </div>

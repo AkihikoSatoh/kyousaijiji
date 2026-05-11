@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>教員採用試験 過去問演習</title>
+<title>教員採用試験 問題演習</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -16,7 +16,7 @@ body {
 }
 
 header {
-  background: linear-gradient(135deg, #1976d2, #2196f3);
+  background: linear-gradient(135deg, #e67e22, #f39c12);
   color: #fff;
   padding: 16px 20px;
   text-align: center;
@@ -52,6 +52,12 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
   color: #fff;
 }
 .header-links a.link-houki:hover { background: #5d4037; }
+.header-links a.link-quiz {
+  background: #2196f3;
+  border-color: #2196f3;
+  color: #fff;
+}
+.header-links a.link-quiz:hover { background: #1976d2; }
 .header-links a.link-mondai {
   background: #f39c12;
   border-color: #f39c12;
@@ -75,7 +81,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 }
 .start-screen h2 {
   font-size: 1.3em;
-  color: #1a5276;
+  color: #d35400;
   margin-bottom: 8px;
 }
 .start-screen .desc {
@@ -87,7 +93,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
   padding: 14px 48px;
   border: none;
   border-radius: 8px;
-  background: linear-gradient(135deg, #2e86c1, #1a5276);
+  background: linear-gradient(135deg, #e67e22, #d35400);
   color: #fff;
   font-size: 1.05em;
   font-weight: bold;
@@ -189,7 +195,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 }
 .progress-bar .fill {
   height: 100%;
-  background: #2e86c1;
+  background: #e67e22;
   transition: width .3s;
   width: 0%;
 }
@@ -203,17 +209,17 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
   margin-bottom: 16px;
 }
 .card-header {
-  background: #eaf2f8;
+  background: #fdebd0;
   padding: 10px 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: .85em;
   color: #555;
-  border-bottom: 1px solid #d6e4f0;
+  border-bottom: 1px solid #fad7a0;
 }
 .badge {
-  background: #2e86c1;
+  background: #e67e22;
   color: #fff;
   padding: 2px 10px;
   border-radius: 12px;
@@ -249,8 +255,8 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
   font-family: inherit;
 }
 .choice-btn:hover:not(.disabled) {
-  border-color: #2e86c1;
-  background: #eaf2f8;
+  border-color: #e67e22;
+  background: #fdebd0;
 }
 .choice-btn.disabled { cursor: default; opacity: .85; }
 .choice-btn.correct {
@@ -299,7 +305,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
   line-height: 1.8;
 }
 .explanation strong {
-  color: #1a5276;
+  color: #d35400;
 }
 
 /* ── 次へボタン ── */
@@ -310,7 +316,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
   margin-top: 16px;
   border: none;
   border-radius: 8px;
-  background: linear-gradient(135deg, #2e86c1, #1a5276);
+  background: linear-gradient(135deg, #e67e22, #d35400);
   color: #fff;
   font-size: 1.05em;
   font-weight: bold;
@@ -666,16 +672,16 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 .checked-item-view {
   flex-shrink: 0;
   padding: 5px 12px;
-  border: 1px solid #2e86c1;
+  border: 1px solid #e67e22;
   border-radius: 6px;
   background: #fff;
-  color: #2e86c1;
+  color: #e67e22;
   font-size: .8em;
   font-weight: bold;
   cursor: pointer;
   font-family: inherit;
 }
-.checked-item-view:hover { background: #eaf2f8; }
+.checked-item-view:hover { background: #fdebd0; }
 
 /* ── 問題詳細モーダル ── */
 .qview-overlay {
@@ -700,7 +706,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
   box-shadow: 0 10px 40px rgba(0,0,0,.3);
 }
 .qview-header {
-  background: linear-gradient(135deg, #1a5276, #2e86c1);
+  background: linear-gradient(135deg, #d35400, #e67e22);
   color: #fff;
   padding: 14px 20px;
   display: flex;
@@ -721,11 +727,11 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 .qview-close:hover { background: rgba(255,255,255,.32); }
 
 .qview-card-meta {
-  background: #eaf2f8;
+  background: #fdebd0;
   padding: 10px 18px;
   font-size: .85em;
   color: #555;
-  border-bottom: 1px solid #d6e4f0;
+  border-bottom: 1px solid #fad7a0;
 }
 .qview-body {
   flex: 1;
@@ -837,11 +843,11 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
   text-align: center;
   padding: 40px 20px;
 }
-.summary-screen h2 { font-size: 1.3em; color: #1a5276; margin-bottom: 16px; }
+.summary-screen h2 { font-size: 1.3em; color: #d35400; margin-bottom: 16px; }
 .summary-stat {
   font-size: 3em;
   font-weight: bold;
-  color: #2e86c1;
+  color: #e67e22;
   margin: 10px 0;
 }
 .summary-detail { font-size: 1em; color: #666; margin-bottom: 30px; }
@@ -864,14 +870,14 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 <body>
 
 <header>
-  <h1>教員採用試験 過去問演習</h1>
+  <h1>教員採用試験 問題演習</h1>
   <div id="scoreBar" class="score-bar" style="display:none;">
     <span>問題 <strong id="qNum">0</strong> / <strong id="qTotal">0</strong></span>
     <span>正解 <strong id="correctCount">0</strong></span>
     <span>不正解 <strong id="wrongCount">0</strong></span>
   </div>
   <div class="header-links" id="headerLinks">
-    <a href="mondai.html" class="link-mondai"><span class="link-icon">💡</span>問題演習</a>
+    <a href="index.html" class="link-quiz"><span class="link-icon">📝</span>過去問演習</a>
     <a href="glossary.html" class="link-glossary"><span class="link-icon">📚</span>用語解説</a>
     <a href="houki-scope.html" class="link-houki"><span class="link-icon">⚖️</span>教育法規スコープ</a>
   </div>
@@ -881,7 +887,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 
   <!-- スタート画面 -->
   <div id="startScreen" class="start-screen">
-    <h2>教員採用試験 過去問に挑戦</h2>
+    <h2>教員採用試験 問題演習</h2>
     <p style="font-size:.75em;color:#999;margin-bottom:12px;">Powered by 『教員養成セミナー』</p>
     <div id="termBanner" class="term-banner" style="display:none;"></div>
 
@@ -894,12 +900,6 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
     <p class="desc" id="startDesc">登録された問題からランダムに出題します</p>
 
     <div class="filters" style="max-width:400px;margin:0 auto 20px;">
-      <select id="filterYear">
-        <option value="">全年度</option>
-      </select>
-      <select id="filterPref">
-        <option value="">全自治体</option>
-      </select>
       <select id="filterCategory">
         <option value="">全分野</option>
         <option value="教育原理">教育原理</option>
@@ -923,8 +923,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
     <button class="start-btn" id="startBtn" onclick="startQuiz()">スタート</button>
 
     <div class="note">
-      <p>※2021～2025年度に実施された教員採用試験の教職教養の過去問のうち，自治体固有のローカル問題を除いたものを収録しています。</p>
-      <p>※一部自治体の試験問題は掲載されていませんので，ご了承ください。</p>
+      <p>※『教員養成セミナー』編集部オリジナルの予想問題を収録しています。</p>
     </div>
 
     <div id="checkedBox" class="checked-box" style="display:none;">
@@ -1034,7 +1033,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 </div>
 
 <script>
-const STORAGE_KEY = 'kyosai_questions';
+const STORAGE_KEY = 'kyosai_mondai';
 
 let allQuestions = [];
 let quizQuestions = [];
@@ -1046,9 +1045,9 @@ let wrongQuestions = [];
 let termFilter = '';
 let lastSelectedIdx = -1;
 
-const SESSION_KEY = 'kyosai_quiz_session';
-const MEMO_KEY = 'kyosai_quiz_memos';
-const CHECK_KEY = 'kyosai_quiz_checks';
+const SESSION_KEY = 'kyosai_mondai_session';
+const MEMO_KEY = 'kyosai_mondai_memos';
+const CHECK_KEY = 'kyosai_mondai_checks';
 
 function loadQuestions() {
   try {
@@ -1076,32 +1075,7 @@ function shuffle(arr) {
 }
 
 function populateFilters() {
-  var years = [];
-  var prefs = [];
-  allQuestions.forEach(function(q) {
-    if (q.year && years.indexOf(q.year) === -1) years.push(q.year);
-    if (q.pref && prefs.indexOf(q.pref) === -1) prefs.push(q.pref);
-  });
-  years.sort();
-  prefs.sort();
-
-  var yearSel = document.getElementById('filterYear');
-  yearSel.innerHTML = '<option value="">全年度</option>';
-  years.forEach(function(y) {
-    var opt = document.createElement('option');
-    opt.value = y;
-    opt.textContent = y + '年';
-    yearSel.appendChild(opt);
-  });
-
-  var prefSel = document.getElementById('filterPref');
-  prefSel.innerHTML = '<option value="">全自治体</option>';
-  prefs.forEach(function(p) {
-    var opt = document.createElement('option');
-    opt.value = p;
-    opt.textContent = p;
-    prefSel.appendChild(opt);
-  });
+  // 問題演習では年度・自治体フィルターを使用しないため何もしない
 }
 
 function updateFilterInfo() {
@@ -1113,12 +1087,8 @@ function updateFilterInfo() {
 }
 
 function getFilteredPool() {
-  var year = document.getElementById('filterYear').value;
-  var pref = document.getElementById('filterPref').value;
   var category = document.getElementById('filterCategory').value;
   var pool = allQuestions.slice();
-  if (year) pool = pool.filter(function(q) { return String(q.year) === year; });
-  if (pref) pool = pool.filter(function(q) { return q.pref === pref; });
   if (category) pool = pool.filter(function(q) { return q.category === category; });
   if (termFilter) {
     pool = pool.filter(function(q) {
@@ -1164,8 +1134,6 @@ function init() {
     populateFilters();
     updateFilterInfo();
     updateTermBanner();
-    document.getElementById('filterYear').onchange = function() { updateFilterInfo(); updateTermBanner(); };
-    document.getElementById('filterPref').onchange = function() { updateFilterInfo(); updateTermBanner(); };
     document.getElementById('filterCategory').onchange = function() { updateFilterInfo(); updateTermBanner(); };
     document.getElementById('filterCount').onchange = updateFilterInfo;
   }
@@ -1244,6 +1212,8 @@ function showQuestion() {
   if (q.year) meta += q.year + '年';
   if (q.pref) meta += (meta ? ' ' : '') + q.pref;
   if (q.category) meta += (meta ? ' ' : '') + '[' + q.category + ']';
+  if (q.area) meta += (meta ? ' ' : '') + '〈' + q.area + '〉';
+  if (q.item) meta += (meta ? ' ' : '') + '《' + q.item + '》';
   document.getElementById('metaInfo').textContent = meta;
   document.getElementById('questionText').innerHTML = renderQuestion(q.question);
 
@@ -1646,6 +1616,8 @@ function openCheckedList() {
       if (q.year) meta += '<span class="tag">' + q.year + '年</span>';
       if (q.pref) meta += '<span class="tag">' + escapeHtml(q.pref) + '</span>';
       if (q.category) meta += '<span class="tag">' + escapeHtml(q.category) + '</span>';
+      if (q.area) meta += '<span class="tag">' + escapeHtml(q.area) + '</span>';
+      if (q.item) meta += '<span class="tag">' + escapeHtml(q.item) + '</span>';
       if (e.data.checkedAt) {
         var dt = new Date(e.data.checkedAt);
         meta += '<span style="color:#aaa;">★ ' + (dt.getMonth() + 1) + '/' + dt.getDate() + ' ' +
@@ -1680,6 +1652,8 @@ function viewCheckedQuestion(key) {
   if (q.year) meta += q.year + '年';
   if (q.pref) meta += (meta ? ' ─ ' : '') + q.pref;
   if (q.category) meta += (meta ? ' ─ ' : '') + '[' + q.category + ']';
+  if (q.area) meta += (meta ? ' ─ ' : '') + '〈' + q.area + '〉';
+  if (q.item) meta += (meta ? ' ─ ' : '') + '《' + q.item + '》';
   document.getElementById('qviewMeta').textContent = meta || '（情報なし）';
 
   document.getElementById('qviewQuestion').innerHTML = renderQuestion(q.question || '');
@@ -1804,7 +1778,7 @@ function resetQuiz() {
     } catch (e) { return true; }
   }
   if (!isEmpty()) { init(); return; }
-  fetch('questions-data.json', { cache: 'no-cache' })
+  fetch('mondai-data.json', { cache: 'no-cache' })
     .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
     .then(function(data) {
       if (Array.isArray(data) && data.length > 0) {
