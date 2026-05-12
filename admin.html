@@ -700,8 +700,8 @@ header h1 { font-size: 1.1em; letter-spacing: .05em; }
   <div class="upload-card">
     <h2>Excelから読み込む</h2>
     <div class="hint">
-      1行目に見出し <code>年度</code> <code>自治体</code> <code>分野</code> <code>問題文</code> <code>選択肢1</code>〜<code>選択肢8</code> <code>解答</code> <code>解説</code> を入れた Excel ファイル（.xlsx / .xls / .csv）をアップロードしてください。<br>
-      <small>※ <code>解答</code> は正解の選択肢番号（1〜8）。<code>分野</code> は <code>教育原理</code> / <code>学習指導要領</code> / <code>教育史</code> / <code>教育心理</code> / <code>教育法規</code> / <code>教育時事</code> / <code>ローカル問題</code> のいずれか。<br>
+      1行目に見出し <code>年度</code> <code>自治体</code> <code>分野</code> <code>問題文</code> <code>選択肢1</code>〜<code>選択肢10</code> <code>解答</code> <code>解説</code> を入れた Excel ファイル（.xlsx / .xls / .csv）をアップロードしてください。<br>
+      <small>※ <code>解答</code> は正解の選択肢番号（1〜10）。<code>分野</code> は <code>教育原理</code> / <code>学習指導要領</code> / <code>教育史</code> / <code>教育心理</code> / <code>教育法規</code> / <code>教育時事</code> / <code>ローカル問題</code> のいずれか。<br>
       ※ 取り込んだ問題は既存データに<strong>追加</strong>されます（置き換えではなく追加登録）。</small>
     </div>
     <div class="upload-row">
@@ -1487,7 +1487,7 @@ function handleExcelFile(event) {
           ? toHalfWidthNumbers(String(row[headerMap.explanation] || '').trim())
           : '';
         var choices = [];
-        for (var c = 1; c <= 8; c++) {
+        for (var c = 1; c <= 10; c++) {
           var key = 'choice' + c;
           if (headerMap[key] !== -1) {
             choices.push(toHalfWidthNumbers(String(row[headerMap[key]] || '').trim()));
@@ -1504,7 +1504,7 @@ function handleExcelFile(event) {
         var filledCount = choices.filter(function(c) { return c !== ''; }).length;
         if (!question) { valid = false; reason = '問題文が空'; }
         else if (filledCount < 2) { valid = false; reason = '選択肢が2つ未満'; }
-        else if (!answer || isNaN(answer) || answer < 1 || answer > 8) {
+        else if (!answer || isNaN(answer) || answer < 1 || answer > 10) {
           valid = false;
           reason = '解答が不正（' + answerRaw + '）';
         }
