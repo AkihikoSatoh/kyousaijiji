@@ -506,13 +506,24 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 
 <script src="houki-scope-data.js"></script>
 <script>
-// localStorage に編集データがあれば優先（管理画面で編集された場合）
+// バンドル版 (HOUKI_DATA) と localStorage の内容を比較し、異なれば localStorage を更新
 (function() {
   try {
-    var stored = localStorage.getItem('kyosai_houki_data');
-    if (stored) {
-      var parsed = JSON.parse(stored);
-      if (Array.isArray(parsed) && parsed.length > 0) HOUKI_DATA = parsed;
+    var bundleStr = JSON.stringify(HOUKI_DATA);
+    var stored = localStorage.getItem('kyosai_houki_data') || '';
+    if (stored && stored !== bundleStr) {
+      // 内容が異なる → バンドル（最新）に同期
+      try {
+        var oldCount = JSON.parse(stored).length;
+        var newCount = HOUKI_DATA.length;
+        if (oldCount !== newCount) {
+          console.log('[教育法規スコープ] データ更新: ' + oldCount + '条 → ' + newCount + '条');
+        }
+      } catch (e) {}
+      localStorage.setItem('kyosai_houki_data', bundleStr);
+    } else if (!stored) {
+      // 初回: localStorageに保存
+      localStorage.setItem('kyosai_houki_data', bundleStr);
     }
   } catch (e) {}
 })();
