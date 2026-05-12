@@ -701,7 +701,7 @@ header h1 { font-size: 1.1em; letter-spacing: .05em; }
     <h2>Excelから読み込む</h2>
     <div class="hint">
       1行目に見出し <code>年度</code> <code>自治体</code> <code>分野</code> <code>問題文</code> <code>選択肢1</code>〜<code>選択肢8</code> <code>解答</code> <code>解説</code> を入れた Excel ファイル（.xlsx / .xls / .csv）をアップロードしてください。<br>
-      <small>※ <code>解答</code> は正解の選択肢番号（1〜8）。<code>分野</code> は <code>教育原理</code> / <code>学習指導要領</code> / <code>教育心理</code> / <code>教育史</code> / <code>教育法規</code> / <code>教育時事</code> / <code>ローカル問題</code> のいずれか。<br>
+      <small>※ <code>解答</code> は正解の選択肢番号（1〜8）。<code>分野</code> は <code>教育原理</code> / <code>学習指導要領</code> / <code>教育史</code> / <code>教育心理</code> / <code>教育法規</code> / <code>教育時事</code> / <code>ローカル問題</code> のいずれか。<br>
       ※ 取り込んだ問題は既存データに<strong>追加</strong>されます（置き換えではなく追加登録）。</small>
     </div>
     <div class="upload-row">
@@ -768,6 +768,14 @@ header h1 { font-size: 1.1em; letter-spacing: .05em; }
         <label>選択肢8</label>
         <input type="text" id="inputChoice8" placeholder="選択肢8（任意）">
       </div>
+      <div class="choice-row">
+        <label>選択肢9</label>
+        <input type="text" id="inputChoice9" placeholder="選択肢9（任意）">
+      </div>
+      <div class="choice-row">
+        <label>選択肢10</label>
+        <input type="text" id="inputChoice10" placeholder="選択肢10（任意）">
+      </div>
       <div style="font-size:.8em;color:#999;margin-top:6px;">※ 各選択肢内でも <code>__テキスト__</code> で囲むとアンダーラインが表示されます。</div>
     </div>
 
@@ -783,6 +791,8 @@ header h1 { font-size: 1.1em; letter-spacing: .05em; }
         <option value="6">選択肢6</option>
         <option value="7">選択肢7</option>
         <option value="8">選択肢8</option>
+        <option value="9">選択肢9</option>
+        <option value="10">選択肢10</option>
       </select>
     </div>
 
@@ -807,8 +817,8 @@ header h1 { font-size: 1.1em; letter-spacing: .05em; }
           <option value="">選択してください</option>
           <option value="教育原理">教育原理</option>
           <option value="学習指導要領">学習指導要領</option>
-          <option value="教育心理">教育心理</option>
           <option value="教育史">教育史</option>
+          <option value="教育心理">教育心理</option>
           <option value="教育法規">教育法規</option>
           <option value="教育時事">教育時事</option>
           <option value="ローカル問題">ローカル問題</option>
@@ -837,8 +847,8 @@ header h1 { font-size: 1.1em; letter-spacing: .05em; }
         <option value="">全分野</option>
         <option value="教育原理">教育原理</option>
         <option value="学習指導要領">学習指導要領</option>
-        <option value="教育心理">教育心理</option>
         <option value="教育史">教育史</option>
+        <option value="教育心理">教育心理</option>
         <option value="教育法規">教育法規</option>
         <option value="教育時事">教育時事</option>
         <option value="ローカル問題">ローカル問題</option>
@@ -923,7 +933,7 @@ function updateInfo() {
 // ── フォーム操作 ──
 function clearForm() {
   document.getElementById('inputQuestion').value = '';
-  for (var i = 1; i <= 8; i++) {
+  for (var i = 1; i <= 10; i++) {
     document.getElementById('inputChoice' + i).value = '';
   }
   document.getElementById('inputAnswer').value = '';
@@ -938,7 +948,7 @@ function clearForm() {
 function registerQuestion() {
   var question = toHalfWidthNumbers(document.getElementById('inputQuestion').value.trim());
   var choices = [];
-  for (var i = 1; i <= 8; i++) {
+  for (var i = 1; i <= 10; i++) {
     choices.push(toHalfWidthNumbers(document.getElementById('inputChoice' + i).value.trim()));
   }
   var answer = parseInt(document.getElementById('inputAnswer').value);
@@ -1178,7 +1188,7 @@ function previewForm() {
     return;
   }
   var rawChoices = [];
-  for (var i = 1; i <= 8; i++) {
+  for (var i = 1; i <= 10; i++) {
     rawChoices.push(toHalfWidthNumbers(document.getElementById('inputChoice' + i).value.trim()));
   }
   var filled = rawChoices.filter(function(c) { return c !== ''; });
@@ -1318,7 +1328,7 @@ function editQuestion(idx) {
 
   document.getElementById('formTitle').textContent = '問題 #' + (idx + 1) + ' を編集';
   document.getElementById('inputQuestion').value = q.question;
-  for (var i = 0; i < 8; i++) {
+  for (var i = 0; i < 10; i++) {
     document.getElementById('inputChoice' + (i + 1)).value = q.choices[i] || '';
   }
   document.getElementById('inputAnswer').value = q.answer;
@@ -1401,7 +1411,7 @@ function importQuestions(event) {
 }
 
 // ── Excel読み込み ──
-var VALID_CATEGORIES = ['教育原理','学習指導要領','教育心理','教育史','教育法規','教育時事','ローカル問題'];
+var VALID_CATEGORIES = ['教育原理','学習指導要領','教育史','教育心理','教育法規','教育時事','ローカル問題'];
 var QUIZ_HEADER_ALIASES = {
   year:        ['年度','year','Year','実施年'],
   pref:        ['自治体','都道府県','pref','Pref'],
@@ -1415,6 +1425,8 @@ var QUIZ_HEADER_ALIASES = {
   choice6:     ['選択肢6','選択肢６','選択肢六','choice6','C6'],
   choice7:     ['選択肢7','選択肢７','選択肢七','choice7','C7'],
   choice8:     ['選択肢8','選択肢８','選択肢八','choice8','C8'],
+  choice9:     ['選択肢9','選択肢９','選択肢九','choice9','C9'],
+  choice10:    ['選択肢10','選択肢１０','選択肢十','choice10','C10'],
   answer:      ['解答','正解','answer','Answer'],
   explanation: ['解説','説明','explanation','Explanation']
 };

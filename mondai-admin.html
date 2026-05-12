@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>管理者画面 ─ 教員採用試験 問題演習</title>
+<title>管理者画面 ─ 教員採用試験 問題演習＆要点理解</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -673,11 +673,11 @@ header h1 { font-size: 1.1em; letter-spacing: .05em; }
 <body>
 
 <header>
-  <h1>管理者画面（問題演習）</h1>
+  <h1>管理者画面（問題演習＆要点理解）</h1>
   <div class="header-right">
     <span id="totalInfo" style="font-size:.85em;opacity:.8;"></span>
     <a href="admin-index.html" class="header-btn">管理者画面ホーム</a>
-    <a href="mondai.html" class="header-btn link-mondai"><span class="link-icon">💡</span>問題演習へ</a>
+    <a href="mondai.html" class="header-btn link-mondai"><span class="link-icon">💡</span>問題演習＆要点理解へ</a>
   </div>
 </header>
 
@@ -701,7 +701,7 @@ header h1 { font-size: 1.1em; letter-spacing: .05em; }
     <h2>Excelから読み込む</h2>
     <div class="hint">
       1行目に見出し <code>問題文</code> <code>選択肢1</code>〜<code>選択肢8</code> <code>解答</code> <code>解説</code> <code>分野</code> <code>領域</code> <code>項目</code> を入れた Excel ファイル（.xlsx / .xls / .csv）をアップロードしてください。<br>
-      <small>※ <code>解答</code> は正解の選択肢番号（1〜8）。<code>分野</code> は <code>教育原理</code> / <code>学習指導要領</code> / <code>教育心理</code> / <code>教育史</code> / <code>教育法規</code> / <code>教育時事</code> / <code>ローカル問題</code> のいずれか。<br>
+      <small>※ <code>解答</code> は正解の選択肢番号（1〜8）。<code>分野</code> は <code>教育原理</code> / <code>学習指導要領</code> / <code>教育史</code> / <code>教育心理</code> / <code>教育法規</code> / <code>教育時事</code> / <code>ローカル問題</code> のいずれか。<br>
       ※ 取り込んだ問題は既存データに<strong>追加</strong>されます（置き換えではなく追加登録）。</small>
     </div>
     <div class="upload-row">
@@ -799,8 +799,8 @@ header h1 { font-size: 1.1em; letter-spacing: .05em; }
           <option value="">選択してください</option>
           <option value="教育原理">教育原理</option>
           <option value="学習指導要領">学習指導要領</option>
-          <option value="教育心理">教育心理</option>
           <option value="教育史">教育史</option>
+          <option value="教育心理">教育心理</option>
           <option value="教育法規">教育法規</option>
           <option value="教育時事">教育時事</option>
           <option value="ローカル問題">ローカル問題</option>
@@ -831,8 +831,8 @@ header h1 { font-size: 1.1em; letter-spacing: .05em; }
         <option value="">全分野</option>
         <option value="教育原理">教育原理</option>
         <option value="学習指導要領">学習指導要領</option>
-        <option value="教育心理">教育心理</option>
         <option value="教育史">教育史</option>
+        <option value="教育心理">教育心理</option>
         <option value="教育法規">教育法規</option>
         <option value="教育時事">教育時事</option>
         <option value="ローカル問題">ローカル問題</option>
@@ -987,7 +987,7 @@ function registerQuestion() {
   renderList();
 }
 
-// ── フィルター選択肢の生成（問題演習版: 分野のみ） ──
+// ── フィルター選択肢の生成（問題演習＆要点理解版: 分野のみ） ──
 function populateListFilters() {
   // 分野は固定リストなのでHTMLで定義済み。何もしない。
 }
@@ -1349,7 +1349,7 @@ function importQuestions(event) {
 }
 
 // ── Excel読み込み ──
-var VALID_CATEGORIES = ['教育原理','学習指導要領','教育心理','教育史','教育法規','教育時事','ローカル問題'];
+var VALID_CATEGORIES = ['教育原理','学習指導要領','教育史','教育心理','教育法規','教育時事','ローカル問題'];
 var QUIZ_HEADER_ALIASES = {
   category:    ['分野','カテゴリ','category','Category'],
   area:        ['領域','area','Area'],
