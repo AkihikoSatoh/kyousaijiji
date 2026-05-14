@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>目次に沿って演習 ─ 問題演習＆要点理解</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  background: #f0f2f5;
+  color: #333;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+header {
+  background: linear-gradient(135deg, #e67e22, #f39c12);
+  color: #fff;
+  padding: 16px 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+}
+header h1 { font-size: 1.2em; letter-spacing: .05em; }
+.header-links { margin-top: 8px; }
+.header-links a {
+  color: rgba(255,255,255,.85);
+  font-size: .92em;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,.4);
+  padding: 7px 16px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: bold;
+}
+.header-links a:hover { background: rgba(255,255,255,.15); }
+
+.container {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.intro {
+  text-align: center;
+  color: #666;
+  font-size: .92em;
+  margin-bottom: 20px;
+}
+
+.category-section {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+  margin-bottom: 18px;
+  overflow: hidden;
+}
+
+.category-title {
+  background: linear-gradient(135deg, #e67e22, #f39c12);
+  color: #fff;
+  padding: 12px 20px;
+  font-size: 1.05em;
+  font-weight: bold;
+  letter-spacing: .04em;
+}
+
+.category-body { padding: 8px 0; }
+
+.area-group {
+  border-bottom: 1px solid #f0f0f0;
+}
+.area-group:last-child { border-bottom: none; }
+
+.area-header {
+  padding: 12px 22px 8px;
+  font-size: .98em;
+  font-weight: bold;
+  color: #d35400;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.area-header .area-num {
+  display: inline-block;
+  min-width: 28px;
+  text-align: center;
+  background: #fdebd0;
+  color: #d35400;
+  padding: 1px 8px;
+  border-radius: 3px;
+  font-size: .85em;
+}
+
+.item-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 22px 8px 64px;
+  border-top: 1px dashed #f0f0f0;
+  transition: background .12s;
+}
+.item-row:hover { background: #fffaf2; }
+.item-row .item-num {
+  display: inline-block;
+  min-width: 24px;
+  text-align: center;
+  background: #f5f5f5;
+  color: #888;
+  padding: 1px 7px;
+  border-radius: 3px;
+  font-size: .82em;
+}
+.item-row .item-name {
+  flex: 1;
+  font-size: .95em;
+  color: #444;
+}
+.item-row .item-count {
+  color: #999;
+  font-size: .82em;
+}
+.item-row .item-go {
+  flex-shrink: 0;
+  padding: 6px 16px;
+  border: none;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #e67e22, #d35400);
+  color: #fff;
+  font-size: .85em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: none;
+}
+.item-row .item-go:hover { opacity: .9; }
+
+.empty-msg {
+  text-align: center;
+  padding: 50px 20px;
+  color: #999;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+}
+
+.back-link {
+  text-align: center;
+  margin-top: 20px;
+}
+.back-link a {
+  display: inline-block;
+  padding: 8px 18px;
+  background: #fff;
+  color: #555;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: .9em;
+}
+.back-link a:hover { background: #f8f8f8; }
+
+@media (max-width: 600px) {
+  header h1 { font-size: 1.05em; }
+  .item-row { padding: 8px 14px 8px 42px; }
+  .area-header { padding: 12px 14px 8px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>目次に沿って演習</h1>
+  <div class="header-links">
+    <a href="mondai.html">← 戻る</a>
+  </div>
+</header>
+
+<div class="container">
+  <p class="intro">分野・領域・項目から該当する問題を登録順に演習できます。</p>
+  <div id="tocBody"></div>
+  <div class="back-link">
+    <a href="mondai.html">← 問題演習＆要点理解 トップへ</a>
+  </div>
+</div>
+
+<script>
+var STORAGE_KEY = 'kyosai_mondai';
+
+// 分野の表示順
+var CATEGORY_ORDER = [
+  '教育原理', '学習指導要領', '教育史', '教育心理',
+  '教育法規', '教育時事', 'ローカル問題'
+];
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function loadQuestions() {
+  try {
+    var s = localStorage.getItem(STORAGE_KEY);
+    if (!s) return [];
+    var arr = JSON.parse(s);
+    return Array.isArray(arr) ? arr : [];
+  } catch (e) { return []; }
+}
+
+function renderToc(questions) {
+  var body = document.getElementById('tocBody');
+
+  if (!questions || questions.length === 0) {
+    body.innerHTML = '<div class="empty-msg">登録された問題がありません。<br><br>管理画面から問題を登録してください。</div>';
+    return;
+  }
+
+  // 分野ごとにグループ化（出現順を保持）
+  var categoryGroups = {}; // category -> { areaName -> { itemName -> [questions] } }
+  var categoryOrderMap = {}; // category -> first appearance index
+
+  questions.forEach(function(q, idx) {
+    var cat = q.category || '未分類';
+    var area = q.area || '（領域未設定）';
+    var item = q.item || '（項目未設定）';
+    if (!categoryGroups[cat]) {
+      categoryGroups[cat] = { _areas: [], _data: {} };
+      categoryOrderMap[cat] = idx;
+    }
+    var g = categoryGroups[cat];
+    if (!g._data[area]) {
+      g._areas.push(area);
+      g._data[area] = { _items: [], _data: {} };
+    }
+    var a = g._data[area];
+    if (!a._data[item]) {
+      a._items.push(item);
+      a._data[item] = [];
+    }
+    a._data[item].push(q);
+  });
+
+  // 分野の表示順: 事前定義 → 未定義は出現順
+  var categories = Object.keys(categoryGroups);
+  categories.sort(function(a, b) {
+    var ia = CATEGORY_ORDER.indexOf(a);
+    var ib = CATEGORY_ORDER.indexOf(b);
+    if (ia === -1 && ib === -1) return categoryOrderMap[a] - categoryOrderMap[b];
+    if (ia === -1) return 1;
+    if (ib === -1) return -1;
+    return ia - ib;
+  });
+
+  var html = '';
+  categories.forEach(function(cat) {
+    var g = categoryGroups[cat];
+    html += '<div class="category-section">';
+    html += '<div class="category-title">' + escapeHtml(cat) + '</div>';
+    html += '<div class="category-body">';
+
+    g._areas.forEach(function(area, areaIdx) {
+      var a = g._data[area];
+      var areaNum = (areaIdx + 1);
+      html += '<div class="area-group">';
+      html += '<div class="area-header">' +
+        '<span class="area-num">' + areaNum + '</span>' +
+        '<span>' + escapeHtml(area) + '</span>' +
+      '</div>';
+      a._items.forEach(function(item, itemIdx) {
+        var qs = a._data[item];
+        var itemNum = (itemIdx + 1);
+        var url = 'mondai-random.html?category=' + encodeURIComponent(cat) +
+                  '&area=' + encodeURIComponent(area) +
+                  '&item=' + encodeURIComponent(item) +
+                  '&seq=1';
+        html += '<div class="item-row">' +
+          '<span class="item-num">' + itemNum + '</span>' +
+          '<span class="item-name">' + escapeHtml(item) + '</span>' +
+          '<span class="item-count">（' + qs.length + '問）</span>' +
+          '<a href="' + url + '" class="item-go">演習</a>' +
+        '</div>';
+      });
+      html += '</div>';
+    });
+
+    html += '</div></div>';
+  });
+
+  body.innerHTML = html;
+}
+
+// 起動時にサーバからデータ同期を試みてから描画
+(function bootstrap() {
+  fetch('mondai-data.json', { cache: 'no-cache' })
+    .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+    .then(function(data) {
+      if (!Array.isArray(data) || data.length === 0) return;
+      var stored = localStorage.getItem(STORAGE_KEY) || '';
+      var remoteStr = JSON.stringify(data);
+      if (stored !== remoteStr) {
+        localStorage.setItem(STORAGE_KEY, remoteStr);
+      }
+    })
+    .catch(function() {})
+    .then(function() {
+      renderToc(loadQuestions());
+    });
+})();
+</script>
+</body>
+</html>

@@ -1365,13 +1365,11 @@ function exportQuestions() {
   var blob = new Blob([JSON.stringify(questions, null, 2)], { type: 'application/json' });
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
-  var date = new Date();
-  var ts = date.getFullYear() + String(date.getMonth()+1).padStart(2,'0') + String(date.getDate()).padStart(2,'0');
   a.href = url;
-  a.download = 'kyosai_questions_' + ts + '.json';
+  a.download = 'questions-data.json';
   a.click();
   URL.revokeObjectURL(url);
-  showToast('エクスポートしました（' + questions.length + '問）');
+  showToast('エクスポートしました（' + questions.length + '問） — GitHubにそのままアップロードできます');
 }
 
 function importQuestions(event) {

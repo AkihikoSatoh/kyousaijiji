@@ -798,39 +798,34 @@ function initGlossary() {
   });
 }
 
+// 起動時: 常にサーバJSONを取得し、localStorageと内容が異なれば更新
 (function bootstrap() {
-  function isEmpty(key) {
-    try {
-      var s = localStorage.getItem(key);
-      if (!s) return true;
-      var arr = JSON.parse(s);
-      return !Array.isArray(arr) || arr.length === 0;
-    } catch (e) { return true; }
+  function fetchAndSyncIfDiffer(jsonPath, storageKey, label) {
+    return fetch(jsonPath, { cache: 'no-cache' })
+      .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function(data) {
+        if (!Array.isArray(data) || data.length === 0) return;
+        var stored = localStorage.getItem(storageKey) || '';
+        var remoteStr = JSON.stringify(data);
+        if (stored !== remoteStr) {
+          localStorage.setItem(storageKey, remoteStr);
+          var hadOldData = stored && stored !== '[]';
+          if (hadOldData) {
+            try {
+              var oldCount = JSON.parse(stored).length;
+              var newCount = data.length;
+              if (oldCount !== newCount) {
+                console.log('[' + label + '] データ更新: ' + oldCount + '件 → ' + newCount + '件');
+              }
+            } catch (e) {}
+          }
+        }
+      })
+      .catch(function() {});
   }
 
-  // 用語データの読み込み（localStorage が空なら glossary-data.json を取得）
-  var glossaryPromise = isEmpty(STORAGE_KEY)
-    ? fetch('glossary-data.json', { cache: 'no-cache' })
-        .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
-        .then(function(data) {
-          if (Array.isArray(data) && data.length > 0) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-          }
-        })
-        .catch(function() {})
-    : Promise.resolve();
-
-  // 過去問データの読み込み（該当問題数の表示に使用）
-  var quizPromise = isEmpty(QUIZ_STORAGE_KEY)
-    ? fetch('questions-data.json', { cache: 'no-cache' })
-        .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
-        .then(function(data) {
-          if (Array.isArray(data) && data.length > 0) {
-            localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify(data));
-          }
-        })
-        .catch(function() {})
-    : Promise.resolve();
+  var glossaryPromise = fetchAndSyncIfDiffer('glossary-data.json', STORAGE_KEY, '用語解説');
+  var quizPromise     = fetchAndSyncIfDiffer('questions-data.json', QUIZ_STORAGE_KEY, '過去問演習');
 
   Promise.all([glossaryPromise, quizPromise]).then(function() {
     loadQuizQuestions();

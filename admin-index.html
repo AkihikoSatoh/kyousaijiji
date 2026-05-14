@@ -48,6 +48,56 @@ header p {
   gap: 14px;
 }
 
+.export-all-section {
+  background: #fff8e1;
+  border: 1px solid #f1c40f;
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin-bottom: 22px;
+  text-align: center;
+}
+.export-all-hint {
+  font-size: .85em;
+  color: #7d6608;
+  line-height: 1.7;
+  margin-bottom: 12px;
+  text-align: left;
+}
+.export-all-btn {
+  padding: 12px 22px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #f1c40f, #d4a017);
+  color: #fff;
+  font-size: .95em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.export-all-btn:hover { opacity: .9; }
+.export-folder-btn {
+  background: linear-gradient(135deg, #27ae60, #1e8449);
+}
+.folder-status {
+  margin-top: 10px;
+  font-size: .8em;
+  color: #555;
+  min-height: 1.2em;
+}
+.folder-status code {
+  background: #fff;
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid #ddd;
+  word-break: break-all;
+}
+.export-summary {
+  margin-top: 10px;
+  font-size: .82em;
+  color: #7d6608;
+  min-height: 1.4em;
+}
+
 .admin-card {
   display: flex;
   align-items: center;
@@ -207,6 +257,21 @@ header p {
 
   <p class="intro">編集したいコンテンツの管理画面を選択してください。</p>
 
+  <div class="export-all-section">
+    <p class="export-all-hint">
+      GitHub にアップロードする 4 つのデータ（<code>questions-data.json</code>、<code>mondai-data.json</code>、<code>glossary-data.json</code>、<code>houki-scope-data.js</code>）をまとめて書き出せます。<br>
+      <strong>🗂 フォルダに直接書き出す</strong>:
+      初回は <code>kyosai-quiz</code> フォルダを選択。次回以降はそのフォルダに自動で上書き保存（Chrome / Edge のデスクトップ版のみ対応）。<br>
+      <strong>📦 ダウンロード</strong>: 通常のダウンロードフォルダに4ファイルを保存（全ブラウザ対応）。
+    </p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+      <button class="export-all-btn export-folder-btn" onclick="exportAllToFolder()">🗂 フォルダに直接書き出す</button>
+      <button class="export-all-btn" onclick="exportAllData()">📦 ダウンロード</button>
+    </div>
+    <div id="folderStatus" class="folder-status"></div>
+    <div id="exportSummary" class="export-summary"></div>
+  </div>
+
   <div class="admin-buttons">
     <a href="mondai-admin.html" class="admin-card mondai">
       <div class="admin-icon">💡</div>
@@ -253,6 +318,217 @@ header p {
   </div>
 
 </div>
+
+<script>
+// ── File System Access API でフォルダに直接書き出す ──
+var DB_NAME = 'kyosai_admin_db';
+var STORE = 'handles';
+var HANDLE_KEY = 'export_folder';
+
+function openDb() {
+  return new Promise(function(resolve, reject) {
+    var req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = function() { req.result.createObjectStore(STORE); };
+    req.onsuccess = function() { resolve(req.result); };
+    req.onerror = function() { reject(req.error); };
+  });
+}
+function getStoredHandle() {
+  return openDb().then(function(db) {
+    return new Promise(function(resolve) {
+      var tx = db.transaction(STORE, 'readonly');
+      var req = tx.objectStore(STORE).get(HANDLE_KEY);
+      req.onsuccess = function() { resolve(req.result || null); };
+      req.onerror = function() { resolve(null); };
+    });
+  });
+}
+function storeHandle(handle) {
+  return openDb().then(function(db) {
+    return new Promise(function(resolve) {
+      var tx = db.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).put(handle, HANDLE_KEY);
+      tx.oncomplete = function() { resolve(); };
+    });
+  });
+}
+function clearStoredHandle() {
+  return openDb().then(function(db) {
+    return new Promise(function(resolve) {
+      var tx = db.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).delete(HANDLE_KEY);
+      tx.oncomplete = function() { resolve(); };
+    });
+  });
+}
+function verifyPermission(handle) {
+  var opts = { mode: 'readwrite' };
+  return handle.queryPermission(opts).then(function(p) {
+    if (p === 'granted') return true;
+    return handle.requestPermission(opts).then(function(p2) { return p2 === 'granted'; });
+  });
+}
+
+function updateFolderStatus(text) {
+  document.getElementById('folderStatus').innerHTML = text;
+}
+
+function exportAllToFolder() {
+  if (!window.showDirectoryPicker) {
+    alert('お使いのブラウザは「フォルダに直接書き出す」機能に対応していません。\n\nChrome または Edge のデスクトップ版でご利用ください。\n（スマホ・Firefox・Safari の場合は通常のダウンロードをご利用ください）');
+    return;
+  }
+
+  var summary = document.getElementById('exportSummary');
+  summary.textContent = '';
+  updateFolderStatus('フォルダ準備中...');
+
+  getStoredHandle().then(function(dirHandle) {
+    if (dirHandle) {
+      return verifyPermission(dirHandle).then(function(ok) {
+        if (ok) return dirHandle;
+        // 権限失効: 再選択
+        return null;
+      });
+    }
+    return null;
+  }).then(function(dirHandle) {
+    if (dirHandle) return dirHandle;
+    // 初回 or 権限切れ → ピッカー表示
+    updateFolderStatus('保存先フォルダを選んでください（例: <code>kyosai-quiz</code> フォルダ）...');
+    return window.showDirectoryPicker({ mode: 'readwrite' }).then(function(handle) {
+      return storeHandle(handle).then(function() { return handle; });
+    });
+  }).then(function(dirHandle) {
+    if (!dirHandle) return;
+    updateFolderStatus('📂 保存先: <code>' + (dirHandle.name || '(選択済み)') + '</code> &nbsp; <a href="#" onclick="resetFolder(event)">変更</a>');
+
+    var targets = [
+      { key: 'kyosai_questions',  file: 'questions-data.json', label: '過去問演習',         unit: '問', type: 'json' },
+      { key: 'kyosai_mondai',     file: 'mondai-data.json',    label: '問題演習＆要点理解', unit: '問', type: 'json' },
+      { key: 'kyosai_glossary',   file: 'glossary-data.json',  label: '用語解説',           unit: '語', type: 'json' },
+      { key: 'kyosai_houki_data', file: 'houki-scope-data.js', label: '教育法規スコープ',   unit: '条', type: 'js'  }
+    ];
+
+    // 順次書き出し
+    var promises = targets.map(function(t) {
+      var raw;
+      try { raw = localStorage.getItem(t.key); } catch (e) {}
+      if (!raw) return Promise.resolve({ t: t, ok: false, msg: 'データなし' });
+      var parsed;
+      try { parsed = JSON.parse(raw); } catch (e) {
+        return Promise.resolve({ t: t, ok: false, msg: 'JSON解析エラー' });
+      }
+      if (!Array.isArray(parsed) || parsed.length === 0) {
+        return Promise.resolve({ t: t, ok: false, msg: 'データなし' });
+      }
+      var content;
+      if (t.type === 'js') {
+        // houki-scope-data.js 形式（バンドルJS）
+        content = '// 教育法規スコープ データ（管理画面より自動生成）\n' +
+                  'var HOUKI_DATA = ' + JSON.stringify(parsed, null, 1) + ';\n';
+      } else {
+        content = JSON.stringify(parsed, null, 2);
+      }
+      return dirHandle.getFileHandle(t.file, { create: true })
+        .then(function(fh) { return fh.createWritable(); })
+        .then(function(w) {
+          return w.write(content).then(function() { return w.close(); });
+        })
+        .then(function() { return { t: t, ok: true, count: parsed.length }; })
+        .catch(function(e) { return { t: t, ok: false, msg: e.message || '書き出し失敗' }; });
+    });
+
+    Promise.all(promises).then(function(results) {
+      var lines = results.map(function(r) {
+        if (r.ok) return '✅ ' + r.t.file + '（' + r.t.label + ' ' + r.count + r.t.unit + '）';
+        return '⚠ ' + r.t.file + '（' + r.t.label + ' — ' + r.msg + ' / スキップ）';
+      });
+      summary.innerHTML = lines.join('<br>') +
+        '<br><br>👉 そのまま GitHub の同フォルダに上書きすれば反映されます（Dropboxに置いている場合は自動同期）。';
+    });
+  }).catch(function(e) {
+    updateFolderStatus('⚠ フォルダ選択がキャンセルされました');
+  });
+}
+
+function resetFolder(ev) {
+  if (ev) ev.preventDefault();
+  clearStoredHandle().then(function() {
+    updateFolderStatus('保存先フォルダをリセットしました。次回クリック時に再選択できます。');
+  });
+}
+
+// 起動時: 保存済みフォルダがあれば表示
+(function checkSavedFolder() {
+  if (!window.showDirectoryPicker) return;
+  getStoredHandle().then(function(h) {
+    if (h) updateFolderStatus('📂 保存先: <code>' + (h.name || '(選択済み)') + '</code> &nbsp; <a href="#" onclick="resetFolder(event)">変更</a>');
+  });
+})();
+
+function downloadJsonFile(storageKey, fileName, type) {
+  var raw;
+  try {
+    raw = localStorage.getItem(storageKey);
+    if (!raw) return { ok: false, count: 0 };
+    var arr = JSON.parse(raw);
+    if (!Array.isArray(arr) || arr.length === 0) return { ok: false, count: 0 };
+  } catch (e) {
+    return { ok: false, count: 0 };
+  }
+  var parsed = JSON.parse(raw);
+  var content, mime;
+  if (type === 'js') {
+    content = '// 教育法規スコープ データ（管理画面より自動生成）\n' +
+              'var HOUKI_DATA = ' + JSON.stringify(parsed, null, 1) + ';\n';
+    mime = 'application/javascript';
+  } else {
+    content = JSON.stringify(parsed, null, 2);
+    mime = 'application/json';
+  }
+  var blob = new Blob([content], { type: mime });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+  return { ok: true, count: parsed.length };
+}
+
+function exportAllData() {
+  var summary = document.getElementById('exportSummary');
+  summary.textContent = 'ダウンロード中...';
+
+  var targets = [
+    { key: 'kyosai_questions',  file: 'questions-data.json', label: '過去問演習',         unit: '問', type: 'json' },
+    { key: 'kyosai_mondai',     file: 'mondai-data.json',    label: '問題演習＆要点理解', unit: '問', type: 'json' },
+    { key: 'kyosai_glossary',   file: 'glossary-data.json',  label: '用語解説',           unit: '語', type: 'json' },
+    { key: 'kyosai_houki_data', file: 'houki-scope-data.js', label: '教育法規スコープ',   unit: '条', type: 'js'   }
+  ];
+
+  var results = [];
+  // ブラウザによっては連続ダウンロードがブロックされるので、間隔を空ける
+  targets.forEach(function(t, i) {
+    setTimeout(function() {
+      var r = downloadJsonFile(t.key, t.file, t.type);
+      results.push({ label: t.label, file: t.file, unit: t.unit, ok: r.ok, count: r.count });
+      if (results.length === targets.length) {
+        var lines = results.map(function(x) {
+          return x.ok
+            ? '✅ ' + x.file + '（' + x.label + ' ' + x.count + x.unit + '）'
+            : '⚠ ' + x.file + '（' + x.label + ' データなし — スキップ）';
+        });
+        summary.innerHTML = lines.join('<br>') +
+          '<br><br>👉 ダウンロードした 3 ファイルをそのまま GitHub にアップロードしてください。';
+      }
+    }, i * 350);
+  });
+}
+</script>
 
 </body>
 </html>
