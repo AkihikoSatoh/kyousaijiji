@@ -48,16 +48,53 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
   text-align: center;
   color: #666;
   font-size: .92em;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+}
+
+/* タブナビ */
+.tab-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  background: #fff;
+  padding: 8px;
+  border-radius: 10px 10px 0 0;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+  border-bottom: 3px solid #e67e22;
+}
+.tab-btn {
+  flex: 1 1 auto;
+  min-width: 90px;
+  padding: 10px 14px;
+  border: 1px solid #fad7a0;
+  border-radius: 8px;
+  background: #fff;
+  color: #d35400;
+  font-size: .92em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .15s;
+}
+.tab-btn:hover {
+  background: #fdebd0;
+  border-color: #e67e22;
+}
+.tab-btn.active {
+  background: linear-gradient(135deg, #e67e22, #d35400);
+  color: #fff;
+  border-color: #d35400;
+  box-shadow: 0 2px 6px rgba(211,84,0,.35);
 }
 
 .category-section {
   background: #fff;
-  border-radius: 10px;
+  border-radius: 0 0 10px 10px;
   box-shadow: 0 2px 10px rgba(0,0,0,.06);
   margin-bottom: 18px;
   overflow: hidden;
 }
+.category-section.hidden { display: none; }
 
 .category-title {
   background: linear-gradient(135deg, #e67e22, #f39c12);
@@ -69,6 +106,13 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 }
 
 .category-body { padding: 8px 0; }
+
+.empty-category {
+  text-align: center;
+  padding: 40px 20px;
+  color: #aaa;
+  font-size: .9em;
+}
 
 .area-group {
   border-bottom: 1px solid #f0f0f0;
@@ -175,12 +219,13 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 <header>
   <h1>目次に沿って演習</h1>
   <div class="header-links">
-    <a href="mondai.html">← 戻る</a>
+    <a href="mondai.html">← 問題演習＆要点理解トップに戻る</a>
   </div>
 </header>
 
 <div class="container">
-  <p class="intro">分野・領域・項目から該当する問題を登録順に演習できます。</p>
+  <p class="intro">分野を選んで、領域・項目から問題を登録順に演習できます。</p>
+  <div class="tab-nav" id="tabNav"></div>
   <div id="tocBody"></div>
   <div class="back-link">
     <a href="mondai.html">← 問題演習＆要点理解 トップへ</a>
@@ -190,10 +235,9 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 <script>
 var STORAGE_KEY = 'kyosai_mondai';
 
-// 分野の表示順
-var CATEGORY_ORDER = [
-  '教育原理', '学習指導要領', '教育史', '教育心理',
-  '教育法規', '教育時事', 'ローカル問題'
+// タブとして表示する分野（6つ）。ローカル問題はタブに含めない。
+var TAB_CATEGORIES = [
+  '教育原理', '学習指導要領', '教育史', '教育心理', '教育法規', '教育時事'
 ];
 
 function escapeHtml(str) {
@@ -211,23 +255,23 @@ function loadQuestions() {
 
 function renderToc(questions) {
   var body = document.getElementById('tocBody');
+  var nav  = document.getElementById('tabNav');
 
   if (!questions || questions.length === 0) {
+    nav.innerHTML = '';
     body.innerHTML = '<div class="empty-msg">登録された問題がありません。<br><br>管理画面から問題を登録してください。</div>';
     return;
   }
 
   // 分野ごとにグループ化（出現順を保持）
-  var categoryGroups = {}; // category -> { areaName -> { itemName -> [questions] } }
-  var categoryOrderMap = {}; // category -> first appearance index
+  var categoryGroups = {}; // category -> { _areas, _data: { area: { _items, _data: { item: [qs] } } } }
 
-  questions.forEach(function(q, idx) {
-    var cat = q.category || '未分類';
-    var area = q.area || '（領域未設定）';
-    var item = q.item || '（項目未設定）';
+  questions.forEach(function(q) {
+    var cat  = q.category || '未分類';
+    var area = q.area     || '（領域未設定）';
+    var item = q.item     || '（項目未設定）';
     if (!categoryGroups[cat]) {
       categoryGroups[cat] = { _areas: [], _data: {} };
-      categoryOrderMap[cat] = idx;
     }
     var g = categoryGroups[cat];
     if (!g._data[area]) {
@@ -242,53 +286,70 @@ function renderToc(questions) {
     a._data[item].push(q);
   });
 
-  // 分野の表示順: 事前定義 → 未定義は出現順
-  var categories = Object.keys(categoryGroups);
-  categories.sort(function(a, b) {
-    var ia = CATEGORY_ORDER.indexOf(a);
-    var ib = CATEGORY_ORDER.indexOf(b);
-    if (ia === -1 && ib === -1) return categoryOrderMap[a] - categoryOrderMap[b];
-    if (ia === -1) return 1;
-    if (ib === -1) return -1;
-    return ia - ib;
+  // タブナビを構築
+  var navHtml = '';
+  TAB_CATEGORIES.forEach(function(cat, i) {
+    navHtml += '<button type="button" class="tab-btn' + (i === 0 ? ' active' : '') + '" ' +
+      'data-cat="' + escapeHtml(cat) + '">' +
+      escapeHtml(cat) +
+      '</button>';
   });
+  nav.innerHTML = navHtml;
 
-  var html = '';
-  categories.forEach(function(cat) {
+  // 各分野のセクションを構築（最初のタブのみ表示）
+  var sectionHtml = '';
+  TAB_CATEGORIES.forEach(function(cat, i) {
+    var hiddenCls = (i === 0 ? '' : ' hidden');
+    sectionHtml += '<div class="category-section' + hiddenCls + '" data-cat="' + escapeHtml(cat) + '">';
+    sectionHtml += '<div class="category-title">' + escapeHtml(cat) + '</div>';
+    sectionHtml += '<div class="category-body">';
+
     var g = categoryGroups[cat];
-    html += '<div class="category-section">';
-    html += '<div class="category-title">' + escapeHtml(cat) + '</div>';
-    html += '<div class="category-body">';
-
-    g._areas.forEach(function(area, areaIdx) {
-      var a = g._data[area];
-      var areaNum = (areaIdx + 1);
-      html += '<div class="area-group">';
-      html += '<div class="area-header">' +
-        '<span class="area-num">' + areaNum + '</span>' +
-        '<span>' + escapeHtml(area) + '</span>' +
-      '</div>';
-      a._items.forEach(function(item, itemIdx) {
-        var qs = a._data[item];
-        var itemNum = (itemIdx + 1);
-        var url = 'mondai-random.html?category=' + encodeURIComponent(cat) +
-                  '&area=' + encodeURIComponent(area) +
-                  '&item=' + encodeURIComponent(item) +
-                  '&seq=1';
-        html += '<div class="item-row">' +
-          '<span class="item-num">' + itemNum + '</span>' +
-          '<span class="item-name">' + escapeHtml(item) + '</span>' +
-          '<span class="item-count">（' + qs.length + '問）</span>' +
-          '<a href="' + url + '" class="item-go">演習</a>' +
+    if (!g || g._areas.length === 0) {
+      sectionHtml += '<div class="empty-category">この分野の問題はまだ登録されていません。</div>';
+    } else {
+      g._areas.forEach(function(area, areaIdx) {
+        var a = g._data[area];
+        var areaNum = (areaIdx + 1);
+        sectionHtml += '<div class="area-group">';
+        sectionHtml += '<div class="area-header">' +
+          '<span class="area-num">' + areaNum + '</span>' +
+          '<span>' + escapeHtml(area) + '</span>' +
         '</div>';
+        a._items.forEach(function(item, itemIdx) {
+          var qs = a._data[item];
+          var itemNum = (itemIdx + 1);
+          var url = 'mondai-random.html?category=' + encodeURIComponent(cat) +
+                    '&area=' + encodeURIComponent(area) +
+                    '&item=' + encodeURIComponent(item) +
+                    '&seq=1';
+          sectionHtml += '<div class="item-row">' +
+            '<span class="item-num">' + itemNum + '</span>' +
+            '<span class="item-name">' + escapeHtml(item) + '</span>' +
+            '<span class="item-count">（' + qs.length + '問）</span>' +
+            '<a href="' + url + '" class="item-go">演習</a>' +
+          '</div>';
+        });
+        sectionHtml += '</div>';
       });
-      html += '</div>';
-    });
+    }
 
-    html += '</div></div>';
+    sectionHtml += '</div></div>';
   });
+  body.innerHTML = sectionHtml;
 
-  body.innerHTML = html;
+  // タブクリックで表示切替
+  nav.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.onclick = function() {
+      var cat = btn.getAttribute('data-cat');
+      nav.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      body.querySelectorAll('.category-section').forEach(function(sec) {
+        if (sec.getAttribute('data-cat') === cat) sec.classList.remove('hidden');
+        else sec.classList.add('hidden');
+      });
+    };
+  });
 }
 
 // 起動時にサーバからデータ同期を試みてから描画

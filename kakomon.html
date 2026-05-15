@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ランダム演習 ─ 問題演習＆要点理解</title>
+<title>教員採用試験 過去問演習</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -16,13 +16,25 @@ body {
 }
 
 header {
-  background: linear-gradient(135deg, #e67e22, #f39c12);
+  background: linear-gradient(135deg, #1976d2, #2196f3);
   color: #fff;
-  padding: 16px 20px;
+  padding: 22px 20px;
   text-align: center;
   box-shadow: 0 2px 8px rgba(0,0,0,.15);
 }
-header h1 { font-size: 1.2em; letter-spacing: .05em; }
+header h1 {
+  font-size: 1.7em;
+  letter-spacing: .04em;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-shadow: 0 2px 4px rgba(0,0,0,.25);
+}
+header h1 .title-icon {
+  font-size: 1.1em;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,.35));
+}
 .header-links {
   margin-top: 6px;
 }
@@ -52,54 +64,6 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
   color: #fff;
 }
 .header-links a.link-houki:hover { background: #5d4037; }
-.header-links a.link-quiz {
-  background: #2196f3;
-  border-color: #2196f3;
-  color: #fff;
-}
-.header-links a.link-quiz:hover { background: #1976d2; }
-.header-links a.link-back {
-  background: rgba(255,255,255,.15);
-  font-weight: normal;
-}
-.header-links a.link-back:hover { background: rgba(255,255,255,.28); }
-
-.toc-final-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 16px;
-}
-.toc-back-btn {
-  flex: 1;
-  padding: 14px;
-  border: 2px solid #d35400;
-  border-radius: 8px;
-  background: #fff;
-  color: #d35400;
-  font-size: 1em;
-  font-weight: bold;
-  cursor: pointer;
-  font-family: inherit;
-}
-.toc-back-btn:hover { background: #fdebd0; }
-.toc-next-btn {
-  flex: 1;
-  padding: 14px;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #e67e22, #d35400);
-  color: #fff;
-  font-size: 1.05em;
-  font-weight: bold;
-  cursor: pointer;
-  font-family: inherit;
-}
-.toc-next-btn:hover { opacity: .9; }
-.toc-next-btn:disabled {
-  background: #ccc;
-  cursor: default;
-  opacity: .7;
-}
 .header-links a.link-mondai {
   background: #f39c12;
   border-color: #f39c12;
@@ -123,7 +87,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 }
 .start-screen h2 {
   font-size: 1.3em;
-  color: #d35400;
+  color: #1a5276;
   margin-bottom: 8px;
 }
 .start-screen .desc {
@@ -135,7 +99,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
   padding: 14px 48px;
   border: none;
   border-radius: 8px;
-  background: linear-gradient(135deg, #e67e22, #d35400);
+  background: linear-gradient(135deg, #2e86c1, #1a5276);
   color: #fff;
   font-size: 1.05em;
   font-weight: bold;
@@ -237,7 +201,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 }
 .progress-bar .fill {
   height: 100%;
-  background: #e67e22;
+  background: #2e86c1;
   transition: width .3s;
   width: 0%;
 }
@@ -251,17 +215,17 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
   margin-bottom: 16px;
 }
 .card-header {
-  background: #fdebd0;
+  background: #eaf2f8;
   padding: 10px 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: .85em;
   color: #555;
-  border-bottom: 1px solid #fad7a0;
+  border-bottom: 1px solid #d6e4f0;
 }
 .badge {
-  background: #e67e22;
+  background: #2e86c1;
   color: #fff;
   padding: 2px 10px;
   border-radius: 12px;
@@ -297,8 +261,8 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
   font-family: inherit;
 }
 .choice-btn:hover:not(.disabled) {
-  border-color: #e67e22;
-  background: #fdebd0;
+  border-color: #2e86c1;
+  background: #eaf2f8;
 }
 .choice-btn.disabled { cursor: default; opacity: .85; }
 .choice-btn.correct {
@@ -347,7 +311,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
   line-height: 1.8;
 }
 .explanation strong {
-  color: #d35400;
+  color: #1a5276;
 }
 
 /* ── 次へボタン ── */
@@ -358,7 +322,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
   margin-top: 16px;
   border: none;
   border-radius: 8px;
-  background: linear-gradient(135deg, #e67e22, #d35400);
+  background: linear-gradient(135deg, #2e86c1, #1a5276);
   color: #fff;
   font-size: 1.05em;
   font-weight: bold;
@@ -714,16 +678,16 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 .checked-item-view {
   flex-shrink: 0;
   padding: 5px 12px;
-  border: 1px solid #e67e22;
+  border: 1px solid #2e86c1;
   border-radius: 6px;
   background: #fff;
-  color: #e67e22;
+  color: #2e86c1;
   font-size: .8em;
   font-weight: bold;
   cursor: pointer;
   font-family: inherit;
 }
-.checked-item-view:hover { background: #fdebd0; }
+.checked-item-view:hover { background: #eaf2f8; }
 
 /* ── 問題詳細モーダル ── */
 .qview-overlay {
@@ -748,7 +712,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
   box-shadow: 0 10px 40px rgba(0,0,0,.3);
 }
 .qview-header {
-  background: linear-gradient(135deg, #d35400, #e67e22);
+  background: linear-gradient(135deg, #1a5276, #2e86c1);
   color: #fff;
   padding: 14px 20px;
   display: flex;
@@ -769,11 +733,11 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 .qview-close:hover { background: rgba(255,255,255,.32); }
 
 .qview-card-meta {
-  background: #fdebd0;
+  background: #eaf2f8;
   padding: 10px 18px;
   font-size: .85em;
   color: #555;
-  border-bottom: 1px solid #fad7a0;
+  border-bottom: 1px solid #d6e4f0;
 }
 .qview-body {
   flex: 1;
@@ -885,11 +849,11 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
   text-align: center;
   padding: 40px 20px;
 }
-.summary-screen h2 { font-size: 1.3em; color: #d35400; margin-bottom: 16px; }
+.summary-screen h2 { font-size: 1.3em; color: #1a5276; margin-bottom: 16px; }
 .summary-stat {
   font-size: 3em;
   font-weight: bold;
-  color: #e67e22;
+  color: #2e86c1;
   margin: 10px 0;
 }
 .summary-detail { font-size: 1em; color: #666; margin-bottom: 30px; }
@@ -903,7 +867,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 }
 
 @media (max-width: 600px) {
-  header h1 { font-size: 1.05em; }
+  header h1 { font-size: 1.25em; }
   .card-body { padding: 16px; }
   .choice-btn { padding: 12px 14px; font-size: .9em; }
 }
@@ -912,15 +876,14 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 <body>
 
 <header>
-  <h1>問題演習＆要点理解 ─ ランダム演習</h1>
+  <h1><span class="title-icon">📝</span>過去問演習</h1>
   <div id="scoreBar" class="score-bar" style="display:none;">
     <span>問題 <strong id="qNum">0</strong> / <strong id="qTotal">0</strong></span>
     <span>正解 <strong id="correctCount">0</strong></span>
     <span>不正解 <strong id="wrongCount">0</strong></span>
   </div>
   <div class="header-links" id="headerLinks">
-    <a href="mondai.html" class="link-back">← 問題演習＆要点理解 トップ</a>
-    <a href="kakomon.html" class="link-quiz"><span class="link-icon">📝</span>過去問演習</a>
+    <a href="mondai.html" class="link-mondai"><span class="link-icon">💡</span>問題演習＆要点理解</a>
     <a href="glossary.html" class="link-glossary"><span class="link-icon">📚</span>用語解説</a>
     <a href="houki-scope.html" class="link-houki"><span class="link-icon">⚖️</span>教育法規スコープ</a>
   </div>
@@ -930,7 +893,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 
   <!-- スタート画面 -->
   <div id="startScreen" class="start-screen">
-    <h2>教員採用試験 問題演習＆要点理解</h2>
+    <h2>教員採用試験 過去問に挑戦</h2>
     <p style="font-size:.75em;color:#999;margin-bottom:12px;">Powered by 『教員養成セミナー』</p>
     <div id="termBanner" class="term-banner" style="display:none;"></div>
 
@@ -943,6 +906,12 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
     <p class="desc" id="startDesc">登録された問題からランダムに出題します</p>
 
     <div class="filters" style="max-width:400px;margin:0 auto 20px;">
+      <select id="filterYear">
+        <option value="">全年度</option>
+      </select>
+      <select id="filterPref">
+        <option value="">全自治体</option>
+      </select>
       <select id="filterCategory">
         <option value="">全分野</option>
         <option value="教育原理">教育原理</option>
@@ -966,7 +935,8 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
     <button class="start-btn" id="startBtn" onclick="startQuiz()">スタート</button>
 
     <div class="note">
-      <p>※『教員養成セミナー』編集部オリジナルの予想問題を収録しています。</p>
+      <p>※2021～2025年度に実施された教員採用試験の教職教養の過去問のうち，自治体固有のローカル問題を除いたものを収録しています。</p>
+      <p>※一部自治体の試験問題は掲載されていませんので，ご了承ください。</p>
     </div>
 
     <div id="checkedBox" class="checked-box" style="display:none;">
@@ -997,13 +967,9 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
       </div>
     </div>
     <button class="next-btn" id="nextBtn" onclick="nextQuestion()">次の問題へ</button>
-    <div class="toc-final-actions" id="tocFinalActions" style="display:none;">
-      <button class="toc-back-btn" onclick="backToTocFromQuiz()">📑 目次に戻る</button>
-      <button class="toc-next-btn" id="tocNextAreaBtn" onclick="goToNextArea()">➡ 次の領域へ</button>
-    </div>
     <div class="quiz-bottom-actions">
       <button class="pause-btn" onclick="pauseQuiz()">一時中断</button>
-      <button class="back-to-start" id="backToStartBtn" onclick="resetQuiz()">スタート画面に戻る</button>
+      <button class="back-to-start" onclick="resetQuiz()">スタート画面に戻る</button>
       <button class="memo-btn" id="memoBtn" onclick="openMemo()">📝 メモをする</button>
       <button class="check-btn" id="checkBtn" onclick="toggleCheck()">☆ チェック</button>
     </div>
@@ -1072,7 +1038,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
       <div class="summary-detail" id="summaryDetail"></div>
       <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
         <button class="start-btn" id="retryWrongBtn" onclick="retryWrong()" style="display:none;">間違えた問題に再挑戦</button>
-        <button class="start-btn" id="backToStartBtn2" onclick="resetQuiz()" style="background:linear-gradient(135deg,#7f8c8d,#566573);">スタート画面に戻る</button>
+        <button class="start-btn" onclick="resetQuiz()" style="background:linear-gradient(135deg,#7f8c8d,#566573);">スタート画面に戻る</button>
       </div>
     </div>
   </div>
@@ -1080,7 +1046,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 </div>
 
 <script>
-const STORAGE_KEY = 'kyosai_mondai';
+const STORAGE_KEY = 'kyosai_questions';
 
 let allQuestions = [];
 let quizQuestions = [];
@@ -1091,14 +1057,10 @@ let answered = false;
 let wrongQuestions = [];
 let termFilter = '';
 let lastSelectedIdx = -1;
-let tocMode = false;
-let tocCurrentCategory = '';
-let tocCurrentArea = '';
-let tocCurrentItem = '';
 
-const SESSION_KEY = 'kyosai_mondai_session';
-const MEMO_KEY = 'kyosai_mondai_memos';
-const CHECK_KEY = 'kyosai_mondai_checks';
+const SESSION_KEY = 'kyosai_quiz_session';
+const MEMO_KEY = 'kyosai_quiz_memos';
+const CHECK_KEY = 'kyosai_quiz_checks';
 
 function loadQuestions() {
   try {
@@ -1126,7 +1088,32 @@ function shuffle(arr) {
 }
 
 function populateFilters() {
-  // 問題演習＆要点理解では年度・自治体フィルターを使用しないため何もしない
+  var years = [];
+  var prefs = [];
+  allQuestions.forEach(function(q) {
+    if (q.year && years.indexOf(q.year) === -1) years.push(q.year);
+    if (q.pref && prefs.indexOf(q.pref) === -1) prefs.push(q.pref);
+  });
+  years.sort();
+  prefs.sort();
+
+  var yearSel = document.getElementById('filterYear');
+  yearSel.innerHTML = '<option value="">全年度</option>';
+  years.forEach(function(y) {
+    var opt = document.createElement('option');
+    opt.value = y;
+    opt.textContent = y + '年';
+    yearSel.appendChild(opt);
+  });
+
+  var prefSel = document.getElementById('filterPref');
+  prefSel.innerHTML = '<option value="">全自治体</option>';
+  prefs.forEach(function(p) {
+    var opt = document.createElement('option');
+    opt.value = p;
+    opt.textContent = p;
+    prefSel.appendChild(opt);
+  });
 }
 
 function updateFilterInfo() {
@@ -1138,8 +1125,12 @@ function updateFilterInfo() {
 }
 
 function getFilteredPool() {
+  var year = document.getElementById('filterYear').value;
+  var pref = document.getElementById('filterPref').value;
   var category = document.getElementById('filterCategory').value;
   var pool = allQuestions.slice();
+  if (year) pool = pool.filter(function(q) { return String(q.year) === year; });
+  if (pref) pool = pool.filter(function(q) { return q.pref === pref; });
   if (category) pool = pool.filter(function(q) { return q.category === category; });
   if (termFilter) {
     pool = pool.filter(function(q) {
@@ -1166,62 +1157,12 @@ function updateTermBanner() {
 function init() {
   loadQuestions();
 
-  // URLパラメータの解析
-  var tocCategory = '', tocArea = '', tocItem = '', isSequential = false;
+  // URLパラメータから用語を取得
   try {
     var params = new URLSearchParams(window.location.search);
     termFilter = params.get('term') || '';
-    tocCategory = params.get('category') || '';
-    tocArea = params.get('area') || '';
-    tocItem = params.get('item') || '';
-    isSequential = params.get('seq') === '1';
   } catch (e) {
     termFilter = '';
-  }
-
-  // 目次経由で起動された場合: 自動的に該当問題のみで順次開始
-  if (tocCategory || tocArea || tocItem) {
-    tocMode = true;
-    tocCurrentCategory = tocCategory;
-    tocCurrentArea = tocArea;
-    tocCurrentItem = tocItem;
-    var pool = allQuestions.filter(function(q) {
-      if (tocCategory && q.category !== tocCategory) return false;
-      if (tocArea && q.area !== tocArea) return false;
-      if (tocItem && q.item !== tocItem) return false;
-      return true;
-    });
-    if (pool.length === 0) {
-      alert('該当する問題がありません。');
-      location.href = 'mondai-toc.html';
-      return;
-    }
-    // 登録順をそのまま使用（シャッフルしない）
-    quizQuestions = isSequential ? pool : pool.slice();
-    currentIndex = 0;
-    correctTotal = 0;
-    wrongTotal = 0;
-    wrongQuestions = [];
-
-    document.getElementById('qTotal').textContent = quizQuestions.length;
-    document.getElementById('scoreBar').style.display = 'flex';
-    document.getElementById('headerLinks').style.display = 'none';
-    document.getElementById('startScreen').style.display = 'none';
-    document.getElementById('summaryScreen').style.display = 'none';
-    document.getElementById('quizScreen').style.display = 'block';
-
-    // 目次経由なので、戻るボタンは「目次に戻る」に切り替え
-    var backToToc = function() {
-      localStorage.removeItem(SESSION_KEY);
-      location.href = 'mondai-toc.html';
-    };
-    var btn1 = document.getElementById('backToStartBtn');
-    if (btn1) { btn1.textContent = '目次に戻る'; btn1.onclick = backToToc; }
-    var btn2 = document.getElementById('backToStartBtn2');
-    if (btn2) { btn2.textContent = '目次に戻る'; btn2.onclick = backToToc; }
-
-    showQuestion();
-    return;
   }
 
   var count = allQuestions.length;
@@ -1235,6 +1176,8 @@ function init() {
     populateFilters();
     updateFilterInfo();
     updateTermBanner();
+    document.getElementById('filterYear').onchange = function() { updateFilterInfo(); updateTermBanner(); };
+    document.getElementById('filterPref').onchange = function() { updateFilterInfo(); updateTermBanner(); };
     document.getElementById('filterCategory').onchange = function() { updateFilterInfo(); updateTermBanner(); };
     document.getElementById('filterCount').onchange = updateFilterInfo;
   }
@@ -1313,8 +1256,6 @@ function showQuestion() {
   if (q.year) meta += q.year + '年';
   if (q.pref) meta += (meta ? ' ' : '') + q.pref;
   if (q.category) meta += (meta ? ' ' : '') + '[' + q.category + ']';
-  if (q.area) meta += (meta ? ' ' : '') + '〈' + q.area + '〉';
-  if (q.item) meta += (meta ? ' ' : '') + '《' + q.item + '》';
   document.getElementById('metaInfo').textContent = meta;
   document.getElementById('questionText').innerHTML = renderQuestion(q.question);
 
@@ -1397,25 +1338,8 @@ function selectAnswer(idx, choices) {
 
   // 次へボタン
   var nextBtn = document.getElementById('nextBtn');
-  var tocActions = document.getElementById('tocFinalActions');
-  var isLast = currentIndex + 1 >= quizQuestions.length;
-  if (tocMode && isLast) {
-    // 目次モードの最終問題: 「目次に戻る」「次の領域へ」を表示
-    nextBtn.className = 'next-btn';
-    if (tocActions) {
-      tocActions.style.display = 'flex';
-      var nextBtn2 = document.getElementById('tocNextAreaBtn');
-      if (nextBtn2) {
-        var next = findNextToc(tocCurrentCategory, tocCurrentArea);
-        nextBtn2.disabled = !next;
-        nextBtn2.textContent = next ? '➡ 次の領域へ' : '（次の領域はありません）';
-      }
-    }
-  } else {
-    nextBtn.className = 'next-btn show';
-    nextBtn.textContent = isLast ? '結果を見る' : '次の問題へ';
-    if (tocActions) tocActions.style.display = 'none';
-  }
+  nextBtn.className = 'next-btn show';
+  nextBtn.textContent = currentIndex + 1 < quizQuestions.length ? '次の問題へ' : '結果を見る';
 }
 
 function nextQuestion() {
@@ -1425,89 +1349,6 @@ function nextQuestion() {
   } else {
     showSummary();
   }
-}
-
-// ── 目次モード: 「目次に戻る」 / 「次の領域へ」 ──
-var CATEGORY_ORDER = ['教育原理', '学習指導要領', '教育史', '教育心理', '教育法規', '教育時事', 'ローカル問題'];
-
-function buildOrderedAreaPairs() {
-  // 全問題から (category, area) 出現順の一意ペアを構築（目次ページと同じ順序）
-  var byCategory = {};
-  var firstSeen = {};
-  allQuestions.forEach(function(q, idx) {
-    var cat = q.category || '未分類';
-    var area = q.area || '（領域未設定）';
-    if (!byCategory[cat]) {
-      byCategory[cat] = [];
-      firstSeen[cat] = idx;
-    }
-    if (byCategory[cat].indexOf(area) === -1) {
-      byCategory[cat].push(area);
-    }
-  });
-  var cats = Object.keys(byCategory);
-  cats.sort(function(a, b) {
-    var ia = CATEGORY_ORDER.indexOf(a);
-    var ib = CATEGORY_ORDER.indexOf(b);
-    if (ia === -1 && ib === -1) return firstSeen[a] - firstSeen[b];
-    if (ia === -1) return 1;
-    if (ib === -1) return -1;
-    return ia - ib;
-  });
-  var pairs = [];
-  cats.forEach(function(cat) {
-    byCategory[cat].forEach(function(area) {
-      pairs.push({ cat: cat, area: area });
-    });
-  });
-  return pairs;
-}
-
-function findNextToc(curCat, curArea) {
-  var pairs = buildOrderedAreaPairs();
-  var idx = -1;
-  for (var i = 0; i < pairs.length; i++) {
-    if (pairs[i].cat === curCat && pairs[i].area === curArea) { idx = i; break; }
-  }
-  if (idx === -1 || idx + 1 >= pairs.length) return null;
-  return pairs[idx + 1];
-}
-
-function findFirstItemFor(cat, area) {
-  for (var i = 0; i < allQuestions.length; i++) {
-    var q = allQuestions[i];
-    var qCat = q.category || '未分類';
-    var qArea = q.area || '（領域未設定）';
-    if (qCat === cat && qArea === area) {
-      return q.item || '（項目未設定）';
-    }
-  }
-  return null;
-}
-
-function backToTocFromQuiz() {
-  localStorage.removeItem(SESSION_KEY);
-  location.href = 'mondai-toc.html';
-}
-
-function goToNextArea() {
-  var next = findNextToc(tocCurrentCategory, tocCurrentArea);
-  if (!next) {
-    alert('次の領域はありません。目次に戻ります。');
-    backToTocFromQuiz();
-    return;
-  }
-  var firstItem = findFirstItemFor(next.cat, next.area);
-  if (!firstItem) {
-    alert('次の領域の問題が見つかりません。');
-    return;
-  }
-  localStorage.removeItem(SESSION_KEY);
-  var url = 'mondai-random.html?category=' + encodeURIComponent(next.cat) +
-            '&area=' + encodeURIComponent(next.area) +
-            '&item=' + encodeURIComponent(firstItem) +
-            '&seq=1';
-  location.href = url;
 }
 
 function showSummary() {
@@ -1817,8 +1658,6 @@ function openCheckedList() {
       if (q.year) meta += '<span class="tag">' + q.year + '年</span>';
       if (q.pref) meta += '<span class="tag">' + escapeHtml(q.pref) + '</span>';
       if (q.category) meta += '<span class="tag">' + escapeHtml(q.category) + '</span>';
-      if (q.area) meta += '<span class="tag">' + escapeHtml(q.area) + '</span>';
-      if (q.item) meta += '<span class="tag">' + escapeHtml(q.item) + '</span>';
       if (e.data.checkedAt) {
         var dt = new Date(e.data.checkedAt);
         meta += '<span style="color:#aaa;">★ ' + (dt.getMonth() + 1) + '/' + dt.getDate() + ' ' +
@@ -1853,8 +1692,6 @@ function viewCheckedQuestion(key) {
   if (q.year) meta += q.year + '年';
   if (q.pref) meta += (meta ? ' ─ ' : '') + q.pref;
   if (q.category) meta += (meta ? ' ─ ' : '') + '[' + q.category + ']';
-  if (q.area) meta += (meta ? ' ─ ' : '') + '〈' + q.area + '〉';
-  if (q.item) meta += (meta ? ' ─ ' : '') + '《' + q.item + '》';
   document.getElementById('qviewMeta').textContent = meta || '（情報なし）';
 
   document.getElementById('qviewQuestion').innerHTML = renderQuestion(q.question || '');
@@ -1971,7 +1808,7 @@ function resetQuiz() {
 // 起動時: localStorageが空なら questions-data.json を自動ロード
 // 起動時: サーバのJSONを取得し、localStorageと内容が異なれば更新する
 (function bootstrap() {
-  fetch('mondai-data.json', { cache: 'no-cache' })
+  fetch('questions-data.json', { cache: 'no-cache' })
     .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
     .then(function(data) {
       if (!Array.isArray(data) || data.length === 0) return;
@@ -1979,13 +1816,14 @@ function resetQuiz() {
       var remoteStr = JSON.stringify(data);
       if (stored !== remoteStr) {
         localStorage.setItem(STORAGE_KEY, remoteStr);
+        // 既存データから件数が変わった場合のみ通知
         var hadOldData = stored && stored !== '[]';
         if (hadOldData) {
           try {
             var oldCount = JSON.parse(stored).length;
             var newCount = data.length;
             if (oldCount !== newCount) {
-              console.log('[問題演習＆要点理解] データ更新: ' + oldCount + '問 → ' + newCount + '問');
+              console.log('[過去問演習] データ更新: ' + oldCount + '問 → ' + newCount + '問');
             }
           } catch (e) {}
         }

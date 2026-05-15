@@ -18,11 +18,23 @@ body {
 header {
   background: linear-gradient(135deg, #e67e22, #f39c12);
   color: #fff;
-  padding: 16px 20px;
+  padding: 22px 20px;
   text-align: center;
   box-shadow: 0 2px 8px rgba(0,0,0,.15);
 }
-header h1 { font-size: 1.2em; letter-spacing: .05em; }
+header h1 {
+  font-size: 1.7em;
+  letter-spacing: .04em;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-shadow: 0 2px 4px rgba(0,0,0,.25);
+}
+header h1 .title-icon {
+  font-size: 1.1em;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,.35));
+}
 .header-links { margin-top: 8px; }
 .header-links a {
   color: rgba(255,255,255,.85);
@@ -128,7 +140,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 .mode-card:hover .mode-arrow { color: #e67e22; }
 
 @media (max-width: 600px) {
-  header h1 { font-size: 1.05em; }
+  header h1 { font-size: 1.25em; }
   .mode-card { padding: 20px; gap: 14px; }
   .mode-icon { width: 52px; height: 52px; font-size: 1.5em; }
   .mode-title { font-size: 1.05em; }
@@ -138,9 +150,9 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 <body>
 
 <header>
-  <h1>教員採用試験 問題演習＆要点理解</h1>
+  <h1><span class="title-icon">💡</span>問題演習＆要点理解</h1>
   <div class="header-links">
-    <a href="index.html" class="link-quiz"><span class="link-icon">📝</span>過去問演習</a>
+    <a href="kakomon.html" class="link-quiz"><span class="link-icon">📝</span>過去問演習</a>
     <a href="glossary.html" class="link-glossary"><span class="link-icon">📚</span>用語解説</a>
     <a href="houki-scope.html" class="link-houki"><span class="link-icon">⚖️</span>教育法規スコープ</a>
   </div>
