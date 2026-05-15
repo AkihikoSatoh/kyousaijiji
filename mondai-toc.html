@@ -114,6 +114,183 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
   font-size: .9em;
 }
 
+/* チェック済みボックス（各タブ上部） */
+.checked-box-toc {
+  background: linear-gradient(135deg, #fef9e7, #fff8e1);
+  border: 1px solid #f1c40f;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 10px 14px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.checked-box-toc.empty {
+  background: #fafafa;
+  border-color: #e0e0e0;
+}
+.checked-box-toc .checked-info {
+  flex: 1;
+  font-size: .9em;
+  font-weight: bold;
+  color: #7d6608;
+}
+.checked-box-toc.empty .checked-info {
+  color: #999;
+  font-weight: normal;
+}
+.checked-box-toc .checked-list-btn {
+  padding: 6px 14px;
+  border: 1px solid #b7950b;
+  border-radius: 5px;
+  background: #fff;
+  color: #7d6608;
+  font-size: .82em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.checked-box-toc .checked-list-btn:hover { background: rgba(241,196,15,.18); }
+.checked-box-toc .checked-quiz-btn {
+  padding: 6px 16px;
+  border: none;
+  border-radius: 5px;
+  background: linear-gradient(135deg, #f1c40f, #d4a017);
+  color: #fff;
+  font-size: .85em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.checked-box-toc .checked-quiz-btn:hover { opacity: .9; }
+
+/* チェック済み一覧モーダル */
+.checked-overlay-toc {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.checked-overlay-toc.show { display: flex; }
+.checked-modal-toc {
+  background: #fff;
+  border-radius: 12px;
+  width: min(680px, 100%);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,.3);
+}
+.checked-modal-toc .header {
+  background: linear-gradient(135deg, #d4a017, #f1c40f);
+  color: #fff;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+}
+.checked-modal-toc .header h3 { font-size: 1.05em; }
+.checked-modal-toc .close-x {
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: rgba(255,255,255,.18);
+  color: #fff;
+  font-size: 1.2em;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.checked-modal-toc .body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 20px;
+}
+.checked-modal-toc .empty {
+  text-align: center;
+  color: #999;
+  padding: 40px 20px;
+}
+.checked-modal-toc .ci {
+  padding: 12px 14px;
+  border: 1px solid #eee;
+  border-left: 3px solid #f1c40f;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.checked-modal-toc .ci-body { flex: 1; min-width: 0; }
+.checked-modal-toc .ci-meta {
+  font-size: .78em;
+  color: #999;
+  margin-bottom: 4px;
+}
+.checked-modal-toc .ci-meta .tag {
+  display: inline-block;
+  background: #f0f2f5;
+  padding: 1px 8px;
+  border-radius: 4px;
+  margin-right: 4px;
+  color: #666;
+}
+.checked-modal-toc .ci-text {
+  font-size: .9em;
+  color: #444;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.checked-modal-toc .ci-remove {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 5px;
+  color: #e74c3c;
+  cursor: pointer;
+}
+.checked-modal-toc .ci-remove:hover { border-color: #e74c3c; background: #fdedec; }
+.checked-modal-toc .footer {
+  border-top: 1px solid #eee;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.checked-modal-toc .clear-all {
+  padding: 7px 14px;
+  border: 1px solid #e74c3c;
+  border-radius: 5px;
+  background: #fff;
+  color: #e74c3c;
+  font-size: .85em;
+  cursor: pointer;
+  font-family: inherit;
+}
+.checked-modal-toc .clear-all:hover { background: #fdedec; }
+.checked-modal-toc .close-btn {
+  padding: 7px 20px;
+  border: none;
+  border-radius: 5px;
+  background: #eee;
+  color: #555;
+  font-size: .88em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+
 .area-group {
   border-bottom: 1px solid #f0f0f0;
 }
@@ -232,13 +409,66 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
   </div>
 </div>
 
+<!-- チェック済み問題 一覧モーダル -->
+<div class="checked-overlay-toc" id="checkedOverlay" onclick="if(event.target===this)closeCheckedList()">
+  <div class="checked-modal-toc">
+    <div class="header">
+      <h3 id="checkedModalTitle">チェック済み問題</h3>
+      <button class="close-x" onclick="closeCheckedList()">×</button>
+    </div>
+    <div class="body" id="checkedModalBody"></div>
+    <div class="footer">
+      <button class="clear-all" onclick="clearChecksInCurrentCategory()">この分野をすべて解除</button>
+      <button class="close-btn" onclick="closeCheckedList()">閉じる</button>
+    </div>
+  </div>
+</div>
+
 <script>
 var STORAGE_KEY = 'kyosai_mondai';
+var CHECK_KEY = 'kyosai_mondai_checks';
 
 // タブとして表示する分野（6つ）。ローカル問題はタブに含めない。
 var TAB_CATEGORIES = [
   '教育原理', '学習指導要領', '教育史', '教育心理', '教育法規', '教育時事'
 ];
+
+var currentModalCategory = '';
+
+function loadChecks() {
+  try {
+    var s = localStorage.getItem(CHECK_KEY);
+    return s ? (JSON.parse(s) || {}) : {};
+  } catch (e) { return {}; }
+}
+function saveChecks(c) { localStorage.setItem(CHECK_KEY, JSON.stringify(c)); }
+
+// mondai-random.html と同じハッシュ関数（同一性を保証）
+function questionKey(q) {
+  var key = (q.question || '') + '|' + (q.choices && q.choices[0] || '');
+  var h = 0;
+  for (var i = 0; i < key.length; i++) {
+    h = ((h << 5) - h) + key.charCodeAt(i);
+    h |= 0;
+  }
+  return 'q' + h;
+}
+
+function getChecksByCategory(cat) {
+  var checks = loadChecks();
+  var result = [];
+  Object.keys(checks).forEach(function(k) {
+    var entry = checks[k];
+    if (entry && entry.question && (entry.question.category || '') === cat) {
+      result.push({ key: k, data: entry });
+    }
+  });
+  // チェック日時降順
+  result.sort(function(a, b) {
+    return (b.data.checkedAt || '').localeCompare(a.data.checkedAt || '');
+  });
+  return result;
+}
 
 function escapeHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -304,6 +534,20 @@ function renderToc(questions) {
     sectionHtml += '<div class="category-title">' + escapeHtml(cat) + '</div>';
     sectionHtml += '<div class="category-body">';
 
+    // チェック済み問題ボックス
+    var checkedInCat = getChecksByCategory(cat).length;
+    if (checkedInCat > 0) {
+      sectionHtml += '<div class="checked-box-toc">' +
+        '<div class="checked-info">★ チェック済みの問題: ' + checkedInCat + ' 問</div>' +
+        '<button class="checked-list-btn" onclick="openCheckedList(\'' + cat.replace(/'/g, "\\'") + '\')">一覧を見る</button>' +
+        '<button class="checked-quiz-btn" onclick="startCheckedQuiz(\'' + cat.replace(/'/g, "\\'") + '\')">演習する</button>' +
+      '</div>';
+    } else {
+      sectionHtml += '<div class="checked-box-toc empty">' +
+        '<div class="checked-info">★ チェック済みの問題はまだありません（演習中に問題を「チェック」すると、ここに表示されます）</div>' +
+      '</div>';
+    }
+
     var g = categoryGroups[cat];
     if (!g || g._areas.length === 0) {
       sectionHtml += '<div class="empty-category">この分野の問題はまだ登録されていません。</div>';
@@ -351,6 +595,84 @@ function renderToc(questions) {
     };
   });
 }
+
+// ── チェック済み問題: モーダル/演習 ──
+function openCheckedList(cat) {
+  currentModalCategory = cat;
+  var entries = getChecksByCategory(cat);
+  document.getElementById('checkedModalTitle').textContent = 'チェック済み問題 ─ ' + cat + '（' + entries.length + '問）';
+
+  var body = document.getElementById('checkedModalBody');
+  if (entries.length === 0) {
+    body.innerHTML = '<div class="empty">この分野でチェック済みの問題はありません</div>';
+  } else {
+    var html = '';
+    entries.forEach(function(e) {
+      var q = e.data.question || {};
+      var meta = '';
+      if (q.area) meta += '<span class="tag">' + escapeHtml(q.area) + '</span>';
+      if (q.item) meta += '<span class="tag">' + escapeHtml(q.item) + '</span>';
+      if (e.data.checkedAt) {
+        var dt = new Date(e.data.checkedAt);
+        meta += '<span style="color:#aaa;">★ ' + (dt.getMonth() + 1) + '/' + dt.getDate() + ' ' +
+          String(dt.getHours()).padStart(2, '0') + ':' + String(dt.getMinutes()).padStart(2, '0') + '</span>';
+      }
+      html +=
+        '<div class="ci">' +
+          '<div class="ci-body">' +
+            '<div class="ci-meta">' + meta + '</div>' +
+            '<div class="ci-text">' + escapeHtml(q.question || '') + '</div>' +
+          '</div>' +
+          '<button class="ci-remove" title="チェック解除" onclick="removeCheckedItem(\'' + e.key + '\')">×</button>' +
+        '</div>';
+    });
+    body.innerHTML = html;
+  }
+  document.getElementById('checkedOverlay').classList.add('show');
+}
+
+function closeCheckedList() {
+  document.getElementById('checkedOverlay').classList.remove('show');
+}
+
+function removeCheckedItem(key) {
+  var checks = loadChecks();
+  delete checks[key];
+  saveChecks(checks);
+  // 再描画
+  if (currentModalCategory) openCheckedList(currentModalCategory);
+  renderToc(loadQuestions());
+}
+
+function clearChecksInCurrentCategory() {
+  if (!currentModalCategory) return;
+  if (!confirm('「' + currentModalCategory + '」のチェックをすべて解除します。よろしいですか？')) return;
+  var checks = loadChecks();
+  Object.keys(checks).forEach(function(k) {
+    var entry = checks[k];
+    if (entry && entry.question && (entry.question.category || '') === currentModalCategory) {
+      delete checks[k];
+    }
+  });
+  saveChecks(checks);
+  closeCheckedList();
+  renderToc(loadQuestions());
+}
+
+function startCheckedQuiz(cat) {
+  var entries = getChecksByCategory(cat);
+  if (entries.length === 0) { alert('この分野でチェック済みの問題はありません。'); return; }
+  // mondai-random.html に checked=1 と category を渡す
+  var url = 'mondai-random.html?checked=1&category=' + encodeURIComponent(cat) + '&seq=1';
+  location.href = url;
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    var ov = document.getElementById('checkedOverlay');
+    if (ov && ov.classList.contains('show')) closeCheckedList();
+  }
+});
 
 // 起動時にサーバからデータ同期を試みてから描画
 (function bootstrap() {

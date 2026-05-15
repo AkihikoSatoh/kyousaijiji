@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>教採クエスト　学習コンテンツ</title>
+<title>教採ナビ　教職教養</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -15,189 +15,184 @@ body {
   min-height: 100vh;
 }
 
+/* === ヘッダー: モダンナビ風デザイン === */
 header {
   background:
-    /* 星のような輝点（スパークル） */
-    radial-gradient(1.5px 1.5px at 12% 22%, rgba(255,255,255,.9), transparent 50%),
-    radial-gradient(2px 2px at 88% 15%, rgba(255,213,79,.85), transparent 50%),
-    radial-gradient(1px 1px at 25% 70%, rgba(255,255,255,.75), transparent 50%),
-    radial-gradient(2px 2px at 75% 80%, rgba(255,193,7,.9), transparent 50%),
-    radial-gradient(1.5px 1.5px at 50% 12%, rgba(255,255,255,.85), transparent 50%),
-    radial-gradient(1px 1px at 60% 45%, rgba(255,255,255,.6), transparent 50%),
-    radial-gradient(2px 2px at 18% 88%, rgba(255,213,79,.8), transparent 50%),
-    radial-gradient(1px 1px at 92% 55%, rgba(255,255,255,.7), transparent 50%),
-    /* 中央上下のグロウ */
-    radial-gradient(ellipse at top, rgba(255,213,79,.22) 0%, transparent 55%),
-    radial-gradient(circle at 85% 80%, rgba(255,143,0,.18) 0%, transparent 55%),
-    /* ベース夜空 */
-    linear-gradient(135deg, #0a0e2c 0%, #1a237e 45%, #2c1968 100%);
+    radial-gradient(ellipse at top right, rgba(0,210,255,.18) 0%, transparent 55%),
+    radial-gradient(circle at 15% 90%, rgba(58,123,213,.22) 0%, transparent 50%),
+    linear-gradient(135deg, #0c2461 0%, #1e3799 45%, #0a3d62 100%);
   color: #fff;
-  padding: 52px 20px 30px;
+  padding: 44px 20px 32px;
   text-align: center;
-  box-shadow: 0 6px 22px rgba(0,0,0,.35);
+  box-shadow: 0 6px 24px rgba(0,0,0,.32);
   position: relative;
   overflow: hidden;
 }
-/* 上下のアクセントライン */
+/* 細かなグリッドパターン（テクノロジー感） */
 header::before {
   content: '';
   position: absolute;
-  left: 0; right: 0; top: 0;
-  height: 5px;
-  background: linear-gradient(90deg, transparent 0%, #ffd54f 20%, #ff6f00 50%, #ffd54f 80%, transparent 100%);
-  box-shadow: 0 0 14px rgba(255,193,7,.7);
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size: 36px 36px;
+  pointer-events: none;
 }
+/* 下部にシアンのグロウライン */
 header::after {
   content: '';
   position: absolute;
   left: 0; right: 0; bottom: 0;
-  height: 5px;
-  background: linear-gradient(90deg, transparent 0%, #ffd54f 20%, #ff6f00 50%, #ffd54f 80%, transparent 100%);
-  box-shadow: 0 0 14px rgba(255,193,7,.7);
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, #00d2ff 30%, #3a7bd5 50%, #00d2ff 70%, transparent 100%);
+  box-shadow: 0 0 18px rgba(0,210,255,.7);
 }
 
-.title-block {
+.brand {
   display: inline-flex;
   align-items: center;
-  gap: 22px;
+  gap: 18px;
   position: relative;
   z-index: 1;
-  margin-bottom: 8px;
 }
-/* 左右の装飾アイコンに「剣のクロス」を使用（冒険感） */
-.title-deco {
-  font-size: 1.9em;
-  color: #ffd54f;
-  text-shadow:
-    0 0 8px rgba(255,213,79,.95),
-    0 0 22px rgba(255,143,0,.7),
-    0 2px 4px rgba(0,0,0,.6);
-  animation: twinkle 2.4s ease-in-out infinite alternate;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,.5));
-}
-.title-deco.right { animation-delay: 1.2s; transform: scaleX(-1); }
-@keyframes twinkle {
-  0%   { opacity: .6;  transform: scale(.9)  rotate(-6deg); }
-  100% { opacity: 1;   transform: scale(1.15) rotate(6deg); }
-}
-.title-deco.right { animation: twinkle-r 2.4s ease-in-out infinite alternate; animation-delay: 1.2s; }
-@keyframes twinkle-r {
-  0%   { opacity: .6;  transform: scaleX(-1) scale(.9)  rotate(6deg); }
-  100% { opacity: 1;   transform: scaleX(-1) scale(1.15) rotate(-6deg); }
-}
-
-/* タイトル上のスター列（冒険らしさ） */
-.title-stars {
-  position: relative;
-  z-index: 1;
-  font-size: .85em;
-  letter-spacing: .8em;
-  padding-left: .8em;
-  color: #ffd54f;
-  margin-bottom: 4px;
-  opacity: .85;
-  text-shadow: 0 0 6px rgba(255,213,79,.7);
-  animation: float 4s ease-in-out infinite;
-}
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-2px); }
-}
-
-/* メインロゴ: 太いゴシックで力強く + 金色グラデ + 紺の縁取り + 立体影 */
-.title-main {
-  font-size: 3.4em;
-  font-weight: 900;
-  letter-spacing: .04em;
-  margin: 0;
-  font-family: 'Hiragino Kaku Gothic ProN W9', 'Hiragino Sans W9', 'Yu Gothic UI', 'Meiryo', 'MS Gothic', sans-serif;
-  background:
-    linear-gradient(180deg,
-      #fffde7 0%,
-      #ffe082 25%,
-      #ffd54f 50%,
-      #ff8f00 80%,
-      #e65100 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  /* 紺の縁取り（4方向）＋下方向の立体影＋足元のソフトシャドウ */
-  filter:
-    drop-shadow( 2px  0   0 #0d1336)
-    drop-shadow(-2px  0   0 #0d1336)
-    drop-shadow( 0    2px 0 #0d1336)
-    drop-shadow( 0   -2px 0 #0d1336)
-    drop-shadow( 0    5px 0 #1a237e)
-    drop-shadow( 0    8px 14px rgba(0,0,0,.7));
-  line-height: 1.1;
-}
-
-.title-divider {
+.brand-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #00d2ff, #3a7bd5);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  margin: 16px auto 10px;
+  font-size: 2em;
+  flex-shrink: 0;
+  box-shadow:
+    0 8px 20px rgba(0,210,255,.35),
+    inset 0 1px 0 rgba(255,255,255,.35),
+    inset 0 -2px 4px rgba(0,0,0,.15);
   position: relative;
-  z-index: 1;
 }
-.title-divider .line {
-  width: 70px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #ffd54f 50%, #ff8f00 100%);
-  box-shadow: 0 0 8px rgba(255,193,7,.5);
+.brand-icon::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(0,210,255,.4), transparent 60%);
+  z-index: -1;
+  filter: blur(8px);
 }
-.title-divider .line.right {
-  background: linear-gradient(90deg, #ff8f00 0%, #ffd54f 50%, transparent);
+.brand-text { text-align: left; }
+.brand-title {
+  font-size: 3em;
+  font-weight: 900;
+  letter-spacing: .01em;
+  line-height: 1;
+  margin: 0;
+  font-family: 'Hiragino Kaku Gothic ProN W9', 'Hiragino Sans W9', 'Yu Gothic UI', 'Meiryo', 'MS Gothic', sans-serif;
 }
-.title-divider .diamond {
-  font-size: 1.1em;
-  color: #ffd54f;
-  text-shadow: 0 0 10px rgba(255,213,79,.9), 0 0 18px rgba(255,143,0,.6);
-  animation: gem 2.6s ease-in-out infinite alternate;
-}
-@keyframes gem {
-  0%   { transform: rotate(0)   scale(1);    filter: brightness(1); }
-  100% { transform: rotate(360deg) scale(1.12); filter: brightness(1.3); }
-}
-
-.title-sub {
-  font-size: 1.05em;
-  letter-spacing: .55em;
-  padding-left: .55em;
-  font-weight: bold;
-  color: #fff;
+/* 教採: 黄色＋濃紺の縁取り＋立体影 */
+.brand-title .kyou {
+  color: #ffeb3b;
+  font-weight: 900;
   text-shadow:
-    0 0 4px rgba(255,213,79,.5),
-    0 2px 5px rgba(0,0,0,.6);
+    -1.5px -1.5px 0 #0a1942,
+     1.5px -1.5px 0 #0a1942,
+    -1.5px  1.5px 0 #0a1942,
+     1.5px  1.5px 0 #0a1942,
+     0      3px   0 #0a3d62,
+     0      6px   12px rgba(0,0,0,.55);
+}
+/* ナビ: 黄色＋濃紺の縁取り＋立体影 */
+.brand-title .navi {
+  color: #ffeb3b;
+  font-weight: 900;
+  padding-left: 6px;
+  text-shadow:
+    -1.5px -1.5px 0 #0a1942,
+     1.5px -1.5px 0 #0a1942,
+    -1.5px  1.5px 0 #0a1942,
+     1.5px  1.5px 0 #0a1942,
+     0      3px   0 #0a3d62,
+     0      6px   12px rgba(0,0,0,.55);
+}
+/* タグライン: HUD風の角括弧＋上下シアン罫の力強いバッジ */
+.brand-tagline {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  font-family: 'Hiragino Kaku Gothic ProN W9', 'Hiragino Sans W9', 'Yu Gothic UI', 'Meiryo', 'MS Gothic', sans-serif;
+}
+.brand-tagline .br {
+  font-size: 1.7em;
+  font-weight: 900;
+  color: #4fc3f7;
+  line-height: 1;
+  filter: drop-shadow(0 0 8px rgba(0,210,255,.85));
+}
+.brand-tagline .tag-text {
+  font-size: 1.25em;
+  letter-spacing: .4em;
+  padding: 6px 18px 6px calc(18px + .4em);
+  font-weight: 900;
+  color: #fff;
+  background:
+    linear-gradient(180deg, rgba(0,210,255,.18) 0%, rgba(58,123,213,.10) 100%);
+  border-top: 2px solid #4fc3f7;
+  border-bottom: 2px solid #4fc3f7;
   position: relative;
-  z-index: 1;
-  margin-bottom: 14px;
+  text-shadow:
+    -1px -1px 0 #0a1942,
+     1px -1px 0 #0a1942,
+    -1px  1px 0 #0a1942,
+     1px  1px 0 #0a1942,
+     0    0   16px rgba(79,195,247,.65);
+}
+.brand-tagline .tag-text::before,
+.brand-tagline .tag-text::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border: 2px solid #4fc3f7;
+  box-shadow: 0 0 6px rgba(0,210,255,.8);
+  background: #0a3d62;
+}
+.brand-tagline .tag-text::before {
+  top: -5px; left: -5px;
+  border-right: none; border-bottom: none;
+}
+.brand-tagline .tag-text::after {
+  bottom: -5px; right: -5px;
+  border-left: none; border-top: none;
 }
 header .subtitle {
-  font-size: .8em;
-  opacity: .78;
+  font-size: .78em;
+  opacity: .68;
   letter-spacing: .08em;
+  margin-top: 14px;
   position: relative;
   z-index: 1;
 }
 
 @media (max-width: 600px) {
-  header { padding: 38px 16px 22px; }
-  .title-main {
-    font-size: 2.2em;
-    letter-spacing: .02em;
-    filter:
-      drop-shadow( 1.5px  0    0 #0d1336)
-      drop-shadow(-1.5px  0    0 #0d1336)
-      drop-shadow( 0     1.5px 0 #0d1336)
-      drop-shadow( 0    -1.5px 0 #0d1336)
-      drop-shadow( 0     3px   0 #1a237e)
-      drop-shadow( 0     6px   10px rgba(0,0,0,.6));
+  header { padding: 32px 16px 24px; }
+  .brand { gap: 12px; }
+  .brand-icon { width: 52px; height: 52px; border-radius: 14px; font-size: 1.5em; }
+  .brand-title { font-size: 2em; }
+  .brand-title .kyou,
+  .brand-title .navi {
+    text-shadow:
+      -1px -1px 0 #0a1942,
+       1px -1px 0 #0a1942,
+      -1px  1px 0 #0a1942,
+       1px  1px 0 #0a1942,
+       0   2px 0 #0a3d62,
+       0   4px 8px rgba(0,0,0,.5);
   }
-  .title-block { gap: 12px; }
-  .title-deco { font-size: 1.4em; }
-  .title-sub { font-size: .9em; letter-spacing: .35em; padding-left: .35em; }
+  .brand-tagline { margin-top: 12px; gap: 6px; }
+  .brand-tagline .br { font-size: 1.4em; }
+  .brand-tagline .tag-text { font-size: 1em; letter-spacing: .28em; padding: 4px 12px 4px calc(12px + .28em); }
 }
 
 .container {
@@ -320,18 +315,17 @@ footer {
 <body>
 
 <header>
-  <div class="title-stars">✧ ✦ ✶ ✦ ✧</div>
-  <div class="title-block">
-    <span class="title-deco left">⚔</span>
-    <h1 class="title-main">教採クエスト</h1>
-    <span class="title-deco right">⚔</span>
+  <div class="brand">
+    <div class="brand-icon">🧭</div>
+    <div class="brand-text">
+      <h1 class="brand-title"><span class="kyou">教採</span><span class="navi">ナビ</span></h1>
+      <div class="brand-tagline">
+        <span class="br">〈</span>
+        <span class="tag-text">教職教養</span>
+        <span class="br">〉</span>
+      </div>
+    </div>
   </div>
-  <div class="title-divider">
-    <span class="line"></span>
-    <span class="diamond">❖</span>
-    <span class="line right"></span>
-  </div>
-  <div class="title-sub">学習コンテンツ</div>
   <div class="subtitle">Powered by 『教員養成セミナー』</div>
 </header>
 

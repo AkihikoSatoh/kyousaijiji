@@ -204,6 +204,30 @@ header h1 { font-size: 1.1em; letter-spacing: .05em; }
   color: #666;
 }
 
+.insert-img-btn {
+  padding: 5px 12px;
+  border: 1px solid #2980b9;
+  border-radius: 5px;
+  background: #fff;
+  color: #2980b9;
+  font-size: .82em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.insert-img-btn:hover { background: #ebf5fb; }
+
+/* プレビューでの画像 */
+.preview-question img,
+.q-img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 12px auto;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.15);
+}
+
 /* ── 問題一覧 ── */
 .list-card {
   background: #fff;
@@ -730,8 +754,12 @@ header h1 { font-size: 1.1em; letter-spacing: .05em; }
 
     <div class="field">
       <label><span class="num">1</span>問題文</label>
-      <textarea id="inputQuestion" rows="5" placeholder="問題文を入力してください&#10;※ __テキスト__ でアンダーラインが引けます"></textarea>
-      <div style="font-size:.8em;color:#999;margin-top:4px;">※ <code>__テキスト__</code> で囲むとアンダーラインが表示されます。例: <code>__下線部__</code> → <u>下線部</u></div>
+      <textarea id="inputQuestion" rows="5" placeholder="問題文を入力してください&#10;※ __テキスト__ でアンダーラインが引けます&#10;※ 「画像を挿入」ボタンで画像を埋め込めます"></textarea>
+      <div style="font-size:.8em;color:#999;margin-top:4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <button type="button" class="insert-img-btn" onclick="document.getElementById('imgUploadInput').click()">🖼️ 画像を挿入</button>
+        <input type="file" id="imgUploadInput" accept="image/*" style="display:none;" onchange="handleImageInsert(event)">
+        <span>※ <code>__テキスト__</code> で囲むとアンダーラインが表示されます。画像はカーソル位置に挿入されます。</span>
+      </div>
     </div>
 
     <div class="choices-group">
@@ -915,6 +943,55 @@ function updateInfo() {
 }
 
 // ── フォーム操作 ──
+// ── 画像挿入 ──
+function handleImageInsert(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = new Image();
+    img.onload = function() {
+      // 大きすぎる画像はリサイズ（長辺最大 800px）
+      var maxSize = 800;
+      var w = img.width, h = img.height;
+      if (w > maxSize || h > maxSize) {
+        if (w >= h) { h = h * maxSize / w; w = maxSize; }
+        else        { w = w * maxSize / h; h = maxSize; }
+      }
+      var canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+
+      // PNGで画像種別が明確な場合はPNG、それ以外はJPEGで圧縮
+      var dataUrl = (file.type === 'image/png')
+        ? canvas.toDataURL('image/png')
+        : canvas.toDataURL('image/jpeg', 0.85);
+
+      // テキストエリアのカーソル位置に挿入
+      var ta = document.getElementById('inputQuestion');
+      var pos = (ta.selectionStart != null) ? ta.selectionStart : ta.value.length;
+      var v = ta.value;
+      var prefix = (pos > 0 && v.charAt(pos - 1) !== '\n') ? '\n' : '';
+      var suffix = (pos < v.length && v.charAt(pos) !== '\n') ? '\n' : '';
+      var insertText = prefix + '![](' + dataUrl + ')' + suffix;
+      ta.value = v.substring(0, pos) + insertText + v.substring(pos);
+
+      // ファイルサイズ警告
+      var kb = Math.round(dataUrl.length / 1024);
+      if (kb > 200) {
+        showToast('画像を挿入しました（' + kb + ' KB ── やや大きめです）');
+      } else {
+        showToast('画像を挿入しました（' + kb + ' KB）');
+      }
+      ta.focus();
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+
 function clearForm() {
   document.getElementById('inputQuestion').value = '';
   for (var i = 1; i <= 8; i++) {
@@ -1121,7 +1198,23 @@ function deleteSelected() {
 
 // ── プレビュー ──
 function renderWithUnderline(str) {
-  return escapeHtml(str).replace(/__(.+?)__/g, '<u>$1</u>');
+  if (!str) return '';
+  var s = String(str);
+  // 画像記法 ![](URL) を仮プレースホルダに退避
+  var images = [];
+  s = s.replace(/!\[\]\(([^)]+)\)/g, function(_, url) {
+    images.push(url);
+    return 'IMG' + (images.length - 1) + '';
+  });
+  // HTMLエスケープ＋アンダーライン
+  s = escapeHtml(s).replace(/__(.+?)__/g, '<u>$1</u>');
+  // プレースホルダ → <img>
+  for (var i = 0; i < images.length; i++) {
+    var marker = 'IMG' + i + '';
+    var safe = images[i].replace(/"/g, '&quot;');
+    s = s.split(marker).join('<img class="q-img" src="' + safe + '" alt="">');
+  }
+  return s;
 }
 
 function previewForm() {

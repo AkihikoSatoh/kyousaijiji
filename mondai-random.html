@@ -277,6 +277,14 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
   padding-bottom: 16px;
   border-bottom: 1px dashed #ddd;
 }
+.q-img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 14px auto;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+}
 
 /* ── 選択肢 ── */
 .choices { display: flex; flex-direction: column; gap: 10px; }
@@ -1114,7 +1122,23 @@ function escapeHtml(str) {
 }
 
 function renderQuestion(str) {
-  return escapeHtml(str).replace(/__(.+?)__/g, '<u>$1</u>');
+  if (!str) return '';
+  var s = String(str);
+  // 画像記法 ![](URL) を抽出して仮プレースホルダ化
+  var images = [];
+  s = s.replace(/!\[\]\(([^)]+)\)/g, function(_, url) {
+    images.push(url);
+    return 'IMG' + (images.length - 1) + '';
+  });
+  // HTMLエスケープ＋アンダーライン
+  s = escapeHtml(s).replace(/__(.+?)__/g, '<u>$1</u>');
+  // プレースホルダを<img>に展開
+  for (var i = 0; i < images.length; i++) {
+    var marker = 'IMG' + i + '';
+    var safe = images[i].replace(/"/g, '&quot;');
+    s = s.split(marker).join('<img class="q-img" src="' + safe + '" alt="">');
+  }
+  return s;
 }
 
 function shuffle(arr) {
@@ -1167,7 +1191,7 @@ function init() {
   loadQuestions();
 
   // URLパラメータの解析
-  var tocCategory = '', tocArea = '', tocItem = '', isSequential = false;
+  var tocCategory = '', tocArea = '', tocItem = '', isSequential = false, isCheckedMode = false;
   try {
     var params = new URLSearchParams(window.location.search);
     termFilter = params.get('term') || '';
@@ -1175,6 +1199,7 @@ function init() {
     tocArea = params.get('area') || '';
     tocItem = params.get('item') || '';
     isSequential = params.get('seq') === '1';
+    isCheckedMode = params.get('checked') === '1';
   } catch (e) {
     termFilter = '';
   }
@@ -1191,8 +1216,23 @@ function init() {
       if (tocItem && q.item !== tocItem) return false;
       return true;
     });
+    // チェック済みモード: チェックされた問題のみに絞り込み
+    if (isCheckedMode) {
+      var checks = {};
+      try { checks = JSON.parse(localStorage.getItem(CHECK_KEY) || '{}') || {}; } catch (e) {}
+      pool = pool.filter(function(q) {
+        // mondai-toc と同じハッシュロジック
+        var key = (q.question || '') + '|' + (q.choices && q.choices[0] || '');
+        var h = 0;
+        for (var ki = 0; ki < key.length; ki++) {
+          h = ((h << 5) - h) + key.charCodeAt(ki);
+          h |= 0;
+        }
+        return !!checks['q' + h];
+      });
+    }
     if (pool.length === 0) {
-      alert('該当する問題がありません。');
+      alert(isCheckedMode ? 'チェック済みの問題がありません。' : '該当する問題がありません。');
       location.href = 'mondai-toc.html';
       return;
     }
