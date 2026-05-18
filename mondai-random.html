@@ -286,6 +286,33 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
   box-shadow: 0 2px 8px rgba(0,0,0,.15);
 }
 
+/* 個人実績エリア */
+.stats-area {
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: #f0f4f8;
+  border-radius: 6px;
+  font-size: .88em;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.stats-area:empty { display: none; }
+.stats-area .stats-label { font-weight: bold; color: #2c3e50; }
+.stats-area .rate { color: #2980b9; }
+.stats-area .rate.low { color: #c0392b; }
+.stats-area .weak-badge {
+  margin-left: auto;
+  padding: 2px 10px;
+  background: #fadbd8;
+  color: #c0392b;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: .9em;
+}
+
 /* ── 選択肢 ── */
 .choices { display: flex; flex-direction: column; gap: 10px; }
 
@@ -1001,6 +1028,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
           <div class="result-label" id="resultLabel"></div>
           <div class="result-answer" id="resultAnswer"></div>
           <div class="explanation" id="explanationArea"></div>
+          <div class="stats-area" id="statsArea"></div>
         </div>
       </div>
     </div>
@@ -1107,6 +1135,7 @@ let tocCurrentItem = '';
 const SESSION_KEY = 'kyosai_mondai_session';
 const MEMO_KEY = 'kyosai_mondai_memos';
 const CHECK_KEY = 'kyosai_mondai_checks';
+const STATS_KEY = 'kyosai_mondai_stats';
 
 function loadQuestions() {
   try {
@@ -1379,11 +1408,39 @@ function showQuestion() {
   resultBox.className = 'result-box';
   resultBox.style.display = 'none';
   document.getElementById('explanationArea').textContent = '';
+  var statsArea0 = document.getElementById('statsArea');
+  if (statsArea0) statsArea0.innerHTML = '';
   document.getElementById('nextBtn').className = 'next-btn';
 
   updateMemoButton();
   updateCheckButton();
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── 解答実績（統計）の記録・取得 ──
+function loadStats() {
+  try { return JSON.parse(localStorage.getItem(STATS_KEY) || '{}') || {}; }
+  catch (e) { return {}; }
+}
+function saveStats(s) { localStorage.setItem(STATS_KEY, JSON.stringify(s)); }
+function recordAnswer(q, isCorrect) {
+  var key = questionKey(q);
+  var s = loadStats();
+  if (!s[key]) s[key] = { answered: 0, correct: 0, lastAt: '' };
+  s[key].answered++;
+  if (isCorrect) s[key].correct++;
+  s[key].lastAt = new Date().toISOString();
+  saveStats(s);
+  return s[key];
+}
+function getStatsFor(q) {
+  var key = questionKey(q);
+  var s = loadStats();
+  return s[key] || { answered: 0, correct: 0 };
+}
+function correctRate(st) {
+  if (!st || !st.answered) return null;
+  return Math.round((st.correct / st.answered) * 100);
 }
 
 function selectAnswer(idx, choices) {
@@ -1409,6 +1466,9 @@ function selectAnswer(idx, choices) {
     wrongQuestions.push(q);
   }
 
+  // 解答実績の記録（永続化）
+  recordAnswer(q, isCorrect);
+
   document.getElementById('correctCount').textContent = correctTotal;
   document.getElementById('wrongCount').textContent = wrongTotal;
 
@@ -1433,6 +1493,22 @@ function selectAnswer(idx, choices) {
     expArea.innerHTML = '<strong>【解説】</strong><br>' + renderQuestion(q.explanation);
   } else {
     expArea.textContent = '';
+  }
+
+  // 個人実績の表示
+  var statsArea = document.getElementById('statsArea');
+  if (statsArea) {
+    var st = getStatsFor(q);
+    var rate = correctRate(st);
+    var rateCls = (rate !== null && rate <= 50 && st.answered >= 2) ? ' low' : '';
+    statsArea.innerHTML =
+      '<span class="stats-label">📊 あなたの実績</span>' +
+      '<span>解答 <strong>' + st.answered + '</strong> 回</span>' +
+      '<span>正答率 <strong class="rate' + rateCls + '">' +
+        (rate !== null ? rate + '%' : '─') +
+      '</strong></span>' +
+      (rate !== null && rate <= 50 && st.answered >= 2
+        ? '<span class="weak-badge">⚠ 苦手問題</span>' : '');
   }
 
   // 次へボタン

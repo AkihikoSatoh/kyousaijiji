@@ -114,6 +114,50 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
   font-size: .9em;
 }
 
+/* 分野統計バナー */
+.category-stats {
+  margin: 10px 14px 12px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, #e3f2fd, #e1f5fe);
+  border: 1px solid #90caf9;
+  border-left: 4px solid #1976d2;
+  border-radius: 6px;
+  font-size: .88em;
+  color: #0d47a1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+.category-stats.empty {
+  background: #fafafa;
+  border-color: #e0e0e0;
+  border-left-color: #bdbdbd;
+  color: #999;
+}
+.category-stats .cs-label { font-weight: bold; }
+.category-stats strong { font-size: 1.1em; color: #1565c0; }
+.category-stats .rate-low strong { color: #c0392b; }
+
+/* 項目行の正答率・ハイライト */
+.item-rate {
+  font-size: .82em;
+  color: #1976d2;
+  font-weight: bold;
+}
+.item-rate.unrated { color: #bbb; font-weight: normal; }
+.item-row.low-rate {
+  background: #fef5e7;
+  border-left: 3px solid #e67e22;
+  padding-left: 61px; /* 64 - 3 to keep alignment */
+}
+.item-row .item-rate.low {
+  color: #c0392b;
+}
+.item-row.low-rate .item-rate.low::before {
+  content: '⚠ ';
+}
+
 /* チェック済みボックス（各タブ上部） */
 .checked-box-toc {
   background: linear-gradient(135deg, #fef9e7, #fff8e1);
@@ -427,6 +471,27 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 <script>
 var STORAGE_KEY = 'kyosai_mondai';
 var CHECK_KEY = 'kyosai_mondai_checks';
+var STATS_KEY = 'kyosai_mondai_stats';
+
+function loadStats() {
+  try { return JSON.parse(localStorage.getItem(STATS_KEY) || '{}') || {}; }
+  catch (e) { return {}; }
+}
+// 質問配列の合計集計（questionKey は後段で定義）
+function aggregateStats(questions) {
+  var stats = loadStats();
+  var ans = 0, cor = 0, withData = 0;
+  questions.forEach(function(q) {
+    var s = stats[questionKey(q)];
+    if (s && s.answered > 0) {
+      ans += s.answered;
+      cor += s.correct;
+      withData++;
+    }
+  });
+  var rate = ans > 0 ? Math.round((cor / ans) * 100) : null;
+  return { answered: ans, correct: cor, rate: rate, count: questions.length, withData: withData };
+}
 
 // タブとして表示する分野（6つ）。ローカル問題はタブに含めない。
 var TAB_CATEGORIES = [
@@ -534,6 +599,29 @@ function renderToc(questions) {
     sectionHtml += '<div class="category-title">' + escapeHtml(cat) + '</div>';
     sectionHtml += '<div class="category-body">';
 
+    // 分野統計バナー
+    var catQuestions = [];
+    if (categoryGroups[cat]) {
+      categoryGroups[cat]._areas.forEach(function(area) {
+        categoryGroups[cat]._data[area]._items.forEach(function(item) {
+          catQuestions = catQuestions.concat(categoryGroups[cat]._data[area]._data[item]);
+        });
+      });
+    }
+    var catStats = aggregateStats(catQuestions);
+    if (catStats.answered > 0) {
+      var catRateCls = (catStats.rate !== null && catStats.rate <= 50) ? ' rate-low' : '';
+      sectionHtml += '<div class="category-stats' + catRateCls + '">' +
+        '<span class="cs-label">📊 ' + escapeHtml(cat) + ' の実績</span>' +
+        '<span>累計 <strong>' + catStats.answered + '</strong> 回</span>' +
+        '<span>正答率 <strong>' + catStats.rate + '%</strong></span>' +
+      '</div>';
+    } else {
+      sectionHtml += '<div class="category-stats empty">' +
+        '<span class="cs-label">📊 まだ解答実績がありません</span>' +
+      '</div>';
+    }
+
     // チェック済み問題ボックス
     var checkedInCat = getChecksByCategory(cat).length;
     if (checkedInCat > 0) {
@@ -567,10 +655,21 @@ function renderToc(questions) {
                     '&area=' + encodeURIComponent(area) +
                     '&item=' + encodeURIComponent(item) +
                     '&seq=1';
-          sectionHtml += '<div class="item-row">' +
+          // 項目統計
+          var itemStats = aggregateStats(qs);
+          var isLow = (itemStats.rate !== null && itemStats.rate <= 50 && itemStats.answered >= 2);
+          var rowCls = isLow ? 'item-row low-rate' : 'item-row';
+          var rateHtml;
+          if (itemStats.rate !== null) {
+            rateHtml = '<span class="item-rate' + (isLow ? ' low' : '') + '">正答率 ' + itemStats.rate + '%</span>';
+          } else {
+            rateHtml = '<span class="item-rate unrated">未挑戦</span>';
+          }
+          sectionHtml += '<div class="' + rowCls + '">' +
             '<span class="item-num">' + itemNum + '</span>' +
             '<span class="item-name">' + escapeHtml(item) + '</span>' +
             '<span class="item-count">（' + qs.length + '問）</span>' +
+            rateHtml +
             '<a href="' + url + '" class="item-go">演習</a>' +
           '</div>';
         });
