@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>教採ナビ　教職教養</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  background: #f0f2f5;
+  color: #333;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* === ヘッダー: モダンナビ風デザイン === */
+header {
+  background:
+    radial-gradient(ellipse at top right, rgba(0,210,255,.18) 0%, transparent 55%),
+    radial-gradient(circle at 15% 90%, rgba(58,123,213,.22) 0%, transparent 50%),
+    linear-gradient(135deg, #0c2461 0%, #1e3799 45%, #0a3d62 100%);
+  color: #fff;
+  padding: 44px 20px 32px;
+  text-align: center;
+  box-shadow: 0 6px 24px rgba(0,0,0,.32);
+  position: relative;
+  overflow: hidden;
+}
+/* 細かなグリッドパターン（テクノロジー感） */
+header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size: 36px 36px;
+  pointer-events: none;
+}
+/* 下部にシアンのグロウライン */
+header::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, #00d2ff 30%, #3a7bd5 50%, #00d2ff 70%, transparent 100%);
+  box-shadow: 0 0 18px rgba(0,210,255,.7);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  position: relative;
+  z-index: 1;
+}
+.brand-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2em;
+  flex-shrink: 0;
+  box-shadow:
+    0 8px 20px rgba(0,210,255,.35),
+    inset 0 1px 0 rgba(255,255,255,.35),
+    inset 0 -2px 4px rgba(0,0,0,.15);
+  position: relative;
+}
+.brand-icon::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(0,210,255,.4), transparent 60%);
+  z-index: -1;
+  filter: blur(8px);
+}
+.brand-text { text-align: left; }
+/* 教採ナビ（小さなサブブランド表記） */
+.sub-brand {
+  font-size: 1em;
+  font-weight: 900;
+  letter-spacing: .12em;
+  line-height: 1;
+  margin-bottom: 10px;
+  font-family: 'Hiragino Kaku Gothic ProN W9', 'Hiragino Sans W9', 'Yu Gothic UI', 'Meiryo', sans-serif;
+}
+.sub-brand .kyou,
+.sub-brand .navi {
+  color: #ffeb3b;
+  text-shadow:
+    -1px -1px 0 #0a1942,
+     1px -1px 0 #0a1942,
+    -1px  1px 0 #0a1942,
+     1px  1px 0 #0a1942,
+     0    2px 4px rgba(0,0,0,.5);
+}
+.sub-brand .navi { padding-left: 3px; }
+
+/* 教職教養（メインタイトル: 大きく、HUD風） */
+.main-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  font-family: 'Hiragino Kaku Gothic ProN W9', 'Hiragino Sans W9', 'Yu Gothic UI', 'Meiryo', 'MS Gothic', sans-serif;
+}
+.main-title .br {
+  font-size: 1.9em;
+  font-weight: 900;
+  color: #4fc3f7;
+  line-height: 1;
+  filter: drop-shadow(0 0 10px rgba(0,210,255,.85));
+}
+.main-title .tag-text {
+  font-size: 2em;
+  letter-spacing: .12em;
+  padding: 7px 20px 7px calc(20px + .12em);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1;
+  background:
+    linear-gradient(180deg, rgba(0,210,255,.20) 0%, rgba(58,123,213,.12) 100%);
+  border-top: 3px solid #4fc3f7;
+  border-bottom: 3px solid #4fc3f7;
+  position: relative;
+  text-shadow:
+    -1.5px -1.5px 0 #0a1942,
+     1.5px -1.5px 0 #0a1942,
+    -1.5px  1.5px 0 #0a1942,
+     1.5px  1.5px 0 #0a1942,
+     0      4px   0 #0a3d62,
+     0      0     22px rgba(79,195,247,.7);
+}
+.main-title .tag-text::before,
+.main-title .tag-text::after {
+  content: '';
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border: 2px solid #4fc3f7;
+  box-shadow: 0 0 8px rgba(0,210,255,.9);
+  background: #0a3d62;
+}
+.main-title .tag-text::before {
+  top: -6px; left: -6px;
+  border-right: none; border-bottom: none;
+}
+.main-title .tag-text::after {
+  bottom: -6px; right: -6px;
+  border-left: none; border-top: none;
+}
+header .subtitle {
+  font-size: .78em;
+  opacity: .68;
+  letter-spacing: .08em;
+  margin-top: 14px;
+  position: relative;
+  z-index: 1;
+}
+.header-back {
+  margin-top: 18px;
+  position: relative;
+  z-index: 1;
+}
+.back-to-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 22px;
+  background: #34495e;
+  color: #fff;
+  border: 1px solid #34495e;
+  border-radius: 7px;
+  text-decoration: none;
+  font-size: .95em;
+  font-weight: bold;
+  letter-spacing: .04em;
+  transition: background .15s;
+}
+.back-to-home:hover { background: #1c2833; }
+
+@media (max-width: 600px) {
+  header { padding: 32px 16px 24px; }
+  .brand { gap: 12px; }
+  .brand-icon { width: 52px; height: 52px; border-radius: 14px; font-size: 1.5em; }
+  .sub-brand { font-size: .88em; margin-bottom: 6px; }
+  .main-title { gap: 8px; }
+  .main-title .br { font-size: 1.4em; }
+  .main-title .tag-text {
+    font-size: 1.3em;
+    letter-spacing: .08em;
+    padding: 4px 12px 4px calc(12px + .08em);
+    text-shadow:
+      -1px -1px 0 #0a1942,
+       1px -1px 0 #0a1942,
+      -1px  1px 0 #0a1942,
+       1px  1px 0 #0a1942,
+       0   3px 0 #0a3d62,
+       0   0   16px rgba(79,195,247,.65);
+  }
+  .main-title .tag-text::before,
+  .main-title .tag-text::after { width: 7px; height: 7px; }
+}
+
+.container {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 30px 16px;
+}
+
+.intro {
+  text-align: center;
+  color: #666;
+  font-size: .95em;
+  margin-bottom: 26px;
+  line-height: 1.9;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.menu-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 28px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  text-decoration: none;
+  color: inherit;
+  border: 2px solid transparent;
+  transition: all .15s;
+}
+.menu-card:hover {
+  border-color: var(--accent, #888);
+  box-shadow: 0 4px 18px rgba(0,0,0,.13);
+  transform: translateY(-2px);
+}
+
+.menu-icon {
+  flex-shrink: 0;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2em;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,.18);
+}
+.menu-card.mondai   { --accent: #f39c12; }
+.menu-card.mondai   .menu-icon { background: linear-gradient(135deg, #f39c12, #e67e22); }
+.menu-card.kakomon  { --accent: #2196f3; }
+.menu-card.kakomon  .menu-icon { background: linear-gradient(135deg, #2196f3, #1976d2); }
+.menu-card.glossary { --accent: #2ecc71; }
+.menu-card.glossary .menu-icon { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+.menu-card.houki    { --accent: #8d6e63; }
+.menu-card.houki    .menu-icon { background: linear-gradient(135deg, #8d6e63, #5d4037); }
+
+.menu-body { flex: 1; min-width: 0; }
+.menu-title {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 4px;
+}
+.menu-desc {
+  font-size: .9em;
+  color: #777;
+  line-height: 1.7;
+}
+.menu-arrow {
+  flex-shrink: 0;
+  font-size: 1.7em;
+  color: #bbb;
+  font-weight: bold;
+}
+.menu-card:hover .menu-arrow { color: var(--accent, #555); }
+
+.admin-link {
+  text-align: center;
+  margin-top: 32px;
+  padding-top: 18px;
+  border-top: 1px solid #e0e0e0;
+}
+.admin-link a {
+  display: inline-block;
+  padding: 8px 18px;
+  background: #fff;
+  color: #555;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: .85em;
+}
+.admin-link a:hover {
+  background: #f5f5f5;
+  border-color: #555;
+  color: #222;
+}
+
+footer {
+  text-align: center;
+  margin-top: 30px;
+  font-size: .75em;
+  color: #999;
+}
+
+@media (max-width: 600px) {
+  header h1 { font-size: 1.2em; }
+  .menu-card { padding: 18px 18px; gap: 14px; }
+  .menu-icon { width: 56px; height: 56px; font-size: 1.6em; }
+  .menu-title { font-size: 1.05em; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-icon">🧭</div>
+    <div class="brand-text">
+      <div class="sub-brand"><span class="kyou">教採</span><span class="navi">ナビ</span></div>
+      <h1 class="main-title">
+        <span class="br">〈</span>
+        <span class="tag-text">教職教養</span>
+        <span class="br">〉</span>
+      </h1>
+    </div>
+  </div>
+  <div class="header-back">
+    <a href="index.html" class="back-to-home">🏠 教採ナビ トップへ</a>
+  </div>
+  <div class="subtitle">Powered by 『教員養成セミナー』</div>
+</header>
+
+<div class="container">
+
+  <p class="intro">学習したいコンテンツを選んでください。</p>
+
+  <div class="menu">
+
+    <a href="mondai.html" class="menu-card mondai">
+      <div class="menu-icon">💡</div>
+      <div class="menu-body">
+        <div class="menu-title">問題演習＆要点理解</div>
+        <div class="menu-desc">予想問題で実力を養成。目次別演習とランダム演習に対応。</div>
+      </div>
+      <div class="menu-arrow">›</div>
+    </a>
+
+    <a href="kakomon.html" class="menu-card kakomon">
+      <div class="menu-icon">📝</div>
+      <div class="menu-body">
+        <div class="menu-title">過去問演習</div>
+        <div class="menu-desc">2021〜2025年度の全国教員採用試験の過去問に挑戦。</div>
+      </div>
+      <div class="menu-arrow">›</div>
+    </a>
+
+    <a href="glossary.html" class="menu-card glossary">
+      <div class="menu-icon">📚</div>
+      <div class="menu-body">
+        <div class="menu-title">用語解説</div>
+        <div class="menu-desc">人名・事項・キーワード検索で重要用語を確認。</div>
+      </div>
+      <div class="menu-arrow">›</div>
+    </a>
+
+    <a href="houki-scope.html" class="menu-card houki">
+      <div class="menu-icon">⚖️</div>
+      <div class="menu-body">
+        <div class="menu-title">教育法規スコープ</div>
+        <div class="menu-desc">必出27法令・317条文を収録。穴埋め演習も可能。</div>
+      </div>
+      <div class="menu-arrow">›</div>
+    </a>
+
+  </div>
+
+  <footer>© 教員養成セミナー</footer>
+
+</div>
+
+</body>
+</html>

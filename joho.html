@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>教採関連情報 ─ 教採ナビ</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  background: #f0f2f5;
+  color: #333;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+header {
+  background: linear-gradient(135deg, #117a65, #1abc9c);
+  color: #fff;
+  padding: 22px 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+}
+header h1 {
+  font-size: 1.7em;
+  letter-spacing: .04em;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-shadow: 0 2px 4px rgba(0,0,0,.25);
+}
+header h1 .title-icon {
+  font-size: 1.1em;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,.35));
+}
+.header-back { margin-top: 14px; }
+.header-back a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  background: #34495e;
+  color: #fff;
+  border: 1px solid #34495e;
+  border-radius: 7px;
+  text-decoration: none;
+  font-size: .9em;
+  font-weight: bold;
+}
+.header-back a:hover { background: #1c2833; }
+
+.container {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 30px 16px;
+}
+
+.intro {
+  text-align: center;
+  color: #666;
+  font-size: .98em;
+  margin-bottom: 26px;
+  line-height: 1.9;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.menu-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 22px 26px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  text-decoration: none;
+  color: inherit;
+  border: 2px solid transparent;
+  transition: all .15s;
+  position: relative;
+}
+.menu-card:hover {
+  border-color: #16a085;
+  box-shadow: 0 5px 18px rgba(0,0,0,.12);
+  transform: translateY(-2px);
+}
+
+.menu-icon {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.9em;
+  color: #fff;
+  background: linear-gradient(135deg, #1abc9c, #117a65);
+  box-shadow: 0 3px 10px rgba(22,160,133,.35);
+}
+
+.menu-body { flex: 1; min-width: 0; }
+.menu-title {
+  font-size: 1.15em;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 4px;
+}
+.menu-desc {
+  font-size: .88em;
+  color: #777;
+  line-height: 1.7;
+}
+.menu-arrow {
+  flex-shrink: 0;
+  font-size: 1.6em;
+  color: #bbb;
+  font-weight: bold;
+}
+.menu-card:hover .menu-arrow { color: #16a085; }
+
+.coming-soon {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: #f1c40f;
+  color: #fff;
+  font-size: .68em;
+  font-weight: bold;
+  padding: 2px 10px;
+  border-radius: 10px;
+  letter-spacing: .04em;
+}
+
+footer {
+  text-align: center;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+  font-size: .78em;
+  color: #999;
+}
+
+@media (max-width: 600px) {
+  header h1 { font-size: 1.25em; }
+  .menu-card { padding: 18px 18px; gap: 14px; }
+  .menu-icon { width: 52px; height: 52px; font-size: 1.5em; }
+  .menu-title { font-size: 1.02em; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1><span class="title-icon">📋</span>教採関連情報</h1>
+  <div class="header-back">
+    <a href="index.html">🏠 教採ナビ トップへ</a>
+  </div>
+</header>
+
+<div class="container">
+
+  <p class="intro">教員採用試験に関する各種情報を提供します。</p>
+
+  <div class="menu">
+
+    <a href="joho-about.html" class="menu-card">
+      <div class="menu-icon">🔰</div>
+      <div class="menu-body">
+        <div class="menu-title">教員採用試験とは？</div>
+        <div class="menu-desc">試験の概要、受験資格、合格までの流れなど、まず知っておきたい基本情報を解説します。</div>
+      </div>
+      <div class="menu-arrow">›</div>
+      <span class="coming-soon">準備中</span>
+    </a>
+
+    <a href="joho-schedule.html" class="menu-card">
+      <div class="menu-icon">📅</div>
+      <div class="menu-body">
+        <div class="menu-title">受験までの年間スケジュール＆月別Todoリスト</div>
+        <div class="menu-desc">試験本番までの1年間の学習計画と、月ごとにやるべきことをまとめています。</div>
+      </div>
+      <div class="menu-arrow">›</div>
+      <span class="coming-soon">準備中</span>
+    </a>
+
+    <a href="joho-strategy.html" class="menu-card">
+      <div class="menu-icon">🎯</div>
+      <div class="menu-body">
+        <div class="menu-title">試験別の対策法</div>
+        <div class="menu-desc">筆記試験・面接・模擬授業など、各試験種別ごとの効果的な対策法を紹介します。</div>
+      </div>
+      <div class="menu-arrow">›</div>
+      <span class="coming-soon">準備中</span>
+    </a>
+
+    <a href="joho-jichitai.html" class="menu-card">
+      <div class="menu-icon">🗾</div>
+      <div class="menu-body">
+        <div class="menu-title">自治体別・試験情報データベース</div>
+        <div class="menu-desc">全国の自治体ごとの試験日程・倍率・出題傾向などをデータベースで確認できます。</div>
+      </div>
+      <div class="menu-arrow">›</div>
+      <span class="coming-soon">準備中</span>
+    </a>
+
+  </div>
+
+  <footer>© 教員養成セミナー</footer>
+
+</div>
+
+</body>
+</html>

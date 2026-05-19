@@ -136,6 +136,8 @@ header p {
 .admin-card.houki .admin-icon { background: linear-gradient(135deg, #8d6e63, #5d4037); }
 .admin-card.mondai { --accent: #f39c12; }
 .admin-card.mondai .admin-icon { background: linear-gradient(135deg, #f39c12, #e67e22); }
+.admin-card.joho { --accent: #117a65; }
+.admin-card.joho .admin-icon { background: linear-gradient(135deg, #1abc9c, #117a65); }
 
 .admin-body { flex: 1; min-width: 0; }
 .admin-title {
@@ -259,7 +261,7 @@ header p {
 
   <div class="export-all-section">
     <p class="export-all-hint">
-      GitHub にアップロードする 4 つのデータ（<code>questions-data.json</code>、<code>mondai-data.json</code>、<code>glossary-data.json</code>、<code>houki-scope-data.js</code>）をまとめて書き出せます。<br>
+      GitHub にアップロードするデータ（<code>questions-data.json</code>、<code>mondai-data.json</code>、<code>glossary-data.json</code>、<code>houki-scope-data.js</code>、<code>joho-about-data.json</code>）をまとめて書き出せます。<br>
       <strong>🗂 フォルダに直接書き出す</strong>:
       初回は <code>kyosai-quiz</code> フォルダを選択。次回以降はそのフォルダに自動で上書き保存（Chrome / Edge のデスクトップ版のみ対応）。<br>
       <strong>📦 ダウンロード</strong>: 通常のダウンロードフォルダに4ファイルを保存（全ブラウザ対応）。
@@ -305,6 +307,15 @@ header p {
       <div class="admin-body">
         <div class="admin-title">教育法規スコープ　管理者画面</div>
         <div class="admin-desc">条文データの登録・編集・Excel入出力</div>
+      </div>
+      <div class="admin-arrow">›</div>
+    </a>
+
+    <a href="joho-about-admin.html" class="admin-card joho">
+      <div class="admin-icon">🔰</div>
+      <div class="admin-body">
+        <div class="admin-title">教員採用試験とは？　管理者画面</div>
+        <div class="admin-desc">「教員採用試験とは？」ページの本文・画像の編集</div>
       </div>
       <div class="admin-arrow">›</div>
     </a>
@@ -407,7 +418,8 @@ function exportAllToFolder() {
       { key: 'kyosai_questions',  file: 'questions-data.json', label: '過去問演習',         unit: '問', type: 'json' },
       { key: 'kyosai_mondai',     file: 'mondai-data.json',    label: '問題演習＆要点理解', unit: '問', type: 'json' },
       { key: 'kyosai_glossary',   file: 'glossary-data.json',  label: '用語解説',           unit: '語', type: 'json' },
-      { key: 'kyosai_houki_data', file: 'houki-scope-data.js', label: '教育法規スコープ',   unit: '条', type: 'js'  }
+      { key: 'kyosai_houki_data', file: 'houki-scope-data.js', label: '教育法規スコープ',   unit: '条', type: 'js'  },
+      { key: 'kyosai_joho_about', file: 'joho-about-data.json', label: '教員採用試験とは？', unit: '文字', type: 'single' }
     ];
 
     // 順次書き出し
@@ -419,23 +431,32 @@ function exportAllToFolder() {
       try { parsed = JSON.parse(raw); } catch (e) {
         return Promise.resolve({ t: t, ok: false, msg: 'JSON解析エラー' });
       }
-      if (!Array.isArray(parsed) || parsed.length === 0) {
-        return Promise.resolve({ t: t, ok: false, msg: 'データなし' });
-      }
-      var content;
-      if (t.type === 'js') {
-        // houki-scope-data.js 形式（バンドルJS）
-        content = '// 教育法規スコープ データ（管理画面より自動生成）\n' +
-                  'var HOUKI_DATA = ' + JSON.stringify(parsed, null, 1) + ';\n';
+      var content, count;
+      if (t.type === 'single') {
+        // joho-about のような単一オブジェクト形式
+        if (!parsed || typeof parsed.body !== 'string' || !parsed.body.trim()) {
+          return Promise.resolve({ t: t, ok: false, msg: 'データなし' });
+        }
+        content = JSON.stringify({ body: parsed.body }, null, 2);
+        count = parsed.body.length;
       } else {
-        content = JSON.stringify(parsed, null, 2);
+        if (!Array.isArray(parsed) || parsed.length === 0) {
+          return Promise.resolve({ t: t, ok: false, msg: 'データなし' });
+        }
+        if (t.type === 'js') {
+          content = '// 教育法規スコープ データ（管理画面より自動生成）\n' +
+                    'var HOUKI_DATA = ' + JSON.stringify(parsed, null, 1) + ';\n';
+        } else {
+          content = JSON.stringify(parsed, null, 2);
+        }
+        count = parsed.length;
       }
       return dirHandle.getFileHandle(t.file, { create: true })
         .then(function(fh) { return fh.createWritable(); })
         .then(function(w) {
           return w.write(content).then(function() { return w.close(); });
         })
-        .then(function() { return { t: t, ok: true, count: parsed.length }; })
+        .then(function() { return { t: t, ok: true, count: count }; })
         .catch(function(e) { return { t: t, ok: false, msg: e.message || '書き出し失敗' }; });
     });
 
@@ -472,20 +493,31 @@ function downloadJsonFile(storageKey, fileName, type) {
   try {
     raw = localStorage.getItem(storageKey);
     if (!raw) return { ok: false, count: 0 };
-    var arr = JSON.parse(raw);
-    if (!Array.isArray(arr) || arr.length === 0) return { ok: false, count: 0 };
   } catch (e) {
     return { ok: false, count: 0 };
   }
-  var parsed = JSON.parse(raw);
-  var content, mime;
-  if (type === 'js') {
+  var parsed;
+  try { parsed = JSON.parse(raw); } catch (e) { return { ok: false, count: 0 }; }
+
+  var content, mime, count;
+  if (type === 'single') {
+    if (!parsed || typeof parsed.body !== 'string' || !parsed.body.trim()) {
+      return { ok: false, count: 0 };
+    }
+    content = JSON.stringify({ body: parsed.body }, null, 2);
+    mime = 'application/json';
+    count = parsed.body.length;
+  } else if (type === 'js') {
+    if (!Array.isArray(parsed) || parsed.length === 0) return { ok: false, count: 0 };
     content = '// 教育法規スコープ データ（管理画面より自動生成）\n' +
               'var HOUKI_DATA = ' + JSON.stringify(parsed, null, 1) + ';\n';
     mime = 'application/javascript';
+    count = parsed.length;
   } else {
+    if (!Array.isArray(parsed) || parsed.length === 0) return { ok: false, count: 0 };
     content = JSON.stringify(parsed, null, 2);
     mime = 'application/json';
+    count = parsed.length;
   }
   var blob = new Blob([content], { type: mime });
   var url = URL.createObjectURL(blob);
@@ -496,7 +528,7 @@ function downloadJsonFile(storageKey, fileName, type) {
   a.click();
   document.body.removeChild(a);
   setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
-  return { ok: true, count: parsed.length };
+  return { ok: true, count: count };
 }
 
 function exportAllData() {
@@ -507,7 +539,8 @@ function exportAllData() {
     { key: 'kyosai_questions',  file: 'questions-data.json', label: '過去問演習',         unit: '問', type: 'json' },
     { key: 'kyosai_mondai',     file: 'mondai-data.json',    label: '問題演習＆要点理解', unit: '問', type: 'json' },
     { key: 'kyosai_glossary',   file: 'glossary-data.json',  label: '用語解説',           unit: '語', type: 'json' },
-    { key: 'kyosai_houki_data', file: 'houki-scope-data.js', label: '教育法規スコープ',   unit: '条', type: 'js'   }
+    { key: 'kyosai_houki_data', file: 'houki-scope-data.js', label: '教育法規スコープ',   unit: '条', type: 'js'   },
+    { key: 'kyosai_joho_about', file: 'joho-about-data.json', label: '教員採用試験とは？', unit: '文字', type: 'single' }
   ];
 
   var results = [];
@@ -523,7 +556,7 @@ function exportAllData() {
             : '⚠ ' + x.file + '（' + x.label + ' データなし — スキップ）';
         });
         summary.innerHTML = lines.join('<br>') +
-          '<br><br>👉 ダウンロードした 3 ファイルをそのまま GitHub にアップロードしてください。';
+          '<br><br>👉 ダウンロードしたファイルをそのまま GitHub にアップロードしてください。';
       }
     }, i * 350);
   });

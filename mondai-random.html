@@ -1503,10 +1503,9 @@ function selectAnswer(idx, choices) {
     var rateCls = (rate !== null && rate <= 50 && st.answered >= 2) ? ' low' : '';
     statsArea.innerHTML =
       '<span class="stats-label">📊 あなたの実績</span>' +
-      '<span>解答 <strong>' + st.answered + '</strong> 回</span>' +
       '<span>正答率 <strong class="rate' + rateCls + '">' +
         (rate !== null ? rate + '%' : '─') +
-      '</strong></span>' +
+      '</strong>（' + st.answered + '回解答）</span>' +
       (rate !== null && rate <= 50 && st.answered >= 2
         ? '<span class="weak-badge">⚠ 苦手問題</span>' : '');
   }

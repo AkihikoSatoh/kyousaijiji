@@ -613,8 +613,7 @@ function renderToc(questions) {
       var catRateCls = (catStats.rate !== null && catStats.rate <= 50) ? ' rate-low' : '';
       sectionHtml += '<div class="category-stats' + catRateCls + '">' +
         '<span class="cs-label">📊 ' + escapeHtml(cat) + ' の実績</span>' +
-        '<span>累計 <strong>' + catStats.answered + '</strong> 回</span>' +
-        '<span>正答率 <strong>' + catStats.rate + '%</strong></span>' +
+        '<span>正答率 <strong>' + catStats.rate + '%</strong>（' + catStats.answered + '回解答）</span>' +
       '</div>';
     } else {
       sectionHtml += '<div class="category-stats empty">' +
@@ -661,7 +660,7 @@ function renderToc(questions) {
           var rowCls = isLow ? 'item-row low-rate' : 'item-row';
           var rateHtml;
           if (itemStats.rate !== null) {
-            rateHtml = '<span class="item-rate' + (isLow ? ' low' : '') + '">正答率 ' + itemStats.rate + '%</span>';
+            rateHtml = '<span class="item-rate' + (isLow ? ' low' : '') + '">正答率 ' + itemStats.rate + '%（' + itemStats.answered + '回解答）</span>';
           } else {
             rateHtml = '<span class="item-rate unrated">未挑戦</span>';
           }

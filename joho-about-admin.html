@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>管理者画面 ─ 教員採用試験とは？</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  background: #f0f2f5;
+  color: #333;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* ── ヘッダー ── */
+header {
+  background: linear-gradient(135deg, #117a65, #1abc9c);
+  color: #fff;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+header h1 { font-size: 1.1em; letter-spacing: .04em; }
+.header-right { display: flex; gap: 8px; flex-wrap: wrap; }
+.header-btn {
+  padding: 6px 14px;
+  border: 1px solid rgba(255,255,255,.5);
+  border-radius: 6px;
+  background: transparent;
+  color: #fff;
+  font-size: .85em;
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: none;
+}
+.header-btn:hover { background: rgba(255,255,255,.15); }
+
+.container { max-width: 900px; margin: 0 auto; padding: 20px 16px; }
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  padding: 22px 24px;
+  margin-bottom: 20px;
+}
+.card h2 {
+  font-size: 1.05em;
+  color: #117a65;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #d1f2eb;
+}
+.card .hint {
+  font-size: .82em;
+  color: #777;
+  line-height: 1.7;
+  margin-bottom: 10px;
+}
+.card .hint code {
+  background: #f5f5f5;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: .9em;
+}
+
+.field { margin-bottom: 14px; }
+.field label {
+  display: block;
+  font-size: .9em;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 6px;
+}
+.field textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: .95em;
+  font-family: inherit;
+  line-height: 1.8;
+  resize: vertical;
+  min-height: 320px;
+}
+.field textarea:focus {
+  outline: none;
+  border-color: #1abc9c;
+  box-shadow: 0 0 0 2px rgba(26,188,156,.2);
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.btn {
+  padding: 9px 22px;
+  border: none;
+  border-radius: 6px;
+  font-size: .92em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btn:hover { opacity: .88; }
+.btn-save {
+  background: linear-gradient(135deg, #117a65, #1abc9c);
+  color: #fff;
+}
+.btn-clear { background: #eee; color: #555; }
+.btn-preview {
+  background: linear-gradient(135deg, #2e86c1, #1a5276);
+  color: #fff;
+}
+.btn-img {
+  padding: 7px 16px;
+  border: 1px solid #2980b9;
+  border-radius: 5px;
+  background: #fff;
+  color: #2980b9;
+  font-size: .85em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btn-img:hover { background: #ebf5fb; }
+
+/* 画像ライブラリ */
+.img-library {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+.lib-item {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px;
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.lib-item img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 4px;
+  background: #eee;
+}
+.lib-info {
+  font-size: .75em;
+  color: #666;
+  line-height: 1.4;
+}
+.lib-name {
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lib-actions {
+  display: flex;
+  gap: 4px;
+}
+.lib-insert {
+  flex: 1;
+  padding: 6px 4px;
+  border: 1px solid #2980b9;
+  background: #fff;
+  color: #2980b9;
+  border-radius: 4px;
+  font-size: .75em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.lib-insert:hover { background: #ebf5fb; }
+.lib-delete {
+  padding: 6px 10px;
+  border: 1px solid #e74c3c;
+  background: #fff;
+  color: #e74c3c;
+  border-radius: 4px;
+  font-size: .8em;
+  cursor: pointer;
+  font-family: inherit;
+}
+.lib-delete:hover { background: #fdedec; }
+.lib-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #aaa;
+  font-style: italic;
+  padding: 14px;
+  font-size: .85em;
+  border: 1px dashed #ddd;
+  border-radius: 6px;
+}
+.lib-hint {
+  font-size: .8em;
+  color: #666;
+  margin: 8px 0 4px;
+  line-height: 1.7;
+}
+.lib-clear {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 4px 10px;
+  border: 1px solid #aaa;
+  background: #fff;
+  color: #666;
+  border-radius: 4px;
+  font-size: .75em;
+  cursor: pointer;
+  font-family: inherit;
+}
+.lib-clear:hover { background: #f5f5f5; }
+.btn-export {
+  border: 1px solid #2e86c1; color: #2e86c1; background: #fff;
+  padding: 8px 16px; font-weight: bold; font-size: .85em;
+  border-radius: 6px; cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-export:hover { background: #eaf2f8; }
+.btn-import {
+  border: 1px solid #27ae60; color: #27ae60; background: #fff;
+  padding: 8px 16px; font-weight: bold; font-size: .85em;
+  border-radius: 6px; cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-import:hover { background: #eafaf1; }
+.btn-import input[type="file"] { display: none; }
+
+/* プレビュー */
+.preview-area {
+  border: 1px dashed #ccc;
+  border-radius: 8px;
+  padding: 22px;
+  background: #fafafa;
+  min-height: 100px;
+  font-size: .95em;
+  line-height: 2;
+  white-space: pre-wrap;
+}
+.preview-area:empty::before {
+  content: '「プレビューを更新」をクリックすると、ここに表示されます。';
+  color: #aaa;
+  font-style: italic;
+  font-size: .9em;
+}
+.preview-area strong { color: #117a65; font-size: 1.15em; }
+.preview-area b { font-weight: bold; }
+.preview-area .content-img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 14px auto;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.15);
+}
+
+/* トースト */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: #333;
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: .9em;
+  opacity: 0;
+  transition: all .3s;
+  z-index: 999;
+  pointer-events: none;
+}
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+@media (max-width: 600px) {
+  header { flex-wrap: wrap; }
+  .card { padding: 16px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>管理者画面（教員採用試験とは？）</h1>
+  <div class="header-right">
+    <a href="admin-index.html" class="header-btn">管理者画面ホーム</a>
+    <a href="joho-about.html" class="header-btn">ページを開く</a>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- データの引き継ぎ -->
+  <div class="card">
+    <h2>データの引き継ぎ</h2>
+    <p class="hint">編集内容をJSONファイルで書き出し／読み込みできます。別のPCへの移行や、GitHubへのアップロードにご利用ください。</p>
+    <div class="row">
+      <button class="btn-export" onclick="exportData()">⬇ エクスポート（joho-about-data.json）</button>
+      <label class="btn-import">
+        ⬆ インポート（JSON読み込み）
+        <input type="file" accept=".json,application/json" onchange="importData(event)">
+      </label>
+    </div>
+  </div>
+
+  <!-- 本文編集 -->
+  <div class="card">
+    <h2>本文を編集</h2>
+    <p class="hint">
+      本文は普通のテキストで入力します。改行はそのまま反映されます。<br>
+      ※ <code>***テキスト***</code> で<strong>大きい太字（強調）</strong>、<code>**テキスト**</code> で<b>通常の太字</b>、<code>__テキスト__</code> で<u>下線</u>になります。<br>
+      ※ 本文中の画像は <code>![](画像1)</code> のような短い記法で表示されます（保存・公開時には実画像に自動で展開されます）。
+    </p>
+    <div class="field">
+      <label>本文</label>
+      <textarea id="inputBody" placeholder="例:&#10;教員採用試験は、各都道府県・指定都市の教育委員会が実施する採用選考試験です。&#10;&#10;1. 筆記試験&#10;2. 面接試験&#10;..."></textarea>
+    </div>
+
+    <!-- 画像ライブラリ -->
+    <div class="field">
+      <label>画像</label>
+      <p class="lib-hint">
+        ① 「画像をアップロード」で1枚または複数枚まとめて追加します。<br>
+        ② 本文の挿入したい位置をクリックしてカーソルを置きます。<br>
+        ③ 各画像の「カーソル位置に挿入」ボタンで本文に挿入します。
+      </p>
+      <div class="row">
+        <button class="btn-img" type="button" onclick="document.getElementById('imgInput').click()">🖼️ 画像をアップロード（複数選択可）</button>
+        <input type="file" id="imgInput" accept="image/*" multiple style="display:none;" onchange="handleImageUpload(event)">
+        <button class="lib-clear" type="button" onclick="clearLibrary()">ライブラリをクリア</button>
+      </div>
+      <div class="img-library" id="imageLibrary"></div>
+    </div>
+    <div class="row">
+      <button class="btn btn-save" onclick="saveBody()">保存</button>
+      <button class="btn btn-preview" onclick="updatePreview()">プレビューを更新</button>
+      <button class="btn btn-clear" onclick="clearBody()">クリア</button>
+    </div>
+  </div>
+
+  <!-- プレビュー -->
+  <div class="card">
+    <h2>プレビュー</h2>
+    <div class="preview-area" id="previewArea"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var STORAGE_KEY = 'kyosai_joho_about';
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// 本文をHTMLに変換（画像・太字・下線対応）
+function renderBody(text) {
+  if (!text) return '';
+  var s = String(text);
+
+  // 画像記法を仮プレースホルダに退避
+  var images = [];
+  s = s.replace(/!\[\]\(([^)]+)\)/g, function(_, url) {
+    images.push(url);
+    return 'IMG' + (images.length - 1) + '';
+  });
+
+  // HTMLエスケープ
+  s = escapeHtml(s);
+
+  // 太字・下線
+  s = s.replace(/\*\*\*(.+?)\*\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+  s = s.replace(/__(.+?)__/g, '<u>$1</u>');
+
+  // プレースホルダ→<img>
+  for (var i = 0; i < images.length; i++) {
+    var marker = 'IMG' + i + '';
+    var safe = images[i].replace(/"/g, '&quot;');
+    s = s.split(marker).join('<img class="content-img" src="' + safe + '" alt="">');
+  }
+  return s;
+}
+
+// 起動時にlocalStorageから読み込み
+function loadBody() {
+  try {
+    var s = localStorage.getItem(STORAGE_KEY);
+    if (!s) return '';
+    var obj = JSON.parse(s);
+    return (obj && typeof obj.body === 'string') ? obj.body : '';
+  } catch (e) { return ''; }
+}
+
+function saveBody() {
+  var displayBody = document.getElementById('inputBody').value;
+  var fullBody = expandBody(displayBody);
+  var obj = { body: fullBody, updatedAt: new Date().toISOString() };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+  showToast('保存しました');
+  updatePreview();
+}
+
+function clearBody() {
+  if (!confirm('入力内容をクリアします。よろしいですか？\n（保存済みデータと画像ライブラリは残ります）')) return;
+  document.getElementById('inputBody').value = '';
+  document.getElementById('previewArea').innerHTML = '';
+}
+
+function updatePreview() {
+  var displayBody = document.getElementById('inputBody').value;
+  var fullBody = expandBody(displayBody);
+  document.getElementById('previewArea').innerHTML = renderBody(fullBody);
+}
+
+// ── 画像マップ（トークン ↔ 実データ） ──
+// textarea には短いトークン（例: 画像1）を表示し、保存・プレビュー時にdataURLへ展開する
+var imageMap = {};       // token -> { dataUrl, name, kb }
+var nextImgIdx = 1;
+var lastCursorPos = 0;
+
+// textarea のカーソル位置を常に追跡
+document.addEventListener('DOMContentLoaded', function() {
+  var ta = document.getElementById('inputBody');
+  if (!ta) return;
+  ['keyup', 'mouseup', 'focus', 'click', 'input'].forEach(function(ev) {
+    ta.addEventListener(ev, function() {
+      if (ta.selectionStart != null) lastCursorPos = ta.selectionStart;
+    });
+  });
+});
+
+// dataURL を含むフル本文 → トークン表示用本文
+function tokenizeBody(fullBody) {
+  if (!fullBody) return '';
+  return String(fullBody).replace(/!\[\]\(([^)]+)\)/g, function(m, url) {
+    if (url.indexOf('data:') !== 0) return m;
+    for (var t in imageMap) {
+      if (imageMap[t].dataUrl === url) return '![](' + t + ')';
+    }
+    var token = '画像' + nextImgIdx++;
+    imageMap[token] = {
+      dataUrl: url,
+      name: token,
+      kb: Math.round(url.length / 1024)
+    };
+    return '![](' + token + ')';
+  });
+}
+
+// トークン表示用本文 → dataURL に展開
+function expandBody(displayBody) {
+  if (!displayBody) return '';
+  return String(displayBody).replace(/!\[\]\(([^)]+)\)/g, function(m, ref) {
+    if (imageMap.hasOwnProperty(ref)) {
+      return '![](' + imageMap[ref].dataUrl + ')';
+    }
+    return m;
+  });
+}
+
+function processOneImage(file) {
+  return new Promise(function(resolve) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        var maxSize = 800;
+        var w = img.width, h = img.height;
+        if (w > maxSize || h > maxSize) {
+          if (w >= h) { h = h * maxSize / w; w = maxSize; }
+          else        { w = w * maxSize / h; h = maxSize; }
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        var dataUrl = (file.type === 'image/png')
+          ? canvas.toDataURL('image/png')
+          : canvas.toDataURL('image/jpeg', 0.85);
+        resolve({
+          dataUrl: dataUrl,
+          name: file.name || '(無題)',
+          kb: Math.round(dataUrl.length / 1024)
+        });
+      };
+      img.onerror = function() { resolve(null); };
+      img.src = e.target.result;
+    };
+    reader.onerror = function() { resolve(null); };
+    reader.readAsDataURL(file);
+  });
+}
+
+function handleImageUpload(event) {
+  var files = Array.prototype.slice.call(event.target.files || []);
+  if (!files.length) return;
+  Promise.all(files.map(processOneImage)).then(function(results) {
+    var ok = 0;
+    results.forEach(function(r) {
+      if (!r) return;
+      var token = '画像' + nextImgIdx++;
+      imageMap[token] = { dataUrl: r.dataUrl, name: r.name, kb: r.kb };
+      ok++;
+    });
+    renderLibrary();
+    showToast(ok + ' 枚をライブラリに追加しました');
+  });
+  event.target.value = '';
+}
+
+function sortedTokens() {
+  return Object.keys(imageMap).sort(function(a, b) {
+    var na = parseInt(a.replace(/^\D+/, ''), 10) || 0;
+    var nb = parseInt(b.replace(/^\D+/, ''), 10) || 0;
+    return na - nb;
+  });
+}
+
+function renderLibrary() {
+  var lib = document.getElementById('imageLibrary');
+  if (!lib) return;
+  var tokens = sortedTokens();
+  if (tokens.length === 0) {
+    lib.innerHTML = '<div class="lib-empty">アップロード済み画像はありません</div>';
+    return;
+  }
+  lib.innerHTML = tokens.map(function(token) {
+    var im = imageMap[token];
+    var safeName = escapeHtml(im.name);
+    return '<div class="lib-item">' +
+      '<img src="' + im.dataUrl + '" alt="">' +
+      '<div class="lib-info">' +
+        '<div class="lib-name" title="' + safeName + '"><strong>' + token + '</strong> <span style="color:#999;font-weight:normal;">(' + safeName + ')</span></div>' +
+        '<div>' + im.kb + ' KB</div>' +
+      '</div>' +
+      '<div class="lib-actions">' +
+        '<button class="lib-insert" onmousedown="event.preventDefault()" onclick="insertImageAtCursor(\'' + token + '\')">👆 カーソル位置に挿入</button>' +
+        '<button class="lib-delete" onclick="deleteLibraryImage(\'' + token + '\')" title="ライブラリから削除">🗑️</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function insertImageAtCursor(token) {
+  if (!imageMap[token]) return;
+  var ta = document.getElementById('inputBody');
+  var pos = (ta.selectionStart != null && document.activeElement === ta)
+    ? ta.selectionStart
+    : lastCursorPos;
+  if (pos == null || pos < 0 || pos > ta.value.length) pos = ta.value.length;
+
+  var v = ta.value;
+  var prefix = (pos > 0 && v.charAt(pos - 1) !== '\n') ? '\n' : '';
+  var suffix = (pos < v.length && v.charAt(pos) !== '\n') ? '\n' : '';
+  // ← トークン形式で挿入（dataURLは入れない）
+  var insertText = prefix + '![](' + token + ')' + suffix;
+  ta.value = v.substring(0, pos) + insertText + v.substring(pos);
+
+  var newPos = pos + insertText.length;
+  ta.focus();
+  ta.setSelectionRange(newPos, newPos);
+  lastCursorPos = newPos;
+
+  showToast('「' + token + '」を挿入しました');
+}
+
+function deleteLibraryImage(token) {
+  if (!imageMap[token]) return;
+  var ta = document.getElementById('inputBody');
+  var escToken = token.replace(/[\\^$.*+?()[\]{}|]/g, '\\$&');
+  var refRe = new RegExp('!\\[\\]\\(' + escToken + '\\)\\n?', 'g');
+  var matches = ta.value.match(refRe);
+  var n = matches ? matches.length : 0;
+  var msg = (n > 0)
+    ? '「' + token + '」は本文中に ' + n + ' か所挿入されています。\n削除すると、本文中の参照も同時に取り除かれます。よろしいですか？'
+    : 'ライブラリから「' + token + '」を削除しますか？';
+  if (!confirm(msg)) return;
+  if (n > 0) ta.value = ta.value.replace(refRe, '');
+  delete imageMap[token];
+  renderLibrary();
+  updatePreview();
+}
+
+function clearLibrary() {
+  if (Object.keys(imageMap).length === 0) { showToast('ライブラリは空です'); return; }
+  if (!confirm('ライブラリの画像をすべて削除しますか？\n（本文中の参照は無効になりますが、本文のテキストはそのままです）')) return;
+  imageMap = {};
+  nextImgIdx = 1;
+  renderLibrary();
+  updatePreview();
+}
+
+// JSONエクスポート（joho-about-data.json）
+function exportData() {
+  var displayBody = document.getElementById('inputBody').value;
+  if (!displayBody.trim()) { showToast('本文が空です'); return; }
+  var fullBody = expandBody(displayBody);
+  var data = { body: fullBody };
+  var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'joho-about-data.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('エクスポートしました');
+}
+
+// JSONインポート
+function importData(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      if (typeof data.body !== 'string') throw new Error('body フィールドがありません');
+      if (!confirm('現在の内容を上書きします。よろしいですか？\n（画像ライブラリもインポート内容で置き換わります）')) {
+        event.target.value = '';
+        return;
+      }
+      imageMap = {};
+      nextImgIdx = 1;
+      var displayBody = tokenizeBody(data.body);
+      document.getElementById('inputBody').value = displayBody;
+      var obj = { body: data.body, updatedAt: new Date().toISOString() };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+      showToast('インポートしました');
+      renderLibrary();
+      updatePreview();
+    } catch (err) {
+      showToast('読み込み失敗: ' + err.message);
+    }
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+// 起動時: サーバJSONと同期しつつlocalStorageを読み込み
+(function bootstrap() {
+  fetch('joho-about-data.json', { cache: 'no-cache' })
+    .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+    .then(function(data) {
+      if (!data || typeof data.body !== 'string') return;
+      var stored = localStorage.getItem(STORAGE_KEY);
+      if (!stored) {
+        // 初回: サーバのデータをセット
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ body: data.body, updatedAt: new Date().toISOString() }));
+      }
+    })
+    .catch(function() {})
+    .then(function() {
+      var fullBody = loadBody();
+      // dataURLを含む本文を、textarea表示用にトークン化（imageMapも自動構築）
+      var displayBody = tokenizeBody(fullBody);
+      document.getElementById('inputBody').value = displayBody;
+      renderLibrary();
+      updatePreview();
+    });
+})();
+</script>
+</body>
+</html>
