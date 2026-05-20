@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>管理者画面 ─ 教員採用試験とは？</title>
+<title>管理者画面 ─ 受験までの年間スケジュール＆月別Todoリスト</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -302,10 +302,10 @@ header h1 { font-size: 1.1em; letter-spacing: .04em; }
 <body>
 
 <header>
-  <h1>管理者画面（教員採用試験とは？）</h1>
+  <h1>管理者画面（年間スケジュール＆月別Todoリスト）</h1>
   <div class="header-right">
     <a href="admin-index.html" class="header-btn">管理者画面ホーム</a>
-    <a href="joho-about.html" class="header-btn">ページを開く</a>
+    <a href="joho-schedule.html" class="header-btn">ページを開く</a>
   </div>
 </header>
 
@@ -316,7 +316,7 @@ header h1 { font-size: 1.1em; letter-spacing: .04em; }
     <h2>データの引き継ぎ</h2>
     <p class="hint">編集内容をJSONファイルで書き出し／読み込みできます。別のPCへの移行や、GitHubへのアップロードにご利用ください。</p>
     <div class="row">
-      <button class="btn-export" onclick="exportData()">⬇ エクスポート（joho-about-data.json）</button>
+      <button class="btn-export" onclick="exportData()">⬇ エクスポート（joho-schedule-data.json）</button>
       <label class="btn-import">
         ⬆ インポート（JSON読み込み）
         <input type="file" accept=".json,application/json" onchange="importData(event)">
@@ -334,7 +334,7 @@ header h1 { font-size: 1.1em; letter-spacing: .04em; }
     </p>
     <div class="field">
       <label>本文</label>
-      <textarea id="inputBody" placeholder="例:&#10;教員採用試験は、各都道府県・指定都市の教育委員会が実施する採用選考試験です。&#10;&#10;1. 筆記試験&#10;2. 面接試験&#10;..."></textarea>
+      <textarea id="inputBody" placeholder="例:&#10;【4月】&#10;・受験する自治体を決める&#10;・出願要項を確認する&#10;&#10;【5月】&#10;・専門教養の学習を本格化&#10;..."></textarea>
     </div>
 
     <!-- 画像ライブラリ -->
@@ -370,7 +370,7 @@ header h1 { font-size: 1.1em; letter-spacing: .04em; }
 <div class="toast" id="toast"></div>
 
 <script>
-var STORAGE_KEY = 'kyosai_joho_about';
+var STORAGE_KEY = 'kyosai_joho_schedule';
 
 function showToast(msg) {
   var t = document.getElementById('toast');
@@ -620,7 +620,7 @@ function clearLibrary() {
   updatePreview();
 }
 
-// JSONエクスポート（joho-about-data.json）
+// JSONエクスポート（joho-schedule-data.json）
 function exportData() {
   var displayBody = document.getElementById('inputBody').value;
   if (!displayBody.trim()) { showToast('本文が空です'); return; }
@@ -630,7 +630,7 @@ function exportData() {
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
   a.href = url;
-  a.download = 'joho-about-data.json';
+  a.download = 'joho-schedule-data.json';
   a.click();
   URL.revokeObjectURL(url);
   showToast('エクスポートしました');
@@ -668,7 +668,7 @@ function importData(event) {
 
 // 起動時: サーバJSONと同期しつつlocalStorageを読み込み
 (function bootstrap() {
-  fetch('joho-about-data.json', { cache: 'no-cache' })
+  fetch('joho-schedule-data.json', { cache: 'no-cache' })
     .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
     .then(function(data) {
       if (!data || typeof data.body !== 'string') return;

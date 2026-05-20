@@ -261,7 +261,7 @@ header p {
 
   <div class="export-all-section">
     <p class="export-all-hint">
-      GitHub にアップロードするデータ（<code>questions-data.json</code>、<code>mondai-data.json</code>、<code>glossary-data.json</code>、<code>houki-scope-data.js</code>、<code>joho-about-data.json</code>）をまとめて書き出せます。<br>
+      GitHub にアップロードするデータ（<code>questions-data.json</code>、<code>mondai-data.json</code>、<code>glossary-data.json</code>、<code>houki-scope-data.js</code>、<code>joho-about-data.json</code>、<code>joho-schedule-data.json</code>）をまとめて書き出せます。<br>
       <strong>🗂 フォルダに直接書き出す</strong>:
       初回は <code>kyosai-quiz</code> フォルダを選択。次回以降はそのフォルダに自動で上書き保存（Chrome / Edge のデスクトップ版のみ対応）。<br>
       <strong>📦 ダウンロード</strong>: 通常のダウンロードフォルダに4ファイルを保存（全ブラウザ対応）。
@@ -316,6 +316,15 @@ header p {
       <div class="admin-body">
         <div class="admin-title">教員採用試験とは？　管理者画面</div>
         <div class="admin-desc">「教員採用試験とは？」ページの本文・画像の編集</div>
+      </div>
+      <div class="admin-arrow">›</div>
+    </a>
+
+    <a href="joho-schedule-admin.html" class="admin-card joho">
+      <div class="admin-icon">📅</div>
+      <div class="admin-body">
+        <div class="admin-title">年間スケジュール＆月別Todoリスト　管理者画面</div>
+        <div class="admin-desc">「受験までの年間スケジュール＆月別Todoリスト」ページの本文・画像の編集</div>
       </div>
       <div class="admin-arrow">›</div>
     </a>
@@ -419,7 +428,8 @@ function exportAllToFolder() {
       { key: 'kyosai_mondai',     file: 'mondai-data.json',    label: '問題演習＆要点理解', unit: '問', type: 'json' },
       { key: 'kyosai_glossary',   file: 'glossary-data.json',  label: '用語解説',           unit: '語', type: 'json' },
       { key: 'kyosai_houki_data', file: 'houki-scope-data.js', label: '教育法規スコープ',   unit: '条', type: 'js'  },
-      { key: 'kyosai_joho_about', file: 'joho-about-data.json', label: '教員採用試験とは？', unit: '文字', type: 'single' }
+      { key: 'kyosai_joho_about', file: 'joho-about-data.json', label: '教員採用試験とは？', unit: '文字', type: 'single' },
+      { key: 'kyosai_joho_schedule', file: 'joho-schedule-data.json', label: '年間スケジュール＆Todo', unit: '文字', type: 'single' }
     ];
 
     // 順次書き出し
@@ -540,7 +550,8 @@ function exportAllData() {
     { key: 'kyosai_mondai',     file: 'mondai-data.json',    label: '問題演習＆要点理解', unit: '問', type: 'json' },
     { key: 'kyosai_glossary',   file: 'glossary-data.json',  label: '用語解説',           unit: '語', type: 'json' },
     { key: 'kyosai_houki_data', file: 'houki-scope-data.js', label: '教育法規スコープ',   unit: '条', type: 'js'   },
-    { key: 'kyosai_joho_about', file: 'joho-about-data.json', label: '教員採用試験とは？', unit: '文字', type: 'single' }
+    { key: 'kyosai_joho_about', file: 'joho-about-data.json', label: '教員採用試験とは？', unit: '文字', type: 'single' },
+    { key: 'kyosai_joho_schedule', file: 'joho-schedule-data.json', label: '年間スケジュール＆Todo', unit: '文字', type: 'single' }
   ];
 
   var results = [];

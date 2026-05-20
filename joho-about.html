@@ -79,7 +79,7 @@ header h1 .title-icon {
   display: block;
   max-width: 100%;
   height: auto;
-  margin: 18px auto;
+  margin: 18px 0;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,.18);
 }
@@ -144,7 +144,7 @@ function renderBody(text) {
   var images = [];
   s = s.replace(/!\[\]\(([^)]+)\)/g, function(_, url) {
     images.push(url);
-    return 'IMG' + (images.length - 1) + '';
+    return 'IMG' + (images.length - 1) + '';
   });
 
   s = escapeHtml(s);
@@ -153,7 +153,7 @@ function renderBody(text) {
   s = s.replace(/__(.+?)__/g, '<u>$1</u>');
 
   for (var i = 0; i < images.length; i++) {
-    var marker = 'IMG' + i + '';
+    var marker = 'IMG' + i + '';
     var safe = images[i].replace(/"/g, '&quot;');
     s = s.split(marker).join('<img class="content-img" src="' + safe + '" alt="">');
   }
