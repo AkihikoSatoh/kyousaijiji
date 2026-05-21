@@ -234,21 +234,21 @@ function renderPage(obj) {
   container.innerHTML = html;
 }
 
-// 起動時: サーバJSONと同期しつつlocalStorageから表示
+// 起動時: 配布JSONを最優先で表示（取得できないときのみlocalStorageを使う）
 (function bootstrap() {
   fetch('joho-strategy-data.json', { cache: 'no-cache' })
     .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
     .then(function(data) {
-      if (!data || typeof data.body !== 'string') return;
-      var stored = loadStored();
-      // localStorageが空ならサーバのデータをセット
-      if (!stored) {
-        var obj = { body: data.body, updatedAt: new Date().toISOString() };
-        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); } catch (e) {}
-      }
+      if (!data || typeof data.body !== 'string') return Promise.reject();
+      // 配布JSONをそのまま表示（常に最新が反映される）
+      renderPage({ body: data.body, updatedAt: data.updatedAt });
+      // 同一端末用キャッシュ（任意・失敗しても無視）
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ body: data.body, updatedAt: data.updatedAt || new Date().toISOString() }));
+      } catch (e) {}
     })
-    .catch(function() {})
-    .then(function() {
+    .catch(function() {
+      // JSONが取得できない場合のみ localStorage を使う
       renderPage(loadStored());
     });
 })();
