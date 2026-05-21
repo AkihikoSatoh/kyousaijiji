@@ -7,6 +7,7 @@
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+html { scroll-behavior: smooth; }
 body {
   font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
   background: #f0f2f5;
@@ -263,6 +264,8 @@ header h1 { font-size: 1.1em; letter-spacing: .04em; }
 }
 .preview-area strong { color: #117a65; font-size: 1.15em; }
 .preview-area b { font-weight: bold; }
+.preview-area a { color: #1565c0; word-break: break-word; }
+.preview-area .jump-anchor { scroll-margin-top: 70px; }
 .preview-area .content-img {
   display: block;
   max-width: 100%;
@@ -330,7 +333,9 @@ header h1 { font-size: 1.1em; letter-spacing: .04em; }
     <p class="hint">
       本文は普通のテキストで入力します。改行はそのまま反映されます。<br>
       ※ <code>***テキスト***</code> で<strong>大きい太字（強調）</strong>、<code>**テキスト**</code> で<b>通常の太字</b>、<code>__テキスト__</code> で<u>下線</u>になります。<br>
-      ※ 本文中の画像は <code>![](画像1)</code> のような短い記法で表示されます（保存・公開時には実画像に自動で展開されます）。
+      ※ <code>[表示テキスト](https://example.com)</code> でリンクになります（別タブで開きます）。<br>
+      ※ ページ内ジャンプ: ジャンプ先に <code>{#目印名}</code> を置き、<code>[表示テキスト](#目印名)</code> をクリックするとそこへ移動します（目印名は英数字推奨）。<br>
+      ※ 画像は <code>![](joho-img/ファイル名)</code> の形で本文に挿入され、「保存」時に <code>joho-img</code> フォルダへ実ファイルとして書き出されます。
     </p>
     <div class="field">
       <label>本文</label>
@@ -343,7 +348,8 @@ header h1 { font-size: 1.1em; letter-spacing: .04em; }
       <p class="lib-hint">
         ① 「画像をアップロード」で1枚または複数枚まとめて追加します。<br>
         ② 本文の挿入したい位置をクリックしてカーソルを置きます。<br>
-        ③ 各画像の「カーソル位置に挿入」ボタンで本文に挿入します。
+        ③ 各画像の「カーソル位置に挿入」ボタンで本文に挿入します。<br>
+        ④ 「保存」を押すと、画像が <code>joho-img</code> フォルダに書き出されます（初回は保存先フォルダ＝<code>kyosai-quiz</code> を選択）。
       </p>
       <div class="row">
         <button class="btn-img" type="button" onclick="document.getElementById('imgInput').click()">🖼️ 画像をアップロード（複数選択可）</button>
@@ -402,6 +408,13 @@ function renderBody(text) {
   s = s.replace(/\*\*\*(.+?)\*\*\*/g, '<strong>$1</strong>');
   s = s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
   s = s.replace(/__(.+?)__/g, '<u>$1</u>');
+  // リンク [表示テキスト](URL) ／ ページ内ジャンプ [表示テキスト](#目印名)
+  s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function(_, t, url) {
+    if (url.charAt(0) === '#') return '<a href="' + url + '" class="jump-link">' + t + '</a>';
+    return '<a href="' + url + '" target="_blank" rel="noopener">' + t + '</a>';
+  });
+  // ジャンプ先の目印 {#目印名}
+  s = s.replace(/\{#([^}]+)\}/g, '<span class="jump-anchor" id="$1"></span>');
 
   // プレースホルダ→<img>
   for (var i = 0; i < images.length; i++) {
@@ -423,11 +436,42 @@ function loadBody() {
 }
 
 function saveBody() {
-  var displayBody = document.getElementById('inputBody').value;
-  var fullBody = expandBody(displayBody);
-  var obj = { body: fullBody, updatedAt: new Date().toISOString() };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
-  showToast('保存しました');
+  var body = document.getElementById('inputBody').value;
+  // 本文中で参照されている未保存画像を抽出
+  var re = new RegExp('!\\[\\]\\(' + IMG_DIR + '/([^)]+)\\)', 'g');
+  var referenced = {}, m;
+  while ((m = re.exec(body)) !== null) referenced[m[1]] = true;
+  var pending = Object.keys(images).filter(function(fn) { return !images[fn].written && referenced[fn]; });
+
+  if (pending.length === 0) { persistBody(body); showToast('保存しました'); return; }
+
+  // 画像ファイルを書き出してから本文を保存
+  getImageDir().then(function(dir) {
+    return pending.reduce(function(p, fn) {
+      return p.then(function() {
+        return writeImageFile(dir, fn, images[fn].dataUrl).then(function() { images[fn].written = true; });
+      });
+    }, Promise.resolve());
+  }).then(function() {
+    persistBody(body);
+    renderLibrary();
+    showToast(pending.length + ' 枚の画像をファイル化し、本文も保存しました');
+  }).catch(function(err) {
+    if (err && err.message === 'no-fsapi') {
+      alert('このブラウザはフォルダへの直接保存に未対応です。\nChrome / Edge のデスクトップ版でお使いください。\n（本文テキストのみ保存します）');
+    } else {
+      alert('画像ファイルの書き出しがキャンセル／失敗しました。本文テキストのみ保存します。\nもう一度「保存」して保存先フォルダ（kyosai-quiz）を指定すると画像が反映されます。');
+    }
+    persistBody(body);
+  });
+}
+
+function persistBody(body) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ body: body, updatedAt: new Date().toISOString() }));
+  } catch (e) {
+    alert('保存に失敗しました: ' + (e && e.message));
+  }
   updatePreview();
 }
 
@@ -438,16 +482,85 @@ function clearBody() {
 }
 
 function updatePreview() {
-  var displayBody = document.getElementById('inputBody').value;
-  var fullBody = expandBody(displayBody);
-  document.getElementById('previewArea').innerHTML = renderBody(fullBody);
+  var body = document.getElementById('inputBody').value;
+  document.getElementById('previewArea').innerHTML = renderBody(expandForPreview(body));
 }
 
-// ── 画像マップ（トークン ↔ 実データ） ──
-// textarea には短いトークン（例: 画像1）を表示し、保存・プレビュー時にdataURLへ展開する
-var imageMap = {};       // token -> { dataUrl, name, kb }
-var nextImgIdx = 1;
+// ── 画像（実ファイル方式） ──
+// 画像は joho-img/ フォルダに実ファイルとして書き出し、本文には ![](joho-img/ファイル名) で参照する
+var IMG_DIR = 'joho-img';
+var CONTENT_PREFIX = 'schedule';
+var images = {};        // filename -> { dataUrl, name, kb, written }
+var imgSeq = 0;
 var lastCursorPos = 0;
+
+// File System Access API 用（admin-index.html と保存先フォルダを共用）
+var DB_NAME = 'kyosai_admin_db', STORE = 'handles', HANDLE_KEY = 'export_folder';
+function openDb() {
+  return new Promise(function(resolve, reject) {
+    var req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = function() { req.result.createObjectStore(STORE); };
+    req.onsuccess = function() { resolve(req.result); };
+    req.onerror = function() { reject(req.error); };
+  });
+}
+function getStoredHandle() {
+  return openDb().then(function(db) {
+    return new Promise(function(resolve) {
+      var tx = db.transaction(STORE, 'readonly');
+      var rq = tx.objectStore(STORE).get(HANDLE_KEY);
+      rq.onsuccess = function() { resolve(rq.result || null); };
+      rq.onerror = function() { resolve(null); };
+    });
+  });
+}
+function storeHandle(handle) {
+  return openDb().then(function(db) {
+    return new Promise(function(resolve) {
+      var tx = db.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).put(handle, HANDLE_KEY);
+      tx.oncomplete = function() { resolve(); };
+    });
+  });
+}
+function verifyPermission(handle) {
+  var opts = { mode: 'readwrite' };
+  return handle.queryPermission(opts).then(function(p) {
+    if (p === 'granted') return true;
+    return handle.requestPermission(opts).then(function(p2) { return p2 === 'granted'; });
+  });
+}
+function pickFolder() {
+  return window.showDirectoryPicker({ mode: 'readwrite' }).then(function(h) {
+    return storeHandle(h).then(function() { return h; });
+  });
+}
+function getImageDir() {
+  if (!window.showDirectoryPicker) return Promise.reject(new Error('no-fsapi'));
+  return getStoredHandle().then(function(h) {
+    if (h) return verifyPermission(h).then(function(ok) { return ok ? h : pickFolder(); });
+    return pickFolder();
+  }).then(function(root) {
+    return root.getDirectoryHandle(IMG_DIR, { create: true });
+  });
+}
+function dataUrlToBlob(dataUrl) {
+  var parts = dataUrl.split(',');
+  var mime = (parts[0].match(/data:([^;]+)/) || [])[1] || 'application/octet-stream';
+  var bin = atob(parts[1]);
+  var arr = new Uint8Array(bin.length);
+  for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return new Blob([arr], { type: mime });
+}
+function writeImageFile(dir, filename, dataUrl) {
+  return dir.getFileHandle(filename, { create: true })
+    .then(function(fh) { return fh.createWritable(); })
+    .then(function(w) { return w.write(dataUrlToBlob(dataUrl)).then(function() { return w.close(); }); });
+}
+function makeFilename(ext) {
+  imgSeq++;
+  return CONTENT_PREFIX + '-' + Date.now().toString(36) + '-' + imgSeq + Math.random().toString(36).slice(2, 5) + '.' + ext;
+}
 
 // textarea のカーソル位置を常に追跡
 document.addEventListener('DOMContentLoaded', function() {
@@ -460,31 +573,23 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-// dataURL を含むフル本文 → トークン表示用本文
-function tokenizeBody(fullBody) {
-  if (!fullBody) return '';
-  return String(fullBody).replace(/!\[\]\(([^)]+)\)/g, function(m, url) {
-    if (url.indexOf('data:') !== 0) return m;
-    for (var t in imageMap) {
-      if (imageMap[t].dataUrl === url) return '![](' + t + ')';
-    }
-    var token = '画像' + nextImgIdx++;
-    imageMap[token] = {
-      dataUrl: url,
-      name: token,
-      kb: Math.round(url.length / 1024)
-    };
-    return '![](' + token + ')';
+// 旧base64（![](data:...)) を実ファイル参照へ移行（保存時に書き出される）
+function migrateBase64(body) {
+  if (!body) return '';
+  return String(body).replace(/!\[\]\((data:([^;]+);base64,[^)]+)\)/g, function(m, dataUrl, mime) {
+    for (var fn in images) { if (images[fn].dataUrl === dataUrl) return '![](' + IMG_DIR + '/' + fn + ')'; }
+    var ext = (mime.indexOf('png') >= 0) ? 'png' : 'jpg';
+    var name = makeFilename(ext);
+    images[name] = { dataUrl: dataUrl, name: name, kb: Math.round(dataUrl.length / 1024), written: false };
+    return '![](' + IMG_DIR + '/' + name + ')';
   });
 }
 
-// トークン表示用本文 → dataURL に展開
-function expandBody(displayBody) {
-  if (!displayBody) return '';
-  return String(displayBody).replace(/!\[\]\(([^)]+)\)/g, function(m, ref) {
-    if (imageMap.hasOwnProperty(ref)) {
-      return '![](' + imageMap[ref].dataUrl + ')';
-    }
+// プレビュー用: 未保存画像のパスをdataURLに差し替え（保存済みは相対パスのまま）
+function expandForPreview(body) {
+  var re = new RegExp('!\\[\\]\\(' + IMG_DIR + '/([^)]+)\\)', 'g');
+  return String(body).replace(re, function(m, fn) {
+    if (images[fn] && images[fn].dataUrl) return '![](' + images[fn].dataUrl + ')';
     return m;
   });
 }
@@ -504,14 +609,9 @@ function processOneImage(file) {
         var canvas = document.createElement('canvas');
         canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        var dataUrl = (file.type === 'image/png')
-          ? canvas.toDataURL('image/png')
-          : canvas.toDataURL('image/jpeg', 0.85);
-        resolve({
-          dataUrl: dataUrl,
-          name: file.name || '(無題)',
-          kb: Math.round(dataUrl.length / 1024)
-        });
+        var isPng = (file.type === 'image/png');
+        var dataUrl = isPng ? canvas.toDataURL('image/png') : canvas.toDataURL('image/jpeg', 0.85);
+        resolve({ dataUrl: dataUrl, name: file.name || '(無題)', kb: Math.round(dataUrl.length / 1024), ext: isPng ? 'png' : 'jpg' });
       };
       img.onerror = function() { resolve(null); };
       img.src = e.target.result;
@@ -525,54 +625,46 @@ function handleImageUpload(event) {
   var files = Array.prototype.slice.call(event.target.files || []);
   if (!files.length) return;
   Promise.all(files.map(processOneImage)).then(function(results) {
-    var ok = 0;
+    var added = 0;
     results.forEach(function(r) {
       if (!r) return;
-      var token = '画像' + nextImgIdx++;
-      imageMap[token] = { dataUrl: r.dataUrl, name: r.name, kb: r.kb };
-      ok++;
+      var fn = makeFilename(r.ext);
+      images[fn] = { dataUrl: r.dataUrl, name: r.name, kb: r.kb, written: false };
+      added++;
     });
     renderLibrary();
-    showToast(ok + ' 枚をライブラリに追加しました');
+    showToast(added + ' 枚を追加しました（「保存」でファイルに書き出します）');
   });
   event.target.value = '';
-}
-
-function sortedTokens() {
-  return Object.keys(imageMap).sort(function(a, b) {
-    var na = parseInt(a.replace(/^\D+/, ''), 10) || 0;
-    var nb = parseInt(b.replace(/^\D+/, ''), 10) || 0;
-    return na - nb;
-  });
 }
 
 function renderLibrary() {
   var lib = document.getElementById('imageLibrary');
   if (!lib) return;
-  var tokens = sortedTokens();
-  if (tokens.length === 0) {
+  var fns = Object.keys(images);
+  if (fns.length === 0) {
     lib.innerHTML = '<div class="lib-empty">アップロード済み画像はありません</div>';
     return;
   }
-  lib.innerHTML = tokens.map(function(token) {
-    var im = imageMap[token];
-    var safeName = escapeHtml(im.name);
+  lib.innerHTML = fns.map(function(fn) {
+    var im = images[fn];
+    var status = im.written ? '✅ファイル保存済み' : '⏳未保存';
     return '<div class="lib-item">' +
       '<img src="' + im.dataUrl + '" alt="">' +
       '<div class="lib-info">' +
-        '<div class="lib-name" title="' + safeName + '"><strong>' + token + '</strong> <span style="color:#999;font-weight:normal;">(' + safeName + ')</span></div>' +
-        '<div>' + im.kb + ' KB</div>' +
+        '<div class="lib-name" title="' + escapeHtml(fn) + '">' + escapeHtml(fn) + '</div>' +
+        '<div>' + im.kb + ' KB ・ ' + status + '</div>' +
       '</div>' +
       '<div class="lib-actions">' +
-        '<button class="lib-insert" onmousedown="event.preventDefault()" onclick="insertImageAtCursor(\'' + token + '\')">👆 カーソル位置に挿入</button>' +
-        '<button class="lib-delete" onclick="deleteLibraryImage(\'' + token + '\')" title="ライブラリから削除">🗑️</button>' +
+        '<button class="lib-insert" onmousedown="event.preventDefault()" onclick="insertImageAtCursor(\'' + fn + '\')">👆 カーソル位置に挿入</button>' +
+        '<button class="lib-delete" onclick="deleteLibraryImage(\'' + fn + '\')" title="一覧から削除">🗑️</button>' +
       '</div>' +
     '</div>';
   }).join('');
 }
 
-function insertImageAtCursor(token) {
-  if (!imageMap[token]) return;
+function insertImageAtCursor(fn) {
+  if (!images[fn]) return;
   var ta = document.getElementById('inputBody');
   var pos = (ta.selectionStart != null && document.activeElement === ta)
     ? ta.selectionStart
@@ -582,8 +674,7 @@ function insertImageAtCursor(token) {
   var v = ta.value;
   var prefix = (pos > 0 && v.charAt(pos - 1) !== '\n') ? '\n' : '';
   var suffix = (pos < v.length && v.charAt(pos) !== '\n') ? '\n' : '';
-  // ← トークン形式で挿入（dataURLは入れない）
-  var insertText = prefix + '![](' + token + ')' + suffix;
+  var insertText = prefix + '![](' + IMG_DIR + '/' + fn + ')' + suffix;
   ta.value = v.substring(0, pos) + insertText + v.substring(pos);
 
   var newPos = pos + insertText.length;
@@ -591,41 +682,44 @@ function insertImageAtCursor(token) {
   ta.setSelectionRange(newPos, newPos);
   lastCursorPos = newPos;
 
-  showToast('「' + token + '」を挿入しました');
+  showToast('挿入しました');
 }
 
-function deleteLibraryImage(token) {
-  if (!imageMap[token]) return;
+function deleteLibraryImage(fn) {
+  if (!images[fn]) return;
   var ta = document.getElementById('inputBody');
-  var escToken = token.replace(/[\\^$.*+?()[\]{}|]/g, '\\$&');
-  var refRe = new RegExp('!\\[\\]\\(' + escToken + '\\)\\n?', 'g');
+  var escPath = (IMG_DIR + '/' + fn).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&');
+  var refRe = new RegExp('!\\[\\]\\(' + escPath + '\\)\\n?', 'g');
   var matches = ta.value.match(refRe);
   var n = matches ? matches.length : 0;
   var msg = (n > 0)
-    ? '「' + token + '」は本文中に ' + n + ' か所挿入されています。\n削除すると、本文中の参照も同時に取り除かれます。よろしいですか？'
-    : 'ライブラリから「' + token + '」を削除しますか？';
+    ? '「' + fn + '」は本文中に ' + n + ' か所使われています。\n削除すると本文の参照も取り除かれます。よろしいですか？\n（書き出し済みのファイル自体は削除されません）'
+    : 'この画像を一覧から削除しますか？\n（書き出し済みのファイル自体は削除されません）';
   if (!confirm(msg)) return;
   if (n > 0) ta.value = ta.value.replace(refRe, '');
-  delete imageMap[token];
+  delete images[fn];
   renderLibrary();
   updatePreview();
 }
 
 function clearLibrary() {
-  if (Object.keys(imageMap).length === 0) { showToast('ライブラリは空です'); return; }
-  if (!confirm('ライブラリの画像をすべて削除しますか？\n（本文中の参照は無効になりますが、本文のテキストはそのままです）')) return;
-  imageMap = {};
-  nextImgIdx = 1;
+  if (Object.keys(images).length === 0) { showToast('一覧は空です'); return; }
+  if (!confirm('画像一覧をクリアします。\n（本文の記述と、書き出し済みファイルはそのまま残ります）')) return;
+  images = {};
   renderLibrary();
-  updatePreview();
 }
 
 // JSONエクスポート（joho-schedule-data.json）
 function exportData() {
-  var displayBody = document.getElementById('inputBody').value;
-  if (!displayBody.trim()) { showToast('本文が空です'); return; }
-  var fullBody = expandBody(displayBody);
-  var data = { body: fullBody };
+  var body = document.getElementById('inputBody').value;
+  if (!body.trim()) { showToast('本文が空です'); return; }
+  var unwritten = Object.keys(images).filter(function(fn) {
+    return !images[fn].written && body.indexOf(IMG_DIR + '/' + fn) !== -1;
+  });
+  if (unwritten.length > 0) {
+    if (!confirm('まだファイル化されていない画像が ' + unwritten.length + ' 枚あります。\n先に「保存」で画像をフォルダに書き出すことをおすすめします。\nこのままJSONだけ書き出しますか？')) return;
+  }
+  var data = { body: body };
   var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
@@ -645,16 +739,15 @@ function importData(event) {
     try {
       var data = JSON.parse(e.target.result);
       if (typeof data.body !== 'string') throw new Error('body フィールドがありません');
-      if (!confirm('現在の内容を上書きします。よろしいですか？\n（画像ライブラリもインポート内容で置き換わります）')) {
+      if (!confirm('現在の内容を上書きします。よろしいですか？')) {
         event.target.value = '';
         return;
       }
-      imageMap = {};
-      nextImgIdx = 1;
-      var displayBody = tokenizeBody(data.body);
-      document.getElementById('inputBody').value = displayBody;
-      var obj = { body: data.body, updatedAt: new Date().toISOString() };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+      images = {};
+      // 旧base64が含まれていればファイル参照へ移行
+      var body = migrateBase64(data.body);
+      document.getElementById('inputBody').value = body;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ body: body, updatedAt: new Date().toISOString() }));
       showToast('インポートしました');
       renderLibrary();
       updatePreview();
@@ -680,10 +773,9 @@ function importData(event) {
     })
     .catch(function() {})
     .then(function() {
-      var fullBody = loadBody();
-      // dataURLを含む本文を、textarea表示用にトークン化（imageMapも自動構築）
-      var displayBody = tokenizeBody(fullBody);
-      document.getElementById('inputBody').value = displayBody;
+      // 旧base64が残っていればファイル参照へ移行（保存時に書き出し）
+      var body = migrateBase64(loadBody());
+      document.getElementById('inputBody').value = body;
       renderLibrary();
       updatePreview();
     });

@@ -6,6 +6,7 @@
 <title>教員採用試験とは？ ─ 教採ナビ</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 body {
   font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
   background: #f0f2f5;
@@ -75,6 +76,9 @@ header h1 .title-icon {
 .content-card strong { color: #117a65; font-weight: bold; font-size: 1.15em; }
 .content-card b { font-weight: bold; }
 .content-card u { text-decoration: underline; }
+.content-card a { color: #1565c0; word-break: break-word; }
+.content-card a:hover { color: #0d47a1; }
+.content-card .jump-anchor { scroll-margin-top: 16px; }
 .content-card .content-img {
   display: block;
   max-width: 100%;
@@ -111,6 +115,29 @@ header h1 .title-icon {
   margin-top: 14px;
 }
 
+/* ページ上部へ戻るボタン */
+.to-top {
+  position: fixed;
+  right: 20px;
+  bottom: 24px;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #117a65, #1abc9c);
+  color: #fff;
+  font-size: 1.5em;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0,0,0,.28);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .25s, visibility .25s;
+  z-index: 500;
+}
+.to-top.show { opacity: .92; visibility: visible; }
+.to-top:hover { opacity: 1; filter: brightness(1.08); }
+
 @media (max-width: 600px) {
   header h1 { font-size: 1.2em; }
   .content-card { padding: 22px 18px; font-size: .95em; }
@@ -129,6 +156,8 @@ header h1 .title-icon {
 <div class="container" id="container">
   <!-- 動的に挿入 -->
 </div>
+
+<button id="toTop" class="to-top" aria-label="ページ上部へ" title="ページ上部へ">↑</button>
 
 <script>
 var STORAGE_KEY = 'kyosai_joho_about';
@@ -151,6 +180,13 @@ function renderBody(text) {
   s = s.replace(/\*\*\*(.+?)\*\*\*/g, '<strong>$1</strong>');
   s = s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
   s = s.replace(/__(.+?)__/g, '<u>$1</u>');
+  // リンク [表示テキスト](URL) ／ ページ内ジャンプ [表示テキスト](#目印名)
+  s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function(_, t, url) {
+    if (url.charAt(0) === '#') return '<a href="' + url + '" class="jump-link">' + t + '</a>';
+    return '<a href="' + url + '" target="_blank" rel="noopener">' + t + '</a>';
+  });
+  // ジャンプ先の目印 {#目印名}
+  s = s.replace(/\{#([^}]+)\}/g, '<span class="jump-anchor" id="$1"></span>');
 
   for (var i = 0; i < images.length; i++) {
     var marker = 'IMG' + i + '';
@@ -213,6 +249,19 @@ function renderPage(obj) {
     .then(function() {
       renderPage(loadStored());
     });
+})();
+
+// ページ上部へ戻るボタン
+(function() {
+  var btn = document.getElementById('toTop');
+  if (!btn) return;
+  window.addEventListener('scroll', function() {
+    if (window.pageYOffset > 300) btn.classList.add('show');
+    else btn.classList.remove('show');
+  });
+  btn.addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 })();
 </script>
 </body>
