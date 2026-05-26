@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>マイページ ─ 教採ナビ</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  background: #f0f2f5;
+  color: #333;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+header {
+  background: linear-gradient(135deg, #0c2461, #1e3799);
+  color: #fff;
+  padding: 22px 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+}
+header h1 {
+  font-size: 1.6em;
+  letter-spacing: .04em;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-shadow: 0 2px 4px rgba(0,0,0,.25);
+}
+header h1 .title-icon {
+  font-size: 1.1em;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,.35));
+}
+.header-back { margin-top: 12px; }
+.header-back a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  background: linear-gradient(135deg, #0c2461 0%, #1e3799 45%, #0a3d62 100%);
+  color: #fff;
+  border: 1px solid #0c2461;
+  border-radius: 7px;
+  text-decoration: none;
+  font-size: .9em;
+  font-weight: bold;
+}
+.header-back a:hover { background: linear-gradient(135deg, #061a4a 0%, #142b75 45%, #062a44 100%); }
+
+.container {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 30px 16px;
+}
+
+.greeting {
+  text-align: center;
+  font-size: 1.05em;
+  color: #1e3799;
+  font-weight: bold;
+  margin-bottom: 18px;
+  min-height: 1.4em;
+}
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  padding: 26px 26px;
+}
+.card h2 {
+  font-size: 1.05em;
+  color: #1e3799;
+  margin-bottom: 6px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #dfe4f5;
+}
+.note {
+  font-size: .8em;
+  color: #888;
+  line-height: 1.7;
+  margin: 10px 0 18px;
+}
+
+.field { margin-bottom: 16px; }
+.field label {
+  display: block;
+  font-size: .9em;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 6px;
+}
+.field input,
+.field select {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  font-size: 1em;
+  font-family: inherit;
+  background: #fff;
+  color: #333;
+}
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: #3a7bd5;
+  box-shadow: 0 0 0 2px rgba(58,123,213,.2);
+}
+
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.btn {
+  padding: 11px 26px;
+  border: none;
+  border-radius: 7px;
+  font-size: .95em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btn:hover { opacity: .9; }
+.btn-save {
+  background: linear-gradient(135deg, #1e3799, #3a7bd5);
+  color: #fff;
+}
+.btn-clear { background: #eee; color: #555; }
+
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: #333;
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: .9em;
+  opacity: 0;
+  transition: all .3s;
+  z-index: 999;
+  pointer-events: none;
+}
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+@media (max-width: 600px) {
+  header h1 { font-size: 1.2em; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1><span class="title-icon">👤</span>マイページ</h1>
+  <div class="header-back">
+    <a href="index.html">🏠 教採ナビ トップへ</a>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="greeting" id="greeting"></div>
+
+  <div class="card">
+    <h2>プロフィール</h2>
+    <p class="note">
+      ※ 現在は仮版です。入力内容はこの端末内（ブラウザ）にのみ保存されます。<br>
+      ログイン機能の導入後は、アカウントごとに保存される予定です。
+    </p>
+
+    <div class="field">
+      <label for="username">ユーザー名</label>
+      <input type="text" id="username" placeholder="例: yamada_taro" maxlength="50">
+    </div>
+
+    <div class="field">
+      <label for="nickname">ニックネーム</label>
+      <input type="text" id="nickname" placeholder="例: たろう" maxlength="30">
+    </div>
+
+    <div class="field">
+      <label for="area">受験予定自治体</label>
+      <select id="area">
+        <option value="">― 選択してください ―</option>
+        <optgroup label="都道府県">
+          <option>北海道</option><option>青森県</option><option>岩手県</option><option>宮城県</option>
+          <option>秋田県</option><option>山形県</option><option>福島県</option><option>茨城県</option>
+          <option>栃木県</option><option>群馬県</option><option>埼玉県</option><option>千葉県</option>
+          <option>東京都</option><option>神奈川県</option><option>新潟県</option><option>富山県</option>
+          <option>石川県</option><option>福井県</option><option>山梨県</option><option>長野県</option>
+          <option>岐阜県</option><option>静岡県</option><option>愛知県</option><option>三重県</option>
+          <option>滋賀県</option><option>京都府</option><option>大阪府</option><option>兵庫県</option>
+          <option>奈良県</option><option>和歌山県</option><option>鳥取県</option><option>島根県</option>
+          <option>岡山県</option><option>広島県</option><option>山口県</option><option>徳島県</option>
+          <option>香川県</option><option>愛媛県</option><option>高知県</option><option>福岡県</option>
+          <option>佐賀県</option><option>長崎県</option><option>熊本県</option><option>大分県</option>
+          <option>宮崎県</option><option>鹿児島県</option><option>沖縄県</option>
+        </optgroup>
+        <optgroup label="指定都市">
+          <option>札幌市</option><option>仙台市</option><option>さいたま市</option><option>千葉市</option>
+          <option>横浜市</option><option>川崎市</option><option>相模原市</option><option>新潟市</option>
+          <option>静岡市</option><option>浜松市</option><option>名古屋市</option><option>京都市</option>
+          <option>大阪市</option><option>堺市</option><option>神戸市</option><option>岡山市</option>
+          <option>広島市</option><option>北九州市</option><option>福岡市</option><option>熊本市</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-save" onclick="saveProfile()">保存</button>
+      <button class="btn btn-clear" onclick="clearProfile()">クリア</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var STORAGE_KEY = 'kyosai_mypage_profile';
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+
+function loadProfile() {
+  try {
+    var s = localStorage.getItem(STORAGE_KEY);
+    if (!s) return null;
+    return JSON.parse(s);
+  } catch (e) { return null; }
+}
+
+function updateGreeting() {
+  var p = loadProfile();
+  var g = document.getElementById('greeting');
+  if (p && (p.nickname || p.username)) {
+    g.textContent = 'ようこそ、' + (p.nickname || p.username) + ' さん';
+  } else {
+    g.textContent = '';
+  }
+}
+
+function saveProfile() {
+  var data = {
+    username: document.getElementById('username').value.trim(),
+    nickname: document.getElementById('nickname').value.trim(),
+    area: document.getElementById('area').value,
+    updatedAt: new Date().toISOString()
+  };
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    showToast('保存しました');
+    updateGreeting();
+  } catch (e) {
+    showToast('保存に失敗しました: ' + (e && e.message));
+  }
+}
+
+function clearProfile() {
+  if (!confirm('入力内容を消去します。よろしいですか？')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  document.getElementById('username').value = '';
+  document.getElementById('nickname').value = '';
+  document.getElementById('area').value = '';
+  updateGreeting();
+  showToast('消去しました');
+}
+
+// 起動時: 保存済みプロフィールを反映
+(function init() {
+  var p = loadProfile();
+  if (p) {
+    document.getElementById('username').value = p.username || '';
+    document.getElementById('nickname').value = p.nickname || '';
+    document.getElementById('area').value = p.area || '';
+  }
+  updateGreeting();
+})();
+</script>
+</body>
+</html>

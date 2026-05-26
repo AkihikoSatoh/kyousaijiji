@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ランダム演習 ─ 問題演習＆要点理解</title>
+<title>ランダム演習 ─ 実力養成演習</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -947,14 +947,14 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 <body>
 
 <header>
-  <h1>問題演習＆要点理解 ─ ランダム演習</h1>
+  <h1>実力養成演習 ─ ランダム演習</h1>
   <div id="scoreBar" class="score-bar" style="display:none;">
     <span>問題 <strong id="qNum">0</strong> / <strong id="qTotal">0</strong></span>
     <span>正解 <strong id="correctCount">0</strong></span>
     <span>不正解 <strong id="wrongCount">0</strong></span>
   </div>
   <div class="header-links" id="headerLinks">
-    <a href="mondai.html" class="link-back">← 問題演習＆要点理解 トップ</a>
+    <a href="mondai.html" class="link-back">← 実力養成演習 トップ</a>
     <a href="kakomon.html" class="link-quiz"><span class="link-icon">📝</span>過去問演習</a>
     <a href="glossary.html" class="link-glossary"><span class="link-icon">📚</span>用語解説</a>
     <a href="houki-scope.html" class="link-houki"><span class="link-icon">⚖️</span>教育法規スコープ</a>
@@ -965,7 +965,7 @@ header h1 { font-size: 1.2em; letter-spacing: .05em; }
 
   <!-- スタート画面 -->
   <div id="startScreen" class="start-screen">
-    <h2>教員採用試験 問題演習＆要点理解</h2>
+    <h2>教員採用試験 実力養成演習</h2>
     <p style="font-size:.75em;color:#999;margin-bottom:12px;">Powered by 『教員養成セミナー』</p>
     <div id="termBanner" class="term-banner" style="display:none;"></div>
 
@@ -1179,7 +1179,7 @@ function shuffle(arr) {
 }
 
 function populateFilters() {
-  // 問題演習＆要点理解では年度・自治体フィルターを使用しないため何もしない
+  // 実力養成演習では年度・自治体フィルターを使用しないため何もしない
 }
 
 function updateFilterInfo() {
@@ -2100,7 +2100,7 @@ function resetQuiz() {
             var oldCount = JSON.parse(stored).length;
             var newCount = data.length;
             if (oldCount !== newCount) {
-              console.log('[問題演習＆要点理解] データ更新: ' + oldCount + '問 → ' + newCount + '問');
+              console.log('[実力養成演習] データ更新: ' + oldCount + '問 → ' + newCount + '問');
             }
           } catch (e) {}
         }
@@ -2110,5 +2110,7 @@ function resetQuiz() {
     .then(function() { init(); });
 })();
 </script>
+
+<a href="mypage.html" id="mypageFab" title="マイページ" aria-label="マイページ" style="position:fixed;top:12px;right:14px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.28);z-index:1000;">👤</a>
 </body>
 </html>

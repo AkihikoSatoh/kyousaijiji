@@ -75,6 +75,32 @@ header h1 { font-size: 1.1em; letter-spacing: .04em; }
   font-size: .9em;
 }
 
+/* 編集タブ */
+.edit-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.etab {
+  padding: 8px 16px;
+  border: 2px solid #1abc9c;
+  background: #fff;
+  color: #117a65;
+  border-radius: 20px;
+  font-size: .85em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .12s;
+}
+.etab:hover { background: #e8f8f5; }
+.etab.active {
+  background: linear-gradient(135deg, #117a65, #1abc9c);
+  color: #fff;
+  border-color: #117a65;
+}
+
 .field { margin-bottom: 14px; }
 .field label {
   display: block;
@@ -317,7 +343,7 @@ header h1 { font-size: 1.1em; letter-spacing: .04em; }
   <!-- データの引き継ぎ -->
   <div class="card">
     <h2>データの引き継ぎ</h2>
-    <p class="hint">編集内容をJSONファイルで書き出し／読み込みできます。別のPCへの移行や、GitHubへのアップロードにご利用ください。</p>
+    <p class="hint">5つのタブ（筆記試験／面接／論作文／集団討論／場面指導）の内容をまとめてJSONファイルで書き出し／読み込みできます。別のPCへの移行や、GitHubへのアップロードにご利用ください。</p>
     <div class="row">
       <button class="btn-export" onclick="exportData()">⬇ エクスポート（joho-strategy-data.json）</button>
       <label class="btn-import">
@@ -329,17 +355,26 @@ header h1 { font-size: 1.1em; letter-spacing: .04em; }
 
   <!-- 本文編集 -->
   <div class="card">
-    <h2>本文を編集</h2>
+    <h2>本文を編集（タブごと）</h2>
     <p class="hint">
-      本文は普通のテキストで入力します。改行はそのまま反映されます。<br>
+      編集したいタブを選び、本文を入力します。タブを切り替えても入力中の内容は保持され、「保存」で5タブまとめて保存されます。<br>
       ※ <code>***テキスト***</code> で<strong>大きい太字（強調）</strong>、<code>**テキスト**</code> で<b>通常の太字</b>、<code>__テキスト__</code> で<u>下線</u>になります。<br>
-      ※ <code>[表示テキスト](https://example.com)</code> でリンクになります（別タブで開きます）。<br>
-      ※ ページ内ジャンプ: ジャンプ先に <code>{#目印名}</code> を置き、<code>[表示テキスト](#目印名)</code> をクリックするとそこへ移動します（目印名は英数字推奨）。<br>
+      ※ <code>[表示テキスト](https://example.com)</code> でリンク、<code>{#目印名}</code>＋<code>[表示テキスト](#目印名)</code> でページ内ジャンプになります。<br>
       ※ 画像は <code>![](joho-img/ファイル名)</code> の形で本文に挿入され、「保存」時に <code>joho-img</code> フォルダへ実ファイルとして書き出されます。
     </p>
+
+    <div class="edit-tabs" id="editTabs">
+      <button type="button" class="etab active" data-key="written" onclick="switchTab('written')">筆記試験</button>
+      <button type="button" class="etab" data-key="interview" onclick="switchTab('interview')">面接</button>
+      <button type="button" class="etab" data-key="essay" onclick="switchTab('essay')">論作文</button>
+      <button type="button" class="etab" data-key="discussion" onclick="switchTab('discussion')">集団討論</button>
+      <button type="button" class="etab" data-key="lesson" onclick="switchTab('lesson')">模擬授業</button>
+      <button type="button" class="etab" data-key="guidance" onclick="switchTab('guidance')">場面指導</button>
+    </div>
+
     <div class="field">
-      <label>本文</label>
-      <textarea id="inputBody" placeholder="例:&#10;【筆記試験】&#10;・教職教養は過去問演習を中心に&#10;・出題分野の傾向をつかむ&#10;&#10;【面接試験】&#10;・想定問答を準備する&#10;..."></textarea>
+      <label id="bodyLabel">本文（筆記試験）</label>
+      <textarea id="inputBody" placeholder="このタブの対策法を入力してください。"></textarea>
     </div>
 
     <!-- 画像ライブラリ -->
@@ -348,7 +383,7 @@ header h1 { font-size: 1.1em; letter-spacing: .04em; }
       <p class="lib-hint">
         ① 「画像をアップロード」で1枚または複数枚まとめて追加します。<br>
         ② 本文の挿入したい位置をクリックしてカーソルを置きます。<br>
-        ③ 各画像の「カーソル位置に挿入」ボタンで本文に挿入します。<br>
+        ③ 各画像の「カーソル位置に挿入」ボタンで本文に挿入します（現在開いているタブに入ります）。<br>
         ④ 「保存」を押すと、画像が <code>joho-img</code> フォルダに書き出されます（初回は保存先フォルダ＝<code>kyosai-quiz</code> を選択）。
       </p>
       <div class="row">
@@ -359,15 +394,15 @@ header h1 { font-size: 1.1em; letter-spacing: .04em; }
       <div class="img-library" id="imageLibrary"></div>
     </div>
     <div class="row">
-      <button class="btn btn-save" onclick="saveBody()">保存</button>
+      <button class="btn btn-save" onclick="saveBody()">保存（全タブ）</button>
       <button class="btn btn-preview" onclick="updatePreview()">プレビューを更新</button>
-      <button class="btn btn-clear" onclick="clearBody()">クリア</button>
+      <button class="btn btn-clear" onclick="clearBody()">このタブをクリア</button>
     </div>
   </div>
 
   <!-- プレビュー -->
   <div class="card">
-    <h2>プレビュー</h2>
+    <h2>プレビュー（<span id="previewLabel">筆記試験</span>）</h2>
     <div class="preview-area" id="previewArea"></div>
   </div>
 
@@ -377,6 +412,13 @@ header h1 { font-size: 1.1em; letter-spacing: .04em; }
 
 <script>
 var STORAGE_KEY = 'kyosai_joho_strategy';
+var SECTION_KEYS = ['written', 'interview', 'essay', 'discussion', 'lesson', 'guidance'];
+var SECTION_LABELS = {
+  written: '筆記試験', interview: '面接', essay: '論作文',
+  discussion: '集団討論', lesson: '模擬授業', guidance: '場面指導'
+};
+var sections = { written: '', interview: '', essay: '', discussion: '', lesson: '', guidance: '' };
+var currentTab = 'written';
 
 function showToast(msg) {
   var t = document.getElementById('toast');
@@ -389,22 +431,19 @@ function escapeHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// 本文をHTMLに変換（画像・太字・下線対応）
+// 本文をHTMLに変換（画像・太字・下線・リンク・ジャンプ対応）
 function renderBody(text) {
   if (!text) return '';
   var s = String(text);
 
-  // 画像記法を仮プレースホルダに退避
+  // 画像記法を仮プレースホルダに退避（base64に出現しない @@ で囲む）
   var images = [];
   s = s.replace(/!\[\]\(([^)]+)\)/g, function(_, url) {
     images.push(url);
-    return 'IMG' + (images.length - 1) + '';
+    return '@@IMG' + (images.length - 1) + '@@';
   });
 
-  // HTMLエスケープ
   s = escapeHtml(s);
-
-  // 太字・下線
   s = s.replace(/\*\*\*(.+?)\*\*\*/g, '<strong>$1</strong>');
   s = s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
   s = s.replace(/__(.+?)__/g, '<u>$1</u>');
@@ -416,36 +455,67 @@ function renderBody(text) {
   // ジャンプ先の目印 {#目印名}
   s = s.replace(/\{#([^}]+)\}/g, '<span class="jump-anchor" id="$1"></span>');
 
-  // プレースホルダ→<img>
   for (var i = 0; i < images.length; i++) {
-    var marker = 'IMG' + i + '';
+    var marker = '@@IMG' + i + '@@';
     var safe = images[i].replace(/"/g, '&quot;');
     s = s.split(marker).join('<img class="content-img" src="' + safe + '" alt="">');
   }
   return s;
 }
 
-// 起動時にlocalStorageから読み込み
-function loadBody() {
+function loadData() {
   try {
     var s = localStorage.getItem(STORAGE_KEY);
-    if (!s) return '';
-    var obj = JSON.parse(s);
-    return (obj && typeof obj.body === 'string') ? obj.body : '';
-  } catch (e) { return ''; }
+    if (!s) return null;
+    return JSON.parse(s);
+  } catch (e) { return null; }
+}
+
+// 旧形式({body})・新形式({sections})を5タブのオブジェクトに正規化
+function normalize(obj) {
+  var out = {};
+  SECTION_KEYS.forEach(function(k) { out[k] = ''; });
+  if (obj && obj.sections && typeof obj.sections === 'object') {
+    SECTION_KEYS.forEach(function(k) { if (typeof obj.sections[k] === 'string') out[k] = obj.sections[k]; });
+  } else if (obj && typeof obj.body === 'string') {
+    out.written = obj.body;
+  }
+  return out;
+}
+
+function switchTab(key) {
+  sections[currentTab] = document.getElementById('inputBody').value;
+  currentTab = key;
+  var btns = document.querySelectorAll('#editTabs .etab');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].classList.toggle('active', btns[i].getAttribute('data-key') === key);
+  }
+  document.getElementById('inputBody').value = sections[key] || '';
+  document.getElementById('bodyLabel').textContent = '本文（' + SECTION_LABELS[key] + '）';
+  document.getElementById('previewLabel').textContent = SECTION_LABELS[key];
+  updatePreview();
+}
+
+function persistData() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ sections: sections, updatedAt: new Date().toISOString() }));
+  } catch (e) {
+    alert('保存に失敗しました: ' + (e && e.message));
+  }
+  updatePreview();
 }
 
 function saveBody() {
-  var body = document.getElementById('inputBody').value;
-  // 本文中で参照されている未保存画像を抽出
+  sections[currentTab] = document.getElementById('inputBody').value;
+  // 全タブで参照されている未保存画像を抽出
+  var allText = SECTION_KEYS.map(function(k) { return sections[k] || ''; }).join('\n');
   var re = new RegExp('!\\[\\]\\(' + IMG_DIR + '/([^)]+)\\)', 'g');
   var referenced = {}, m;
-  while ((m = re.exec(body)) !== null) referenced[m[1]] = true;
+  while ((m = re.exec(allText)) !== null) referenced[m[1]] = true;
   var pending = Object.keys(images).filter(function(fn) { return !images[fn].written && referenced[fn]; });
 
-  if (pending.length === 0) { persistBody(body); showToast('保存しました'); return; }
+  if (pending.length === 0) { persistData(); showToast('保存しました'); return; }
 
-  // 画像ファイルを書き出してから本文を保存
   getImageDir().then(function(dir) {
     return pending.reduce(function(p, fn) {
       return p.then(function() {
@@ -453,7 +523,7 @@ function saveBody() {
       });
     }, Promise.resolve());
   }).then(function() {
-    persistBody(body);
+    persistData();
     renderLibrary();
     showToast(pending.length + ' 枚の画像をファイル化し、本文も保存しました');
   }).catch(function(err) {
@@ -462,21 +532,12 @@ function saveBody() {
     } else {
       alert('画像ファイルの書き出しがキャンセル／失敗しました。本文テキストのみ保存します。\nもう一度「保存」して保存先フォルダ（kyosai-quiz）を指定すると画像が反映されます。');
     }
-    persistBody(body);
+    persistData();
   });
 }
 
-function persistBody(body) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ body: body, updatedAt: new Date().toISOString() }));
-  } catch (e) {
-    alert('保存に失敗しました: ' + (e && e.message));
-  }
-  updatePreview();
-}
-
 function clearBody() {
-  if (!confirm('入力内容をクリアします。よろしいですか？\n（保存済みデータと画像ライブラリは残ります）')) return;
+  if (!confirm('「' + SECTION_LABELS[currentTab] + '」タブの入力内容をクリアします。よろしいですか？\n（保存後に反映されます。画像ライブラリは残ります）')) return;
   document.getElementById('inputBody').value = '';
   document.getElementById('previewArea').innerHTML = '';
 }
@@ -687,17 +748,22 @@ function insertImageAtCursor(fn) {
 
 function deleteLibraryImage(fn) {
   if (!images[fn]) return;
-  var ta = document.getElementById('inputBody');
+  // 現在のタブを同期してから全タブを対象に判定・除去
+  sections[currentTab] = document.getElementById('inputBody').value;
   var escPath = (IMG_DIR + '/' + fn).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&');
   var refRe = new RegExp('!\\[\\]\\(' + escPath + '\\)\\n?', 'g');
-  var matches = ta.value.match(refRe);
-  var n = matches ? matches.length : 0;
-  var msg = (n > 0)
-    ? '「' + fn + '」は本文中に ' + n + ' か所使われています。\n削除すると本文の参照も取り除かれます。よろしいですか？\n（書き出し済みのファイル自体は削除されません）'
+  var total = 0;
+  SECTION_KEYS.forEach(function(k) {
+    var mm = (sections[k] || '').match(refRe);
+    if (mm) total += mm.length;
+  });
+  var msg = (total > 0)
+    ? '「' + fn + '」は本文中に ' + total + ' か所使われています。\n削除すると本文の参照も取り除かれます。よろしいですか？\n（書き出し済みのファイル自体は削除されません）'
     : 'この画像を一覧から削除しますか？\n（書き出し済みのファイル自体は削除されません）';
   if (!confirm(msg)) return;
-  if (n > 0) ta.value = ta.value.replace(refRe, '');
+  if (total > 0) SECTION_KEYS.forEach(function(k) { sections[k] = (sections[k] || '').replace(refRe, ''); });
   delete images[fn];
+  document.getElementById('inputBody').value = sections[currentTab] || '';
   renderLibrary();
   updatePreview();
 }
@@ -711,15 +777,18 @@ function clearLibrary() {
 
 // JSONエクスポート（joho-strategy-data.json）
 function exportData() {
-  var body = document.getElementById('inputBody').value;
-  if (!body.trim()) { showToast('本文が空です'); return; }
+  sections[currentTab] = document.getElementById('inputBody').value;
+  var filled = SECTION_KEYS.filter(function(k) { return (sections[k] || '').trim(); });
+  if (filled.length === 0) { showToast('本文が空です'); return; }
+  var allText = SECTION_KEYS.map(function(k) { return sections[k] || ''; }).join('\n');
   var unwritten = Object.keys(images).filter(function(fn) {
-    return !images[fn].written && body.indexOf(IMG_DIR + '/' + fn) !== -1;
+    return !images[fn].written && allText.indexOf(IMG_DIR + '/' + fn) !== -1;
   });
   if (unwritten.length > 0) {
     if (!confirm('まだファイル化されていない画像が ' + unwritten.length + ' 枚あります。\n先に「保存」で画像をフォルダに書き出すことをおすすめします。\nこのままJSONだけ書き出しますか？')) return;
   }
-  var data = { body: body };
+  var data = { sections: {} };
+  SECTION_KEYS.forEach(function(k) { data.sections[k] = sections[k] || ''; });
   var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
@@ -738,16 +807,18 @@ function importData(event) {
   reader.onload = function(e) {
     try {
       var data = JSON.parse(e.target.result);
-      if (typeof data.body !== 'string') throw new Error('body フィールドがありません');
+      if (!data.sections && typeof data.body !== 'string') throw new Error('sections / body フィールドがありません');
       if (!confirm('現在の内容を上書きします。よろしいですか？')) {
         event.target.value = '';
         return;
       }
       images = {};
+      var norm = normalize(data);
       // 旧base64が含まれていればファイル参照へ移行
-      var body = migrateBase64(data.body);
-      document.getElementById('inputBody').value = body;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ body: body, updatedAt: new Date().toISOString() }));
+      SECTION_KEYS.forEach(function(k) { norm[k] = migrateBase64(norm[k]); });
+      sections = norm;
+      document.getElementById('inputBody').value = sections[currentTab] || '';
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ sections: sections, updatedAt: new Date().toISOString() }));
       showToast('インポートしました');
       renderLibrary();
       updatePreview();
@@ -764,18 +835,18 @@ function importData(event) {
   fetch('joho-strategy-data.json', { cache: 'no-cache' })
     .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
     .then(function(data) {
-      if (!data || typeof data.body !== 'string') return;
       var stored = localStorage.getItem(STORAGE_KEY);
-      if (!stored) {
-        // 初回: サーバのデータをセット
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ body: data.body, updatedAt: new Date().toISOString() }));
+      if (!stored && data && (data.sections || typeof data.body === 'string')) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ sections: normalize(data), updatedAt: new Date().toISOString() }));
       }
     })
     .catch(function() {})
     .then(function() {
+      var norm = normalize(loadData());
       // 旧base64が残っていればファイル参照へ移行（保存時に書き出し）
-      var body = migrateBase64(loadBody());
-      document.getElementById('inputBody').value = body;
+      SECTION_KEYS.forEach(function(k) { norm[k] = migrateBase64(norm[k]); });
+      sections = norm;
+      document.getElementById('inputBody').value = sections[currentTab] || '';
       renderLibrary();
       updatePreview();
     });

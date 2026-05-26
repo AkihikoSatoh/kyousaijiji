@@ -1,0 +1,2114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>クイズでお手軽演習</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  background: #f0f2f5;
+  color: #333;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+header {
+  background: linear-gradient(135deg, #9b59b6, #8e44ad);
+  color: #fff;
+  padding: 16px 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+}
+header h1 { font-size: 1.2em; letter-spacing: .05em; }
+.header-links {
+  margin-top: 6px;
+}
+.header-links a {
+  color: rgba(255,255,255,.85);
+  font-size: .98em;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,.4);
+  padding: 9px 20px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: bold;
+}
+.header-links a .link-icon { font-size: 1.15em; line-height: 1; }
+.header-links a:hover { background: rgba(255,255,255,.15); }
+.header-links a.link-glossary {
+  background: #2ecc71;
+  border-color: #2ecc71;
+  color: #fff;
+}
+.header-links a.link-glossary:hover { background: #27ae60; }
+.header-links a.link-houki {
+  background: #8d6e63;
+  border-color: #8d6e63;
+  color: #fff;
+}
+.header-links a.link-houki:hover { background: #5d4037; }
+.header-links a.link-quiz {
+  background: #2196f3;
+  border-color: #2196f3;
+  color: #fff;
+}
+.header-links a.link-quiz:hover { background: #1976d2; }
+.header-links a.link-home {
+  background: #34495e;
+  border-color: #34495e;
+  color: #fff;
+}
+.header-links a.link-home:hover { background: #1c2833; }
+
+.toc-final-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+.toc-back-btn {
+  flex: 1;
+  padding: 14px;
+  border: 2px solid #d35400;
+  border-radius: 8px;
+  background: #fff;
+  color: #d35400;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.toc-back-btn:hover { background: #fdebd0; }
+.toc-next-btn {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #e67e22, #d35400);
+  color: #fff;
+  font-size: 1.05em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.toc-next-btn:hover { opacity: .9; }
+.toc-next-btn:disabled {
+  background: #ccc;
+  cursor: default;
+  opacity: .7;
+}
+.header-links a.link-quiz5 {
+  background: #f39c12;
+  border-color: #f39c12;
+  color: #fff;
+}
+.header-links a.link-quiz5:hover { background: #e67e22; }
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px 16px;
+}
+
+/* ── スタート画面 ── */
+.start-screen {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  text-align: center;
+  padding: 50px 20px;
+}
+.start-screen h2 {
+  font-size: 1.3em;
+  color: #d35400;
+  margin-bottom: 8px;
+}
+.start-screen .desc {
+  color: #666;
+  margin-bottom: 24px;
+  font-size: .95em;
+}
+.start-btn {
+  padding: 14px 48px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #e67e22, #d35400);
+  color: #fff;
+  font-size: 1.05em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.start-btn:hover { opacity: .9; }
+.start-btn:disabled {
+  background: #aaa;
+  cursor: default;
+}
+
+/* ── フィルター ── */
+.filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.filters select {
+  flex: 1;
+  min-width: 120px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: .9em;
+  font-family: inherit;
+  background: #fff;
+}
+.filter-info {
+  font-size: .85em;
+  color: #888;
+  margin-bottom: 16px;
+}
+
+.term-banner {
+  background: linear-gradient(135deg, #eafaf1, #d1f2eb);
+  border: 1px solid #48c9b0;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  font-size: .9em;
+  color: #117a65;
+  text-align: left;
+  line-height: 1.7;
+}
+.term-banner .term-word {
+  font-weight: bold;
+  background: #fff;
+  padding: 2px 10px;
+  border-radius: 4px;
+  margin: 0 4px;
+}
+.term-banner .clear-term {
+  margin-top: 10px;
+  display: inline-block;
+  padding: 5px 14px;
+  background: transparent;
+  border: 1px solid #117a65;
+  color: #117a65;
+  border-radius: 5px;
+  font-size: .82em;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: inherit;
+}
+.term-banner .clear-term:hover { background: rgba(17,122,101,.1); }
+
+.note {
+  margin-top: 30px;
+  padding: 14px 18px;
+  background: #f8f9fa;
+  border-left: 3px solid #bdc3c7;
+  border-radius: 4px;
+  text-align: left;
+  font-size: .78em;
+  color: #666;
+  line-height: 1.7;
+}
+.note p { margin-bottom: 4px; }
+.note p:last-child { margin-bottom: 0; }
+
+/* ── スコアバー ── */
+.score-bar {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 6px;
+  font-size: .85em;
+  color: rgba(255,255,255,.9);
+}
+
+/* ── プログレスバー ── */
+.progress-bar {
+  height: 4px;
+  background: #d5dbdb;
+  border-radius: 2px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.progress-bar .fill {
+  height: 100%;
+  background: #e67e22;
+  transition: width .3s;
+  width: 0%;
+}
+
+/* ── 問題カード ── */
+.card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.card-header {
+  background: #fdebd0;
+  padding: 10px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: .85em;
+  color: #555;
+  border-bottom: 1px solid #fad7a0;
+}
+.badge {
+  background: #e67e22;
+  color: #fff;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: .8em;
+}
+.card-body { padding: 20px; }
+
+/* ── 問題文 ── */
+.question-text {
+  font-size: 1em;
+  white-space: pre-wrap;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed #ddd;
+}
+.q-img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 14px auto;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+}
+
+/* 個人実績エリア */
+.stats-area {
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: #f0f4f8;
+  border-radius: 6px;
+  font-size: .88em;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.stats-area:empty { display: none; }
+.stats-area .stats-label { font-weight: bold; color: #2c3e50; }
+.stats-area .rate { color: #2980b9; }
+.stats-area .rate.low { color: #c0392b; }
+.stats-area .weak-badge {
+  margin-left: auto;
+  padding: 2px 10px;
+  background: #fadbd8;
+  color: #c0392b;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: .9em;
+}
+
+/* ── 選択肢 ── */
+.choices { display: flex; flex-direction: column; gap: 10px; }
+
+.choice-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 14px 18px;
+  border: 2px solid #d5dbdb;
+  border-radius: 8px;
+  background: #fff;
+  font-size: .95em;
+  cursor: pointer;
+  transition: all .15s;
+  line-height: 1.6;
+  color: #333;
+  font-family: inherit;
+}
+.choice-btn:hover:not(.disabled) {
+  border-color: #e67e22;
+  background: #fdebd0;
+}
+.choice-btn.disabled { cursor: default; opacity: .85; }
+.choice-btn.correct {
+  border-color: #27ae60;
+  background: #eafaf1;
+  color: #1e8449;
+  font-weight: bold;
+}
+.choice-btn.incorrect {
+  border-color: #e74c3c;
+  background: #fdedec;
+  color: #c0392b;
+}
+
+/* ── 結果表示 ── */
+.result-box {
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 8px;
+  display: none;
+}
+.result-box.show { display: block; }
+.result-box.is-correct {
+  background: #d5f5e3;
+  border-left: 5px solid #27ae60;
+}
+.result-box.is-wrong {
+  background: #fadbd8;
+  border-left: 5px solid #e74c3c;
+}
+.result-label {
+  font-size: 1.15em;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.result-box.is-correct .result-label { color: #1e8449; }
+.result-box.is-wrong .result-label { color: #c0392b; }
+.result-answer { font-size: .95em; color: #555; }
+.explanation {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed #bbb;
+  white-space: pre-wrap;
+  font-size: .93em;
+  color: #444;
+  line-height: 1.8;
+}
+.explanation strong {
+  color: #d35400;
+}
+
+/* ── 次へボタン ── */
+.next-btn {
+  display: none;
+  width: 100%;
+  padding: 14px;
+  margin-top: 16px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #e67e22, #d35400);
+  color: #fff;
+  font-size: 1.05em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.next-btn:hover { opacity: .9; }
+.next-btn.show { display: block; }
+
+.back-to-start {
+  display: inline-block;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #7f8c8d;
+  color: #fff;
+  font-size: .82em;
+  cursor: pointer;
+  font-family: inherit;
+}
+.back-to-start:hover { opacity: .85; }
+
+.quiz-bottom-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.pause-btn {
+  display: inline-block;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #e67e22;
+  color: #fff;
+  font-size: .82em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.pause-btn:hover { opacity: .88; }
+
+.memo-btn {
+  display: inline-block;
+  padding: 8px 18px;
+  border: 1px solid #16a085;
+  border-radius: 6px;
+  background: #fff;
+  color: #16a085;
+  font-size: .82em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.memo-btn:hover { background: #e8f8f5; }
+.memo-btn.has-memo {
+  background: #16a085;
+  color: #fff;
+  border-color: #16a085;
+}
+.memo-btn.has-memo:hover { opacity: .88; }
+
+.memo-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.memo-overlay.show { display: flex; }
+.memo-modal {
+  background: #fff;
+  border-radius: 12px;
+  width: min(560px, 100%);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,.3);
+}
+.memo-header {
+  background: linear-gradient(135deg, #16a085, #1abc9c);
+  color: #fff;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.memo-header h3 { font-size: 1.05em; }
+.memo-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: rgba(255,255,255,.15);
+  color: #fff;
+  font-size: 1.3em;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.memo-close:hover { background: rgba(255,255,255,.3); }
+.memo-body {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+.memo-body textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: .95em;
+  font-family: inherit;
+  line-height: 1.7;
+  resize: vertical;
+  min-height: 180px;
+}
+.memo-body textarea:focus {
+  outline: none;
+  border-color: #16a085;
+  box-shadow: 0 0 0 2px rgba(22,160,133,.2);
+}
+.memo-footer {
+  border-top: 1px solid #eee;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+}
+.memo-footer button {
+  padding: 9px 22px;
+  border: none;
+  border-radius: 6px;
+  font-size: .9em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.memo-save {
+  background: linear-gradient(135deg, #16a085, #1abc9c);
+  color: #fff;
+}
+.memo-save:hover { opacity: .88; }
+.memo-cancel {
+  background: #eee;
+  color: #555;
+}
+.memo-cancel:hover { background: #e0e0e0; }
+.memo-delete {
+  background: #fff;
+  color: #e74c3c;
+  border: 1px solid #e74c3c !important;
+}
+.memo-delete:hover { background: #fdedec; }
+
+/* ── チェック機能 ── */
+.check-btn {
+  display: inline-block;
+  padding: 8px 18px;
+  border: 1px solid #d4a017;
+  border-radius: 6px;
+  background: #fff;
+  color: #b7950b;
+  font-size: .82em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.check-btn:hover { background: #fef9e7; }
+.check-btn.checked {
+  background: linear-gradient(135deg, #f1c40f, #d4a017);
+  color: #fff;
+  border-color: #d4a017;
+}
+.check-btn.checked:hover { opacity: .88; }
+
+.checked-box {
+  background: linear-gradient(135deg, #fef9e7, #fff8e1);
+  border: 1px solid #f1c40f;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+.checked-info {
+  font-size: .95em;
+  color: #7d6608;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.checked-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.checked-list-btn {
+  padding: 9px 20px;
+  border: 1px solid #b7950b;
+  border-radius: 6px;
+  background: #fff;
+  color: #7d6608;
+  font-size: .88em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.checked-list-btn:hover { background: rgba(241,196,15,.18); }
+.checked-quiz-btn {
+  padding: 9px 22px;
+  border: none;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #f1c40f, #d4a017);
+  color: #fff;
+  font-size: .9em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.checked-quiz-btn:hover { opacity: .9; }
+
+.checked-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.checked-overlay.show { display: flex; }
+.checked-modal {
+  background: #fff;
+  border-radius: 12px;
+  width: min(680px, 100%);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,.3);
+}
+.checked-modal-header {
+  background: linear-gradient(135deg, #d4a017, #f1c40f);
+  color: #fff;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.checked-modal-header h3 { font-size: 1.05em; }
+.checked-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: rgba(255,255,255,.18);
+  color: #fff;
+  font-size: 1.3em;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.checked-close:hover { background: rgba(255,255,255,.32); }
+.checked-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 20px;
+}
+.checked-modal-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+}
+.checked-item {
+  padding: 12px 14px;
+  border: 1px solid #eee;
+  border-left: 3px solid #f1c40f;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.checked-item-body { flex: 1; min-width: 0; }
+.checked-item-meta {
+  font-size: .78em;
+  color: #999;
+  margin-bottom: 4px;
+}
+.checked-item-meta .tag {
+  display: inline-block;
+  background: #f0f2f5;
+  padding: 1px 8px;
+  border-radius: 4px;
+  margin-right: 4px;
+  color: #666;
+}
+.checked-item-text {
+  font-size: .9em;
+  color: #444;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.checked-item-remove {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 6px;
+  color: #e74c3c;
+  font-size: 1em;
+  cursor: pointer;
+  font-family: inherit;
+}
+.checked-item-remove:hover { border-color: #e74c3c; background: #fdedec; }
+.checked-modal-footer {
+  border-top: 1px solid #eee;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.checked-clear-all {
+  padding: 8px 16px;
+  border: 1px solid #e74c3c;
+  border-radius: 6px;
+  background: #fff;
+  color: #e74c3c;
+  font-size: .85em;
+  cursor: pointer;
+  font-family: inherit;
+}
+.checked-clear-all:hover { background: #fdedec; }
+.checked-modal-close-btn {
+  padding: 8px 24px;
+  border: none;
+  border-radius: 6px;
+  background: #eee;
+  color: #555;
+  font-size: .9em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.checked-modal-close-btn:hover { background: #e0e0e0; }
+
+.checked-item-view {
+  flex-shrink: 0;
+  padding: 5px 12px;
+  border: 1px solid #e67e22;
+  border-radius: 6px;
+  background: #fff;
+  color: #e67e22;
+  font-size: .8em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.checked-item-view:hover { background: #fdebd0; }
+
+/* ── 問題詳細モーダル ── */
+.qview-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  z-index: 600;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.qview-overlay.show { display: flex; }
+.qview-modal {
+  background: #fff;
+  border-radius: 12px;
+  width: min(720px, 100%);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,.3);
+}
+.qview-header {
+  background: linear-gradient(135deg, #d35400, #e67e22);
+  color: #fff;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.qview-header h3 { font-size: 1.05em; }
+.qview-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: rgba(255,255,255,.18);
+  color: #fff;
+  font-size: 1.3em;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.qview-close:hover { background: rgba(255,255,255,.32); }
+
+.qview-card-meta {
+  background: #fdebd0;
+  padding: 10px 18px;
+  font-size: .85em;
+  color: #555;
+  border-bottom: 1px solid #fad7a0;
+}
+.qview-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+.qview-question {
+  font-size: 1em;
+  white-space: pre-wrap;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px dashed #ddd;
+  line-height: 1.8;
+}
+.qview-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.qview-choice {
+  padding: 12px 16px;
+  border: 1px solid #d5dbdb;
+  border-radius: 8px;
+  background: #fff;
+  font-size: .95em;
+  line-height: 1.6;
+}
+.qview-choice.correct {
+  border-color: #27ae60;
+  background: #eafaf1;
+  color: #1e8449;
+  font-weight: bold;
+}
+.qview-explanation {
+  margin-top: 18px;
+  padding: 14px 16px;
+  background: #fef9e7;
+  border-left: 4px solid #f1c40f;
+  border-radius: 4px;
+  font-size: .92em;
+  white-space: pre-wrap;
+  color: #444;
+  line-height: 1.8;
+}
+.qview-explanation strong { color: #b7950b; }
+.qview-footer {
+  border-top: 1px solid #eee;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+.qview-close-btn {
+  padding: 8px 24px;
+  border: none;
+  border-radius: 6px;
+  background: #eee;
+  color: #555;
+  font-size: .9em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.qview-close-btn:hover { background: #e0e0e0; }
+
+.resume-box {
+  background: linear-gradient(135deg, #fef9e7, #fcf3cf);
+  border: 1px solid #f1c40f;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.resume-info {
+  font-size: .9em;
+  color: #7d6608;
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+.resume-btn {
+  display: inline-block;
+  padding: 11px 28px;
+  border: none;
+  border-radius: 7px;
+  background: linear-gradient(135deg, #f39c12, #d68910);
+  color: #fff;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+  margin-right: 10px;
+}
+.resume-btn:hover { opacity: .9; }
+.resume-discard {
+  display: inline-block;
+  padding: 9px 16px;
+  border: 1px solid #b7950b;
+  border-radius: 7px;
+  background: transparent;
+  color: #7d6608;
+  font-size: .82em;
+  cursor: pointer;
+  font-family: inherit;
+}
+.resume-discard:hover { background: rgba(241,196,15,.18); }
+
+/* ── 結果画面 ── */
+.summary-screen {
+  display: none;
+  text-align: center;
+  padding: 40px 20px;
+}
+.summary-screen h2 { font-size: 1.3em; color: #d35400; margin-bottom: 16px; }
+.summary-stat {
+  font-size: 3em;
+  font-weight: bold;
+  color: #e67e22;
+  margin: 10px 0;
+}
+.summary-detail { font-size: 1em; color: #666; margin-bottom: 30px; }
+
+/* ── 問題なし ── */
+.no-questions {
+  text-align: center;
+  color: #999;
+  padding: 20px;
+  font-size: .95em;
+}
+
+@media (max-width: 600px) {
+  header h1 { font-size: 1.05em; }
+  .card-body { padding: 16px; }
+  .choice-btn { padding: 12px 14px; font-size: .9em; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>クイズでお手軽演習</h1>
+  <div id="scoreBar" class="score-bar" style="display:none;">
+    <span>問題 <strong id="qNum">0</strong> / <strong id="qTotal">0</strong></span>
+    <span>正解 <strong id="correctCount">0</strong></span>
+    <span>不正解 <strong id="wrongCount">0</strong></span>
+  </div>
+  <div class="header-links" id="headerLinks">
+    <a href="kyoshoku.html" class="link-home"><span class="link-icon">🏠</span>教職教養トップへ</a>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- スタート画面 -->
+  <div id="startScreen" class="start-screen">
+    <h2>教員採用試験 クイズでお手軽演習</h2>
+    <p style="font-size:.75em;color:#999;margin-bottom:12px;">Powered by 『教員養成セミナー』</p>
+    <div id="termBanner" class="term-banner" style="display:none;"></div>
+
+    <div id="resumeBox" class="resume-box" style="display:none;">
+      <div class="resume-info" id="resumeInfo"></div>
+      <button class="resume-btn" onclick="resumeQuiz()">続きから始める</button>
+      <button class="resume-discard" onclick="discardSession()">中断データを破棄</button>
+    </div>
+
+    <p class="desc" id="startDesc">登録された問題からランダムに出題します</p>
+
+    <div class="filters" style="max-width:400px;margin:0 auto 20px;">
+      <select id="filterCategory">
+        <option value="">全分野</option>
+        <option value="教育原理">教育原理</option>
+        <option value="学習指導要領">学習指導要領</option>
+        <option value="教育史">教育史</option>
+        <option value="教育心理">教育心理</option>
+        <option value="教育法規">教育法規</option>
+        <option value="教育時事">教育時事</option>
+        <option value="ローカル問題">ローカル問題</option>
+      </select>
+    </div>
+    <div class="filters" style="max-width:400px;margin:0 auto 12px;">
+      <select id="filterCount">
+        <option value="10">10問出題</option>
+        <option value="20">20問出題</option>
+        <option value="30">30問出題</option>
+      </select>
+    </div>
+    <p class="filter-info" id="filterInfo"></p>
+
+    <button class="start-btn" id="startBtn" onclick="startQuiz()">スタート</button>
+
+    <div class="note">
+      <p>※『教員養成セミナー』編集部オリジナルの予想問題を収録しています。</p>
+    </div>
+
+    <div id="checkedBox" class="checked-box" style="display:none;">
+      <div class="checked-info">★ チェック済みの問題: <span id="checkedCount">0</span> 問</div>
+      <div class="checked-actions">
+        <button class="checked-list-btn" onclick="openCheckedList()">一覧を見る</button>
+        <button class="checked-quiz-btn" onclick="startCheckedQuiz()">チェック問題に挑戦</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- クイズ画面 -->
+  <div id="quizScreen" style="display:none;">
+    <div class="progress-bar"><div class="fill" id="progressFill"></div></div>
+    <div class="card">
+      <div class="card-header">
+        <span id="metaInfo"></span>
+        <span class="badge" id="qBadge">Q1</span>
+      </div>
+      <div class="card-body">
+        <div class="question-text" id="questionText"></div>
+        <div class="choices" id="choicesArea"></div>
+        <div class="result-box" id="resultBox">
+          <div class="result-label" id="resultLabel"></div>
+          <div class="result-answer" id="resultAnswer"></div>
+          <div class="explanation" id="explanationArea"></div>
+          <div class="stats-area" id="statsArea"></div>
+        </div>
+      </div>
+    </div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">次の問題へ</button>
+    <div class="toc-final-actions" id="tocFinalActions" style="display:none;">
+      <button class="toc-back-btn" onclick="backToTocFromQuiz()">📑 目次に戻る</button>
+      <button class="toc-next-btn" id="tocNextAreaBtn" onclick="goToNextArea()">➡ 次の領域へ</button>
+    </div>
+    <div class="quiz-bottom-actions">
+      <button class="pause-btn" onclick="pauseQuiz()">一時中断</button>
+      <button class="back-to-start" id="backToStartBtn" onclick="resetQuiz()">スタート画面に戻る</button>
+      <button class="memo-btn" id="memoBtn" onclick="openMemo()">📝 メモをする</button>
+      <button class="check-btn" id="checkBtn" onclick="toggleCheck()">☆ チェック</button>
+    </div>
+  </div>
+
+  <!-- メモモーダル -->
+  <div class="memo-overlay" id="memoOverlay" onclick="if(event.target===this)closeMemo()">
+    <div class="memo-modal">
+      <div class="memo-header">
+        <h3>メモ <span style="font-size:.85em;font-weight:normal;opacity:.85;">（この問題に紐づきます）</span></h3>
+        <button class="memo-close" onclick="closeMemo()">&times;</button>
+      </div>
+      <div class="memo-body">
+        <textarea id="memoText" rows="10" placeholder="この問題に関するメモを入力してください…"></textarea>
+        <div id="memoSavedAt" style="font-size:.8em;color:#888;margin-top:6px;"></div>
+      </div>
+      <div class="memo-footer">
+        <button class="memo-delete" id="memoDeleteBtn" onclick="deleteMemo()" style="display:none;">削除</button>
+        <div style="display:flex;gap:10px;margin-left:auto;">
+          <button class="memo-cancel" onclick="closeMemo()">キャンセル</button>
+          <button class="memo-save" onclick="saveMemo()">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 問題詳細モーダル -->
+  <div class="qview-overlay" id="qviewOverlay" onclick="if(event.target===this)closeQView()">
+    <div class="qview-modal">
+      <div class="qview-header">
+        <h3>問題を見る</h3>
+        <button class="qview-close" onclick="closeQView()">&times;</button>
+      </div>
+      <div class="qview-card-meta" id="qviewMeta"></div>
+      <div class="qview-body">
+        <div class="qview-question" id="qviewQuestion"></div>
+        <div class="qview-choices" id="qviewChoices"></div>
+        <div class="qview-explanation" id="qviewExplanation"></div>
+      </div>
+      <div class="qview-footer">
+        <button class="qview-close-btn" onclick="closeQView()">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- チェック問題一覧モーダル -->
+  <div class="checked-overlay" id="checkedOverlay" onclick="if(event.target===this)closeCheckedList()">
+    <div class="checked-modal">
+      <div class="checked-modal-header">
+        <h3>チェック済みの問題 <span id="checkedModalCount" style="font-size:.85em;font-weight:normal;opacity:.85;"></span></h3>
+        <button class="checked-close" onclick="closeCheckedList()">&times;</button>
+      </div>
+      <div class="checked-modal-body" id="checkedModalBody"></div>
+      <div class="checked-modal-footer">
+        <button class="checked-clear-all" onclick="clearAllChecks()">すべてクリア</button>
+        <button class="checked-modal-close-btn" onclick="closeCheckedList()">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 結果画面 -->
+  <div class="card summary-screen" id="summaryScreen">
+    <div class="card-body">
+      <h2>結果発表</h2>
+      <div class="summary-stat" id="summaryRate">0%</div>
+      <div class="summary-detail" id="summaryDetail"></div>
+      <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
+        <button class="start-btn" id="retryWrongBtn" onclick="retryWrong()" style="display:none;">間違えた問題に再挑戦</button>
+        <button class="start-btn" id="backToStartBtn2" onclick="resetQuiz()" style="background:linear-gradient(135deg,#7f8c8d,#566573);">スタート画面に戻る</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const STORAGE_KEY = 'kyosai_quiz5';
+
+let allQuestions = [];
+let quizQuestions = [];
+let currentIndex = 0;
+let correctTotal = 0;
+let wrongTotal = 0;
+let answered = false;
+let wrongQuestions = [];
+let termFilter = '';
+let lastSelectedIdx = -1;
+let tocMode = false;
+let tocCurrentCategory = '';
+let tocCurrentArea = '';
+let tocCurrentItem = '';
+
+const SESSION_KEY = 'kyosai_quiz5_session';
+const MEMO_KEY = 'kyosai_quiz5_memos';
+const CHECK_KEY = 'kyosai_quiz5_checks';
+const STATS_KEY = 'kyosai_quiz5_stats';
+
+function loadQuestions() {
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
+    allQuestions = data ? JSON.parse(data) : [];
+  } catch (e) {
+    allQuestions = [];
+  }
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderQuestion(str) {
+  if (!str) return '';
+  var s = String(str);
+  // 画像記法 ![](URL) を抽出して仮プレースホルダ化
+  var images = [];
+  s = s.replace(/!\[\]\(([^)]+)\)/g, function(_, url) {
+    images.push(url);
+    return 'IMG' + (images.length - 1) + '';
+  });
+  // HTMLエスケープ＋アンダーライン
+  s = escapeHtml(s).replace(/__(.+?)__/g, '<u>$1</u>');
+  // プレースホルダを<img>に展開
+  for (var i = 0; i < images.length; i++) {
+    var marker = 'IMG' + i + '';
+    var safe = images[i].replace(/"/g, '&quot;');
+    s = s.split(marker).join('<img class="q-img" src="' + safe + '" alt="">');
+  }
+  return s;
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function populateFilters() {
+  // クイズでお手軽演習では年度・自治体フィルターを使用しないため何もしない
+}
+
+function updateFilterInfo() {
+  var pool = getFilteredPool();
+  var count = parseInt(document.getElementById('filterCount').value);
+  var info = document.getElementById('filterInfo');
+  info.textContent = '該当: ' + pool.length + ' 問（最大' + count + '問を出題）';
+  document.getElementById('startBtn').disabled = pool.length === 0;
+}
+
+function getFilteredPool() {
+  var category = document.getElementById('filterCategory').value;
+  var pool = allQuestions.slice();
+  if (category) pool = pool.filter(function(q) { return q.category === category; });
+  if (termFilter) {
+    pool = pool.filter(function(q) {
+      if ((q.question || '').indexOf(termFilter) !== -1) return true;
+      return (q.choices || []).some(function(c) { return c.indexOf(termFilter) !== -1; });
+    });
+  }
+  return pool;
+}
+
+function updateTermBanner() {
+  var banner = document.getElementById('termBanner');
+  if (!termFilter) {
+    banner.style.display = 'none';
+    return;
+  }
+  var pool = getFilteredPool();
+  banner.innerHTML =
+    '<div>用語<span class="term-word">' + escapeHtml(termFilter) + '</span>を含む問題を出題します（該当: ' + pool.length + '問）</div>' +
+    '<a href="kakomon.html" class="clear-term">すべての問題から出題に戻す</a>';
+  banner.style.display = 'block';
+}
+
+function init() {
+  loadQuestions();
+
+  // URLパラメータの解析
+  var tocCategory = '', tocArea = '', tocItem = '', isSequential = false, isCheckedMode = false;
+  try {
+    var params = new URLSearchParams(window.location.search);
+    termFilter = params.get('term') || '';
+    tocCategory = params.get('category') || '';
+    tocArea = params.get('area') || '';
+    tocItem = params.get('item') || '';
+    isSequential = params.get('seq') === '1';
+    isCheckedMode = params.get('checked') === '1';
+  } catch (e) {
+    termFilter = '';
+  }
+
+  // 目次経由で起動された場合: 自動的に該当問題のみで順次開始
+  if (tocCategory || tocArea || tocItem) {
+    tocMode = true;
+    tocCurrentCategory = tocCategory;
+    tocCurrentArea = tocArea;
+    tocCurrentItem = tocItem;
+    var pool = allQuestions.filter(function(q) {
+      if (tocCategory && q.category !== tocCategory) return false;
+      if (tocArea && q.area !== tocArea) return false;
+      if (tocItem && q.item !== tocItem) return false;
+      return true;
+    });
+    // チェック済みモード: チェックされた問題のみに絞り込み
+    if (isCheckedMode) {
+      var checks = {};
+      try { checks = JSON.parse(localStorage.getItem(CHECK_KEY) || '{}') || {}; } catch (e) {}
+      pool = pool.filter(function(q) {
+        // quiz5-toc と同じハッシュロジック
+        var key = (q.question || '') + '|' + (q.choices && q.choices[0] || '');
+        var h = 0;
+        for (var ki = 0; ki < key.length; ki++) {
+          h = ((h << 5) - h) + key.charCodeAt(ki);
+          h |= 0;
+        }
+        return !!checks['q' + h];
+      });
+    }
+    if (pool.length === 0) {
+      alert(isCheckedMode ? 'チェック済みの問題がありません。' : '該当する問題がありません。');
+      location.href = 'quiz5-toc.html';
+      return;
+    }
+    // 登録順をそのまま使用（シャッフルしない）
+    quizQuestions = isSequential ? pool : pool.slice();
+    currentIndex = 0;
+    correctTotal = 0;
+    wrongTotal = 0;
+    wrongQuestions = [];
+
+    document.getElementById('qTotal').textContent = quizQuestions.length;
+    document.getElementById('scoreBar').style.display = 'flex';
+    document.getElementById('headerLinks').style.display = 'none';
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('summaryScreen').style.display = 'none';
+    document.getElementById('quizScreen').style.display = 'block';
+
+    // 目次経由なので、戻るボタンは「目次に戻る」に切り替え
+    var backToToc = function() {
+      localStorage.removeItem(SESSION_KEY);
+      location.href = 'quiz5-toc.html';
+    };
+    var btn1 = document.getElementById('backToStartBtn');
+    if (btn1) { btn1.textContent = '目次に戻る'; btn1.onclick = backToToc; }
+    var btn2 = document.getElementById('backToStartBtn2');
+    if (btn2) { btn2.textContent = '目次に戻る'; btn2.onclick = backToToc; }
+
+    showQuestion();
+    return;
+  }
+
+  var count = allQuestions.length;
+  document.getElementById('startDesc').textContent =
+    count > 0
+      ? '登録済み ' + count + ' 問からランダムに出題します'
+      : '問題が登録されていません。管理者画面から登録してください。';
+  document.getElementById('startBtn').disabled = count === 0;
+
+  if (count > 0) {
+    populateFilters();
+    updateFilterInfo();
+    updateTermBanner();
+    document.getElementById('filterCategory').onchange = function() { updateFilterInfo(); updateTermBanner(); };
+    document.getElementById('filterCount').onchange = updateFilterInfo;
+  }
+
+  updateResumeBox();
+  updateCheckedBox();
+}
+
+function updateResumeBox() {
+  var box = document.getElementById('resumeBox');
+  var saved;
+  try {
+    saved = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+  } catch (e) {
+    saved = null;
+  }
+  if (!saved || !saved.quizQuestions || saved.currentIndex == null) {
+    box.style.display = 'none';
+    return;
+  }
+  var total = saved.quizQuestions.length;
+  var pos = saved.currentIndex + 1;
+  var dt = saved.savedAt ? new Date(saved.savedAt) : null;
+  var dtStr = dt
+    ? dt.getFullYear() + '/' + (dt.getMonth() + 1) + '/' + dt.getDate() + ' ' +
+      String(dt.getHours()).padStart(2, '0') + ':' + String(dt.getMinutes()).padStart(2, '0')
+    : '';
+  document.getElementById('resumeInfo').innerHTML =
+    '<strong>中断中のクイズがあります</strong><br>' +
+    '全' + total + '問中、第' + pos + '問目から再開できます' +
+    (dtStr ? '<br><span style="font-size:.85em;opacity:.75;">中断時刻: ' + dtStr + '</span>' : '');
+  box.style.display = 'block';
+}
+
+function startQuiz() {
+  var pool = getFilteredPool();
+  if (pool.length === 0) return;
+
+  // 中断データがあれば確認
+  if (localStorage.getItem(SESSION_KEY)) {
+    if (!confirm('中断中のクイズデータがあります。新規にスタートすると、中断データは破棄されます。よろしいですか？')) {
+      return;
+    }
+    localStorage.removeItem(SESSION_KEY);
+  }
+
+  shuffle(pool);
+  var count = parseInt(document.getElementById('filterCount').value) || 10;
+  quizQuestions = pool.slice(0, count);
+  currentIndex = 0;
+  correctTotal = 0;
+  wrongTotal = 0;
+  wrongQuestions = [];
+
+  document.getElementById('qTotal').textContent = quizQuestions.length;
+  document.getElementById('scoreBar').style.display = 'flex';
+  document.getElementById('headerLinks').style.display = 'none';
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('summaryScreen').style.display = 'none';
+  document.getElementById('quizScreen').style.display = 'block';
+
+  showQuestion();
+}
+
+function showQuestion() {
+  answered = false;
+  lastSelectedIdx = -1;
+  const q = quizQuestions[currentIndex];
+  const num = currentIndex + 1;
+
+  document.getElementById('qNum').textContent = num;
+  document.getElementById('correctCount').textContent = correctTotal;
+  document.getElementById('wrongCount').textContent = wrongTotal;
+  document.getElementById('qBadge').textContent = 'Q' + num;
+  var meta = '';
+  if (q.year) meta += q.year + '年';
+  if (q.pref) meta += (meta ? ' ' : '') + q.pref;
+  if (q.category) meta += (meta ? ' ' : '') + '[' + q.category + ']';
+  if (q.area) meta += (meta ? ' ' : '') + '〈' + q.area + '〉';
+  if (q.item) meta += (meta ? ' ' : '') + '《' + q.item + '》';
+  document.getElementById('metaInfo').textContent = meta;
+  document.getElementById('questionText').innerHTML = renderQuestion(q.question);
+
+  // プログレスバー
+  document.getElementById('progressFill').style.width =
+    ((num - 1) / quizQuestions.length * 100) + '%';
+
+  // 選択肢を生成
+  const area = document.getElementById('choicesArea');
+  area.innerHTML = '';
+  const choices = q.choices.filter(function(c) { return c !== ''; });
+  choices.forEach(function(ch, idx) {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = renderQuestion(ch);
+    btn.onclick = function() { selectAnswer(idx, choices); };
+    area.appendChild(btn);
+  });
+
+  // 結果・解説を非表示
+  var resultBox = document.getElementById('resultBox');
+  resultBox.className = 'result-box';
+  resultBox.style.display = 'none';
+  document.getElementById('explanationArea').textContent = '';
+  var statsArea0 = document.getElementById('statsArea');
+  if (statsArea0) statsArea0.innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  updateMemoButton();
+  updateCheckButton();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── 解答実績（統計）の記録・取得 ──
+function loadStats() {
+  try { return JSON.parse(localStorage.getItem(STATS_KEY) || '{}') || {}; }
+  catch (e) { return {}; }
+}
+function saveStats(s) { localStorage.setItem(STATS_KEY, JSON.stringify(s)); }
+function recordAnswer(q, isCorrect) {
+  var key = questionKey(q);
+  var s = loadStats();
+  if (!s[key]) s[key] = { answered: 0, correct: 0, lastAt: '' };
+  s[key].answered++;
+  if (isCorrect) s[key].correct++;
+  s[key].lastAt = new Date().toISOString();
+  saveStats(s);
+  return s[key];
+}
+function getStatsFor(q) {
+  var key = questionKey(q);
+  var s = loadStats();
+  return s[key] || { answered: 0, correct: 0 };
+}
+function correctRate(st) {
+  if (!st || !st.answered) return null;
+  return Math.round((st.correct / st.answered) * 100);
+}
+
+function selectAnswer(idx, choices) {
+  if (answered) return;
+  answered = true;
+  lastSelectedIdx = idx;
+
+  var q = quizQuestions[currentIndex];
+  var correctIdx = q.answer - 1; // answer は 1始まり
+  var isCorrect = idx === correctIdx;
+
+  var btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(function(btn, i) {
+    btn.classList.add('disabled');
+    if (i === correctIdx) btn.classList.add('correct');
+    if (i === idx && !isCorrect) btn.classList.add('incorrect');
+  });
+
+  if (isCorrect) {
+    correctTotal++;
+  } else {
+    wrongTotal++;
+    wrongQuestions.push(q);
+  }
+
+  // 解答実績の記録（永続化）
+  recordAnswer(q, isCorrect);
+
+  document.getElementById('correctCount').textContent = correctTotal;
+  document.getElementById('wrongCount').textContent = wrongTotal;
+
+  // 結果表示
+  var resultBox = document.getElementById('resultBox');
+  resultBox.className = 'result-box show ' + (isCorrect ? 'is-correct' : 'is-wrong');
+  resultBox.style.display = 'block';
+  document.getElementById('resultLabel').textContent = isCorrect ? '正解！' : '不正解…';
+
+  if (isCorrect) {
+    document.getElementById('resultAnswer').innerHTML =
+      '正答：' + renderQuestion(choices[correctIdx]);
+  } else {
+    document.getElementById('resultAnswer').innerHTML =
+      '<div style="margin-bottom:6px;">あなたの解答：' + renderQuestion(choices[idx]) + '</div>' +
+      '<div><strong>正答：' + renderQuestion(choices[correctIdx]) + '</strong></div>';
+  }
+
+  // 解説表示
+  var expArea = document.getElementById('explanationArea');
+  if (q.explanation) {
+    expArea.innerHTML = '<strong>【解説】</strong><br>' + renderQuestion(q.explanation);
+  } else {
+    expArea.textContent = '';
+  }
+
+  // 個人実績の表示
+  var statsArea = document.getElementById('statsArea');
+  if (statsArea) {
+    var st = getStatsFor(q);
+    var rate = correctRate(st);
+    var rateCls = (rate !== null && rate <= 50 && st.answered >= 2) ? ' low' : '';
+    statsArea.innerHTML =
+      '<span class="stats-label">📊 あなたの実績</span>' +
+      '<span>正答率 <strong class="rate' + rateCls + '">' +
+        (rate !== null ? rate + '%' : '─') +
+      '</strong>（' + st.answered + '回解答）</span>' +
+      (rate !== null && rate <= 50 && st.answered >= 2
+        ? '<span class="weak-badge">⚠ 苦手問題</span>' : '');
+  }
+
+  // 次へボタン
+  var nextBtn = document.getElementById('nextBtn');
+  var tocActions = document.getElementById('tocFinalActions');
+  var isLast = currentIndex + 1 >= quizQuestions.length;
+  if (tocMode && isLast) {
+    // 目次モードの最終問題: 「目次に戻る」「次の領域へ」を表示
+    nextBtn.className = 'next-btn';
+    if (tocActions) {
+      tocActions.style.display = 'flex';
+      var nextBtn2 = document.getElementById('tocNextAreaBtn');
+      if (nextBtn2) {
+        var next = findNextToc(tocCurrentCategory, tocCurrentArea);
+        nextBtn2.disabled = !next;
+        nextBtn2.textContent = next ? '➡ 次の領域へ' : '（次の領域はありません）';
+      }
+    }
+  } else {
+    nextBtn.className = 'next-btn show';
+    nextBtn.textContent = isLast ? '結果を見る' : '次の問題へ';
+    if (tocActions) tocActions.style.display = 'none';
+  }
+}
+
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex < quizQuestions.length) {
+    showQuestion();
+  } else {
+    showSummary();
+  }
+}
+
+// ── 目次モード: 「目次に戻る」 / 「次の領域へ」 ──
+var CATEGORY_ORDER = ['教育原理', '学習指導要領', '教育史', '教育心理', '教育法規', '教育時事', 'ローカル問題'];
+
+function buildOrderedAreaPairs() {
+  // 全問題から (category, area) 出現順の一意ペアを構築（目次ページと同じ順序）
+  var byCategory = {};
+  var firstSeen = {};
+  allQuestions.forEach(function(q, idx) {
+    var cat = q.category || '未分類';
+    var area = q.area || '（領域未設定）';
+    if (!byCategory[cat]) {
+      byCategory[cat] = [];
+      firstSeen[cat] = idx;
+    }
+    if (byCategory[cat].indexOf(area) === -1) {
+      byCategory[cat].push(area);
+    }
+  });
+  var cats = Object.keys(byCategory);
+  cats.sort(function(a, b) {
+    var ia = CATEGORY_ORDER.indexOf(a);
+    var ib = CATEGORY_ORDER.indexOf(b);
+    if (ia === -1 && ib === -1) return firstSeen[a] - firstSeen[b];
+    if (ia === -1) return 1;
+    if (ib === -1) return -1;
+    return ia - ib;
+  });
+  var pairs = [];
+  cats.forEach(function(cat) {
+    byCategory[cat].forEach(function(area) {
+      pairs.push({ cat: cat, area: area });
+    });
+  });
+  return pairs;
+}
+
+function findNextToc(curCat, curArea) {
+  var pairs = buildOrderedAreaPairs();
+  var idx = -1;
+  for (var i = 0; i < pairs.length; i++) {
+    if (pairs[i].cat === curCat && pairs[i].area === curArea) { idx = i; break; }
+  }
+  if (idx === -1 || idx + 1 >= pairs.length) return null;
+  return pairs[idx + 1];
+}
+
+function findFirstItemFor(cat, area) {
+  for (var i = 0; i < allQuestions.length; i++) {
+    var q = allQuestions[i];
+    var qCat = q.category || '未分類';
+    var qArea = q.area || '（領域未設定）';
+    if (qCat === cat && qArea === area) {
+      return q.item || '（項目未設定）';
+    }
+  }
+  return null;
+}
+
+function backToTocFromQuiz() {
+  localStorage.removeItem(SESSION_KEY);
+  location.href = 'quiz5-toc.html';
+}
+
+function goToNextArea() {
+  var next = findNextToc(tocCurrentCategory, tocCurrentArea);
+  if (!next) {
+    alert('次の領域はありません。目次に戻ります。');
+    backToTocFromQuiz();
+    return;
+  }
+  var firstItem = findFirstItemFor(next.cat, next.area);
+  if (!firstItem) {
+    alert('次の領域の問題が見つかりません。');
+    return;
+  }
+  localStorage.removeItem(SESSION_KEY);
+  var url = 'quiz5-random.html?category=' + encodeURIComponent(next.cat) +
+            '&area=' + encodeURIComponent(next.area) +
+            '&item=' + encodeURIComponent(firstItem) +
+            '&seq=1';
+  location.href = url;
+}
+
+function showSummary() {
+  document.getElementById('quizScreen').style.display = 'none';
+  document.getElementById('summaryScreen').style.display = 'block';
+
+  var total = quizQuestions.length;
+  var rate = Math.round((correctTotal / total) * 100);
+  document.getElementById('summaryRate').textContent = rate + '%';
+  document.getElementById('summaryDetail').textContent =
+    total + '問中 ' + correctTotal + '問正解（不正解 ' + wrongTotal + '問）';
+  document.getElementById('progressFill').style.width = '100%';
+
+  var retryBtn = document.getElementById('retryWrongBtn');
+  retryBtn.style.display = wrongQuestions.length > 0 ? 'inline-block' : 'none';
+  if (wrongQuestions.length > 0) {
+    retryBtn.textContent = '間違えた問題に再挑戦（' + wrongQuestions.length + '問）';
+  }
+
+  // 完走したのでセッションをクリア
+  localStorage.removeItem(SESSION_KEY);
+}
+
+function pauseQuiz() {
+  var session = {
+    quizQuestions: quizQuestions,
+    currentIndex: currentIndex,
+    correctTotal: correctTotal,
+    wrongTotal: wrongTotal,
+    wrongQuestions: wrongQuestions,
+    termFilter: termFilter,
+    answered: answered,
+    selectedIdx: lastSelectedIdx,
+    savedAt: new Date().toISOString()
+  };
+  try {
+    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+  } catch (e) {
+    alert('中断データの保存に失敗しました: ' + e.message);
+    return;
+  }
+  resetQuizUI();
+  updateResumeBox();
+}
+
+function resumeQuiz() {
+  var saved;
+  try {
+    saved = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+  } catch (e) {
+    saved = null;
+  }
+  if (!saved || !saved.quizQuestions || saved.currentIndex == null) {
+    document.getElementById('resumeBox').style.display = 'none';
+    return;
+  }
+
+  quizQuestions = saved.quizQuestions;
+  currentIndex = saved.currentIndex;
+  correctTotal = saved.correctTotal || 0;
+  wrongTotal = saved.wrongTotal || 0;
+  wrongQuestions = saved.wrongQuestions || [];
+  termFilter = saved.termFilter || '';
+
+  document.getElementById('qTotal').textContent = quizQuestions.length;
+  document.getElementById('scoreBar').style.display = 'flex';
+  document.getElementById('headerLinks').style.display = 'none';
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('summaryScreen').style.display = 'none';
+  document.getElementById('quizScreen').style.display = 'block';
+
+  showQuestion();
+
+  // 中断時に解答済みだった場合は、その状態を再現（スコアは加算しない）
+  if (saved.answered && saved.selectedIdx != null && saved.selectedIdx >= 0) {
+    var q = quizQuestions[currentIndex];
+    var choices = q.choices.filter(function(c) { return c !== ''; });
+    var correctIdx = q.answer - 1;
+    var selIdx = saved.selectedIdx;
+    var isCorrect = selIdx === correctIdx;
+
+    answered = true;
+    lastSelectedIdx = selIdx;
+
+    var btns = document.querySelectorAll('.choice-btn');
+    btns.forEach(function(btn, i) {
+      btn.classList.add('disabled');
+      if (i === correctIdx) btn.classList.add('correct');
+      if (i === selIdx && !isCorrect) btn.classList.add('incorrect');
+    });
+
+    var resultBox = document.getElementById('resultBox');
+    resultBox.className = 'result-box show ' + (isCorrect ? 'is-correct' : 'is-wrong');
+    resultBox.style.display = 'block';
+    document.getElementById('resultLabel').textContent = isCorrect ? '正解！' : '不正解…';
+
+    if (isCorrect) {
+      document.getElementById('resultAnswer').innerHTML = '正答：' + renderQuestion(choices[correctIdx]);
+    } else {
+      document.getElementById('resultAnswer').innerHTML =
+        '<div style="margin-bottom:6px;">あなたの解答：' + renderQuestion(choices[selIdx]) + '</div>' +
+        '<div><strong>正答：' + renderQuestion(choices[correctIdx]) + '</strong></div>';
+    }
+
+    var expArea = document.getElementById('explanationArea');
+    if (q.explanation) {
+      expArea.innerHTML = '<strong>【解説】</strong><br>' + renderQuestion(q.explanation);
+    } else {
+      expArea.textContent = '';
+    }
+
+    var nextBtn = document.getElementById('nextBtn');
+    nextBtn.className = 'next-btn show';
+    nextBtn.textContent = currentIndex + 1 < quizQuestions.length ? '次の問題へ' : '結果を見る';
+  }
+}
+
+function discardSession() {
+  if (!confirm('中断中のクイズデータを破棄します。よろしいですか？')) return;
+  localStorage.removeItem(SESSION_KEY);
+  updateResumeBox();
+}
+
+// ── メモ機能 ──
+function loadMemos() {
+  try {
+    return JSON.parse(localStorage.getItem(MEMO_KEY) || '{}') || {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveMemos(memos) {
+  localStorage.setItem(MEMO_KEY, JSON.stringify(memos));
+}
+
+function questionKey(q) {
+  // 問題文＋最初の選択肢で識別（問題文だけだと長すぎる場合があるため）
+  var key = (q.question || '') + '|' + (q.choices && q.choices[0] || '');
+  // 簡易ハッシュ
+  var h = 0;
+  for (var i = 0; i < key.length; i++) {
+    h = ((h << 5) - h) + key.charCodeAt(i);
+    h |= 0;
+  }
+  return 'q' + h;
+}
+
+function getCurrentMemo() {
+  if (!quizQuestions[currentIndex]) return null;
+  var memos = loadMemos();
+  return memos[questionKey(quizQuestions[currentIndex])] || null;
+}
+
+function updateMemoButton() {
+  var btn = document.getElementById('memoBtn');
+  if (!btn) return;
+  var memo = getCurrentMemo();
+  if (memo && memo.text) {
+    btn.classList.add('has-memo');
+    btn.textContent = '📝 メモを編集';
+  } else {
+    btn.classList.remove('has-memo');
+    btn.textContent = '📝 メモをする';
+  }
+}
+
+function openMemo() {
+  if (!quizQuestions[currentIndex]) return;
+  var memo = getCurrentMemo();
+  document.getElementById('memoText').value = memo ? memo.text : '';
+  document.getElementById('memoDeleteBtn').style.display = (memo && memo.text) ? 'inline-block' : 'none';
+  if (memo && memo.savedAt) {
+    var dt = new Date(memo.savedAt);
+    var dtStr = dt.getFullYear() + '/' + (dt.getMonth() + 1) + '/' + dt.getDate() + ' ' +
+      String(dt.getHours()).padStart(2, '0') + ':' + String(dt.getMinutes()).padStart(2, '0');
+    document.getElementById('memoSavedAt').textContent = '最終保存: ' + dtStr;
+  } else {
+    document.getElementById('memoSavedAt').textContent = '';
+  }
+  document.getElementById('memoOverlay').classList.add('show');
+  setTimeout(function() { document.getElementById('memoText').focus(); }, 50);
+}
+
+function saveMemo() {
+  if (!quizQuestions[currentIndex]) return;
+  var text = document.getElementById('memoText').value;
+  var memos = loadMemos();
+  var key = questionKey(quizQuestions[currentIndex]);
+  if (text.trim()) {
+    memos[key] = {
+      text: text,
+      savedAt: new Date().toISOString(),
+      questionPreview: (quizQuestions[currentIndex].question || '').substring(0, 50)
+    };
+  } else {
+    delete memos[key];
+  }
+  saveMemos(memos);
+  updateMemoButton();
+  closeMemo();
+}
+
+function deleteMemo() {
+  if (!confirm('このメモを削除しますか？')) return;
+  if (!quizQuestions[currentIndex]) return;
+  var memos = loadMemos();
+  delete memos[questionKey(quizQuestions[currentIndex])];
+  saveMemos(memos);
+  updateMemoButton();
+  closeMemo();
+}
+
+function closeMemo() {
+  document.getElementById('memoOverlay').classList.remove('show');
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    var qviewEl = document.getElementById('qviewOverlay');
+    if (qviewEl && qviewEl.classList.contains('show')) { closeQView(); return; }
+    var memoEl = document.getElementById('memoOverlay');
+    if (memoEl && memoEl.classList.contains('show')) { closeMemo(); return; }
+    var checkedEl = document.getElementById('checkedOverlay');
+    if (checkedEl && checkedEl.classList.contains('show')) { closeCheckedList(); return; }
+  }
+});
+
+// ── チェック機能 ──
+function loadChecks() {
+  try {
+    return JSON.parse(localStorage.getItem(CHECK_KEY) || '{}') || {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveChecks(checks) {
+  localStorage.setItem(CHECK_KEY, JSON.stringify(checks));
+}
+
+function isChecked(q) {
+  if (!q) return false;
+  return !!loadChecks()[questionKey(q)];
+}
+
+function toggleCheck() {
+  if (!quizQuestions[currentIndex]) return;
+  var q = quizQuestions[currentIndex];
+  var key = questionKey(q);
+  var checks = loadChecks();
+  if (checks[key]) {
+    delete checks[key];
+  } else {
+    checks[key] = {
+      question: q,
+      checkedAt: new Date().toISOString()
+    };
+  }
+  saveChecks(checks);
+  updateCheckButton();
+}
+
+function updateCheckButton() {
+  var btn = document.getElementById('checkBtn');
+  if (!btn || !quizQuestions[currentIndex]) return;
+  if (isChecked(quizQuestions[currentIndex])) {
+    btn.classList.add('checked');
+    btn.textContent = '★ チェック済';
+  } else {
+    btn.classList.remove('checked');
+    btn.textContent = '☆ チェック';
+  }
+}
+
+function updateCheckedBox() {
+  var box = document.getElementById('checkedBox');
+  var checks = loadChecks();
+  var count = Object.keys(checks).length;
+  if (count === 0) {
+    box.style.display = 'none';
+    return;
+  }
+  document.getElementById('checkedCount').textContent = count;
+  box.style.display = 'block';
+}
+
+function openCheckedList() {
+  var checks = loadChecks();
+  var entries = Object.keys(checks).map(function(k) {
+    return { key: k, data: checks[k] };
+  });
+  entries.sort(function(a, b) {
+    return (b.data.checkedAt || '').localeCompare(a.data.checkedAt || '');
+  });
+
+  document.getElementById('checkedModalCount').textContent = '（' + entries.length + ' 問）';
+
+  var body = document.getElementById('checkedModalBody');
+  if (entries.length === 0) {
+    body.innerHTML = '<div class="checked-modal-empty">チェックした問題はありません</div>';
+  } else {
+    var html = '';
+    entries.forEach(function(e) {
+      var q = e.data.question || {};
+      var meta = '';
+      if (q.year) meta += '<span class="tag">' + q.year + '年</span>';
+      if (q.pref) meta += '<span class="tag">' + escapeHtml(q.pref) + '</span>';
+      if (q.category) meta += '<span class="tag">' + escapeHtml(q.category) + '</span>';
+      if (q.area) meta += '<span class="tag">' + escapeHtml(q.area) + '</span>';
+      if (q.item) meta += '<span class="tag">' + escapeHtml(q.item) + '</span>';
+      if (e.data.checkedAt) {
+        var dt = new Date(e.data.checkedAt);
+        meta += '<span style="color:#aaa;">★ ' + (dt.getMonth() + 1) + '/' + dt.getDate() + ' ' +
+          String(dt.getHours()).padStart(2, '0') + ':' + String(dt.getMinutes()).padStart(2, '0') + '</span>';
+      }
+      html +=
+        '<div class="checked-item">' +
+          '<div class="checked-item-body">' +
+            '<div class="checked-item-meta">' + meta + '</div>' +
+            '<div class="checked-item-text">' + escapeHtml(q.question || '') + '</div>' +
+          '</div>' +
+          '<button class="checked-item-view" title="問題を見る" onclick="viewCheckedQuestion(\'' + e.key + '\')">問題を見る</button>' +
+          '<button class="checked-item-remove" title="チェック解除" onclick="removeCheck(\'' + e.key + '\')">×</button>' +
+        '</div>';
+    });
+    body.innerHTML = html;
+  }
+  document.getElementById('checkedOverlay').classList.add('show');
+}
+
+function closeCheckedList() {
+  document.getElementById('checkedOverlay').classList.remove('show');
+}
+
+function viewCheckedQuestion(key) {
+  var checks = loadChecks();
+  var entry = checks[key];
+  if (!entry || !entry.question) return;
+  var q = entry.question;
+
+  var meta = '';
+  if (q.year) meta += q.year + '年';
+  if (q.pref) meta += (meta ? ' ─ ' : '') + q.pref;
+  if (q.category) meta += (meta ? ' ─ ' : '') + '[' + q.category + ']';
+  if (q.area) meta += (meta ? ' ─ ' : '') + '〈' + q.area + '〉';
+  if (q.item) meta += (meta ? ' ─ ' : '') + '《' + q.item + '》';
+  document.getElementById('qviewMeta').textContent = meta || '（情報なし）';
+
+  document.getElementById('qviewQuestion').innerHTML = renderQuestion(q.question || '');
+
+  var choices = (q.choices || []).filter(function(c) { return c !== ''; });
+  var correctIdx = (q.answer || 1) - 1;
+  var html = '';
+  choices.forEach(function(c, i) {
+    var cls = (i === correctIdx) ? 'qview-choice correct' : 'qview-choice';
+    var prefix = (i === correctIdx ? '◎ ' : '○ ') + (i + 1) + '. ';
+    html += '<div class="' + cls + '">' + prefix + escapeHtml(c) + '</div>';
+  });
+  document.getElementById('qviewChoices').innerHTML = html;
+
+  var expEl = document.getElementById('qviewExplanation');
+  if (q.explanation) {
+    expEl.innerHTML = '<strong>【解説】</strong><br>' + renderQuestion(q.explanation);
+    expEl.style.display = 'block';
+  } else {
+    expEl.innerHTML = '';
+    expEl.style.display = 'none';
+  }
+
+  document.getElementById('qviewOverlay').classList.add('show');
+}
+
+function closeQView() {
+  document.getElementById('qviewOverlay').classList.remove('show');
+}
+
+function removeCheck(key) {
+  var checks = loadChecks();
+  delete checks[key];
+  saveChecks(checks);
+  updateCheckedBox();
+  openCheckedList(); // 再描画
+  updateCheckButton();
+}
+
+function clearAllChecks() {
+  var checks = loadChecks();
+  if (Object.keys(checks).length === 0) return;
+  if (!confirm('すべてのチェックを解除します。よろしいですか？')) return;
+  localStorage.removeItem(CHECK_KEY);
+  updateCheckedBox();
+  openCheckedList();
+  updateCheckButton();
+}
+
+function startCheckedQuiz() {
+  var checks = loadChecks();
+  var questions = Object.keys(checks).map(function(k) { return checks[k].question; }).filter(Boolean);
+  if (questions.length === 0) {
+    alert('チェックした問題はありません');
+    return;
+  }
+
+  // 中断データがあれば確認
+  if (localStorage.getItem(SESSION_KEY)) {
+    if (!confirm('中断中のクイズデータがあります。新規にスタートすると、中断データは破棄されます。よろしいですか？')) {
+      return;
+    }
+    localStorage.removeItem(SESSION_KEY);
+  }
+
+  shuffle(questions);
+  quizQuestions = questions;
+  currentIndex = 0;
+  correctTotal = 0;
+  wrongTotal = 0;
+  wrongQuestions = [];
+
+  document.getElementById('qTotal').textContent = quizQuestions.length;
+  document.getElementById('scoreBar').style.display = 'flex';
+  document.getElementById('headerLinks').style.display = 'none';
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('summaryScreen').style.display = 'none';
+  document.getElementById('quizScreen').style.display = 'block';
+
+  showQuestion();
+}
+
+function retryWrong() {
+  quizQuestions = wrongQuestions.slice();
+  currentIndex = 0;
+  correctTotal = 0;
+  wrongTotal = 0;
+  wrongQuestions = [];
+
+  document.getElementById('qTotal').textContent = quizQuestions.length;
+  document.getElementById('scoreBar').style.display = 'flex';
+  document.getElementById('summaryScreen').style.display = 'none';
+  document.getElementById('quizScreen').style.display = 'block';
+
+  showQuestion();
+}
+
+function resetQuizUI() {
+  document.getElementById('quizScreen').style.display = 'none';
+  document.getElementById('summaryScreen').style.display = 'none';
+  document.getElementById('startScreen').style.display = 'block';
+  document.getElementById('scoreBar').style.display = 'none';
+  document.getElementById('headerLinks').style.display = '';
+  document.getElementById('progressFill').style.width = '0%';
+  init();
+}
+
+function resetQuiz() {
+  // 「スタート画面に戻る」(明示的な放棄)はセッションも破棄
+  localStorage.removeItem(SESSION_KEY);
+  resetQuizUI();
+}
+
+// 起動時: localStorageが空なら questions-data.json を自動ロード
+// 起動時: サーバのJSONを取得し、localStorageと内容が異なれば更新する
+(function bootstrap() {
+  fetch('quiz5-data.json', { cache: 'no-cache' })
+    .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+    .then(function(data) {
+      if (!Array.isArray(data) || data.length === 0) return;
+      var stored = localStorage.getItem(STORAGE_KEY) || '';
+      var remoteStr = JSON.stringify(data);
+      if (stored !== remoteStr) {
+        localStorage.setItem(STORAGE_KEY, remoteStr);
+        var hadOldData = stored && stored !== '[]';
+        if (hadOldData) {
+          try {
+            var oldCount = JSON.parse(stored).length;
+            var newCount = data.length;
+            if (oldCount !== newCount) {
+              console.log('[クイズでお手軽演習] データ更新: ' + oldCount + '問 → ' + newCount + '問');
+            }
+          } catch (e) {}
+        }
+      }
+    })
+    .catch(function() { /* JSONなしの場合は黙ってスキップ */ })
+    .then(function() { init(); });
+})();
+</script>
+
+<a href="mypage.html" id="mypageFab" title="マイページ" aria-label="マイページ" style="position:fixed;top:12px;right:14px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.28);z-index:1000;">👤</a>
+</body>
+</html>

@@ -15,199 +15,42 @@ body {
   min-height: 100vh;
 }
 
-/* === ヘッダー: モダンナビ風デザイン === */
+/* === ヘッダー（教採関連情報と同じ体裁） === */
 header {
-  background:
-    radial-gradient(ellipse at top right, rgba(0,210,255,.18) 0%, transparent 55%),
-    radial-gradient(circle at 15% 90%, rgba(58,123,213,.22) 0%, transparent 50%),
-    linear-gradient(135deg, #0c2461 0%, #1e3799 45%, #0a3d62 100%);
+  background: linear-gradient(135deg, #117a65, #1abc9c);
   color: #fff;
-  padding: 44px 20px 32px;
+  padding: 22px 20px;
   text-align: center;
-  box-shadow: 0 6px 24px rgba(0,0,0,.32);
-  position: relative;
-  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
 }
-/* 細かなグリッドパターン（テクノロジー感） */
-header::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
-  background-size: 36px 36px;
-  pointer-events: none;
-}
-/* 下部にシアンのグロウライン */
-header::after {
-  content: '';
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
-  height: 3px;
-  background: linear-gradient(90deg, transparent 0%, #00d2ff 30%, #3a7bd5 50%, #00d2ff 70%, transparent 100%);
-  box-shadow: 0 0 18px rgba(0,210,255,.7);
-}
-
-.brand {
+header h1 {
+  font-size: 1.7em;
+  letter-spacing: .04em;
+  font-weight: bold;
   display: inline-flex;
   align-items: center;
-  gap: 18px;
-  position: relative;
-  z-index: 1;
+  gap: 10px;
+  text-shadow: 0 2px 4px rgba(0,0,0,.25);
 }
-.brand-icon {
-  width: 68px;
-  height: 68px;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #00d2ff, #3a7bd5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2em;
-  flex-shrink: 0;
-  box-shadow:
-    0 8px 20px rgba(0,210,255,.35),
-    inset 0 1px 0 rgba(255,255,255,.35),
-    inset 0 -2px 4px rgba(0,0,0,.15);
-  position: relative;
+header h1 .title-icon {
+  font-size: 1.1em;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,.35));
 }
-.brand-icon::after {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  border-radius: 22px;
-  background: linear-gradient(135deg, rgba(0,210,255,.4), transparent 60%);
-  z-index: -1;
-  filter: blur(8px);
-}
-.brand-text { text-align: left; }
-/* 教採ナビ（小さなサブブランド表記） */
-.sub-brand {
-  font-size: 1em;
-  font-weight: 900;
-  letter-spacing: .12em;
-  line-height: 1;
-  margin-bottom: 10px;
-  font-family: 'Hiragino Kaku Gothic ProN W9', 'Hiragino Sans W9', 'Yu Gothic UI', 'Meiryo', sans-serif;
-}
-.sub-brand .kyou,
-.sub-brand .navi {
-  color: #ffeb3b;
-  text-shadow:
-    -1px -1px 0 #0a1942,
-     1px -1px 0 #0a1942,
-    -1px  1px 0 #0a1942,
-     1px  1px 0 #0a1942,
-     0    2px 4px rgba(0,0,0,.5);
-}
-.sub-brand .navi { padding-left: 3px; }
-
-/* 教職教養（メインタイトル: 大きく、HUD風） */
-.main-title {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  margin: 0;
-  font-family: 'Hiragino Kaku Gothic ProN W9', 'Hiragino Sans W9', 'Yu Gothic UI', 'Meiryo', 'MS Gothic', sans-serif;
-}
-.main-title .br {
-  font-size: 1.9em;
-  font-weight: 900;
-  color: #4fc3f7;
-  line-height: 1;
-  filter: drop-shadow(0 0 10px rgba(0,210,255,.85));
-}
-.main-title .tag-text {
-  font-size: 2em;
-  letter-spacing: .12em;
-  padding: 7px 20px 7px calc(20px + .12em);
-  font-weight: 900;
-  color: #fff;
-  line-height: 1;
-  background:
-    linear-gradient(180deg, rgba(0,210,255,.20) 0%, rgba(58,123,213,.12) 100%);
-  border-top: 3px solid #4fc3f7;
-  border-bottom: 3px solid #4fc3f7;
-  position: relative;
-  text-shadow:
-    -1.5px -1.5px 0 #0a1942,
-     1.5px -1.5px 0 #0a1942,
-    -1.5px  1.5px 0 #0a1942,
-     1.5px  1.5px 0 #0a1942,
-     0      4px   0 #0a3d62,
-     0      0     22px rgba(79,195,247,.7);
-}
-.main-title .tag-text::before,
-.main-title .tag-text::after {
-  content: '';
-  position: absolute;
-  width: 9px;
-  height: 9px;
-  border: 2px solid #4fc3f7;
-  box-shadow: 0 0 8px rgba(0,210,255,.9);
-  background: #0a3d62;
-}
-.main-title .tag-text::before {
-  top: -6px; left: -6px;
-  border-right: none; border-bottom: none;
-}
-.main-title .tag-text::after {
-  bottom: -6px; right: -6px;
-  border-left: none; border-top: none;
-}
-header .subtitle {
-  font-size: .78em;
-  opacity: .68;
-  letter-spacing: .08em;
-  margin-top: 14px;
-  position: relative;
-  z-index: 1;
-}
-.header-back {
-  margin-top: 18px;
-  position: relative;
-  z-index: 1;
-}
-.back-to-home {
+.header-back { margin-top: 14px; }
+.header-back a {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 9px 22px;
-  background: #34495e;
+  padding: 8px 18px;
+  background: linear-gradient(135deg, #0c2461 0%, #1e3799 45%, #0a3d62 100%);
   color: #fff;
-  border: 1px solid #34495e;
+  border: 1px solid #0c2461;
   border-radius: 7px;
   text-decoration: none;
-  font-size: .95em;
+  font-size: .9em;
   font-weight: bold;
-  letter-spacing: .04em;
-  transition: background .15s;
 }
-.back-to-home:hover { background: #1c2833; }
-
-@media (max-width: 600px) {
-  header { padding: 32px 16px 24px; }
-  .brand { gap: 12px; }
-  .brand-icon { width: 52px; height: 52px; border-radius: 14px; font-size: 1.5em; }
-  .sub-brand { font-size: .88em; margin-bottom: 6px; }
-  .main-title { gap: 8px; }
-  .main-title .br { font-size: 1.4em; }
-  .main-title .tag-text {
-    font-size: 1.3em;
-    letter-spacing: .08em;
-    padding: 4px 12px 4px calc(12px + .08em);
-    text-shadow:
-      -1px -1px 0 #0a1942,
-       1px -1px 0 #0a1942,
-      -1px  1px 0 #0a1942,
-       1px  1px 0 #0a1942,
-       0   3px 0 #0a3d62,
-       0   0   16px rgba(79,195,247,.65);
-  }
-  .main-title .tag-text::before,
-  .main-title .tag-text::after { width: 7px; height: 7px; }
-}
+.header-back a:hover { background: linear-gradient(135deg, #061a4a 0%, #142b75 45%, #062a44 100%); }
 
 .container {
   max-width: 760px;
@@ -262,6 +105,8 @@ header .subtitle {
 }
 .menu-card.mondai   { --accent: #f39c12; }
 .menu-card.mondai   .menu-icon { background: linear-gradient(135deg, #f39c12, #e67e22); }
+.menu-card.quiz5    { --accent: #8e44ad; }
+.menu-card.quiz5    .menu-icon { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
 .menu-card.kakomon  { --accent: #2196f3; }
 .menu-card.kakomon  .menu-icon { background: linear-gradient(135deg, #2196f3, #1976d2); }
 .menu-card.glossary { --accent: #2ecc71; }
@@ -329,21 +174,10 @@ footer {
 <body>
 
 <header>
-  <div class="brand">
-    <div class="brand-icon">🧭</div>
-    <div class="brand-text">
-      <div class="sub-brand"><span class="kyou">教採</span><span class="navi">ナビ</span></div>
-      <h1 class="main-title">
-        <span class="br">〈</span>
-        <span class="tag-text">教職教養</span>
-        <span class="br">〉</span>
-      </h1>
-    </div>
-  </div>
+  <h1><span class="title-icon">📖</span>教職教養</h1>
   <div class="header-back">
-    <a href="index.html" class="back-to-home">🏠 教採ナビ トップへ</a>
+    <a href="index.html">🏠 教採ナビ トップへ</a>
   </div>
-  <div class="subtitle">Powered by 『教員養成セミナー』</div>
 </header>
 
 <div class="container">
@@ -352,10 +186,19 @@ footer {
 
   <div class="menu">
 
+    <a href="quiz5-random.html" class="menu-card quiz5">
+      <div class="menu-icon">5️⃣</div>
+      <div class="menu-body">
+        <div class="menu-title">クイズでお手軽演習</div>
+        <div class="menu-desc">分野と問題数を指定して、5択クイズに挑戦できます。</div>
+      </div>
+      <div class="menu-arrow">›</div>
+    </a>
+
     <a href="mondai.html" class="menu-card mondai">
       <div class="menu-icon">💡</div>
       <div class="menu-body">
-        <div class="menu-title">問題演習＆要点理解</div>
+        <div class="menu-title">実力養成演習</div>
         <div class="menu-desc">予想問題で実力を養成。目次別演習とランダム演習に対応。</div>
       </div>
       <div class="menu-arrow">›</div>
@@ -394,5 +237,7 @@ footer {
 
 </div>
 
+
+<a href="mypage.html" id="mypageFab" title="マイページ" aria-label="マイページ" style="position:fixed;top:12px;right:14px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.28);z-index:1000;">👤</a>
 </body>
 </html>

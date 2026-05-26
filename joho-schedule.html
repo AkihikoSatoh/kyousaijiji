@@ -42,15 +42,15 @@ header h1 .title-icon {
   align-items: center;
   gap: 6px;
   padding: 7px 16px;
-  background: #34495e;
+  background: linear-gradient(135deg, #0c2461 0%, #1e3799 45%, #0a3d62 100%);
   color: #fff;
-  border: 1px solid #34495e;
+  border: 1px solid #0c2461;
   border-radius: 7px;
   text-decoration: none;
   font-size: .88em;
   font-weight: bold;
 }
-.header-links a:hover { background: #1c2833; }
+.header-links a:hover { background: linear-gradient(135deg, #061a4a 0%, #142b75 45%, #062a44 100%); }
 .header-links a.back-joho {
   background: #fff;
   color: #117a65;
@@ -266,5 +266,7 @@ function renderPage(obj) {
   });
 })();
 </script>
+
+<a href="mypage.html" id="mypageFab" title="マイページ" aria-label="マイページ" style="position:fixed;top:12px;right:14px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.28);z-index:1000;">👤</a>
 </body>
 </html>
