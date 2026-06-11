@@ -6,11 +6,12 @@
 <title>自治体別・試験情報データベース ─ 教採ナビ</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 body {
   font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
   background: #f0f2f5;
   color: #333;
-  line-height: 1.8;
+  line-height: 1.7;
   min-height: 100vh;
 }
 header {
@@ -37,50 +38,369 @@ header h1 .title-icon {
 }
 .header-links { margin-top: 12px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
 .header-links a {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  display: inline-flex; align-items: center; gap: 6px;
   padding: 7px 16px;
-  background: linear-gradient(135deg, #0c2461 0%, #1e3799 45%, #0a3d62 100%);
+  background: #34495e;
   color: #fff;
-  border: 1px solid #0c2461;
+  border: 1px solid #34495e;
   border-radius: 7px;
   text-decoration: none;
   font-size: .88em;
   font-weight: bold;
 }
-.header-links a:hover { background: linear-gradient(135deg, #061a4a 0%, #142b75 45%, #062a44 100%); }
+.header-links a:hover { background: #1c2833; }
 .header-links a.back-joho {
-  background: #fff;
-  color: #117a65;
-  border-color: #fff;
+  background: #fff; color: #117a65; border-color: #fff;
 }
 .header-links a.back-joho:hover { background: #d1f2eb; color: #0e5b4a; }
-.container {
-  max-width: 720px;
+
+/* タブ（主役） */
+.tabs-section {
+  background: #fff;
+  border-bottom: 1px solid #e0e6ec;
+  padding: 18px 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,.04);
+}
+.tabs-label {
+  text-align: center;
+  font-size: .85em;
+  color: #777;
+  margin-bottom: 10px;
+  letter-spacing: .08em;
+}
+.tabs {
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 60px 16px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.tab {
+  padding: 11px 22px;
+  border: 2px solid #1abc9c;
+  background: #fff;
+  color: #117a65;
+  border-radius: 24px;
+  font-size: .95em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .12s;
+  min-width: 130px;
   text-align: center;
 }
-.coming {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0,0,0,.08);
-  padding: 50px 30px;
+.tab:hover { background: #e8f8f5; transform: translateY(-1px); }
+.tab.active {
+  background: linear-gradient(135deg, #117a65, #1abc9c);
+  color: #fff;
+  border-color: #117a65;
+  box-shadow: 0 3px 10px rgba(22,160,133,.4);
 }
-.coming .icon { font-size: 3.5em; margin-bottom: 14px; }
-.coming h2 {
-  font-size: 1.3em;
+.tab .count {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.85);
   color: #117a65;
+  font-size: .8em;
+  font-weight: bold;
+}
+.tab.active .count { background: rgba(255,255,255,.25); color: #fff; }
+
+/* 検索バー（サブ） */
+.filter-bar {
+  max-width: 1100px;
+  margin: 14px auto 0;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.search-input {
+  flex: 1;
+  min-width: 200px;
+  max-width: 380px;
+  padding: 8px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: .9em;
+  font-family: inherit;
+}
+.search-input:focus {
+  outline: none;
+  border-color: #1abc9c;
+  box-shadow: 0 0 0 2px rgba(26,188,156,.2);
+}
+.region-info {
+  font-size: .85em;
+  color: #555;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 18px 16px 30px;
+}
+
+/* 自治体カード（アコーディオン） */
+.area-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  margin-bottom: 10px;
+  border: 1px solid #e0e6ec;
+  overflow: hidden;
+}
+.area-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  cursor: pointer;
+  user-select: none;
+  background: #fff;
+  transition: background .12s;
+}
+.area-head:hover { background: #f5fbf9; }
+.area-card.open .area-head {
+  background: linear-gradient(135deg, #117a65, #1abc9c);
+  color: #fff;
+}
+.area-name {
+  flex: 1;
+  font-size: 1.05em;
+  font-weight: bold;
+  color: inherit;
+}
+.year-badge {
+  display: inline-block;
+  padding: 4px 13px;
+  background: linear-gradient(135deg, #e67e22, #d35400);
+  color: #fff;
+  font-size: .88em;
+  font-weight: bold;
+  border-radius: 14px;
+  margin-right: 10px;
+  letter-spacing: .04em;
+  vertical-align: middle;
+  box-shadow: 0 2px 5px rgba(211,84,0,.35);
+  text-shadow: 0 1px 1px rgba(0,0,0,.2);
+}
+.area-card.open .year-badge {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,.3);
+}
+.year-banner {
+  background: linear-gradient(135deg, #d35400, #e67e22);
+  color: #fff;
+  padding: 11px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1.08em;
   margin-bottom: 14px;
+  text-align: center;
+  letter-spacing: .05em;
+  box-shadow: 0 2px 8px rgba(211,84,0,.3);
+  text-shadow: 0 1px 2px rgba(0,0,0,.18);
 }
-.coming p {
+.year-banner-bottom {
+  margin-top: 16px;
+  margin-bottom: 0;
+}
+.area-summary {
+  font-size: .82em;
   color: #666;
-  font-size: .95em;
-  line-height: 1.9;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
 }
-@media (max-width: 600px) {
-  header h1 { font-size: 1.15em; }
+.area-card.open .area-summary { color: rgba(255,255,255,.92); }
+.summary-pill {
+  background: #f0f2f5;
+  color: #555;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: .9em;
+}
+.area-card.open .summary-pill {
+  background: rgba(255,255,255,.22);
+  color: #fff;
+}
+.toggle-icon {
+  font-size: 1.2em;
+  color: #117a65;
+  transition: transform .15s;
+}
+.area-card.open .toggle-icon {
+  color: #fff;
+  transform: rotate(90deg);
+}
+
+.area-body {
+  display: none;
+  padding: 16px 22px 22px;
+  background: #fafbfc;
+  border-top: 1px solid #e0e6ec;
+}
+.area-card.open .area-body { display: block; }
+
+.detail-section { margin-bottom: 16px; }
+.detail-section:last-child { margin-bottom: 0; }
+.section-title {
+  font-size: .85em;
+  font-weight: bold;
+  color: #117a65;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #d1f2eb;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #d1f2eb;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.section-header.left-year {
+  justify-content: flex-start;
+  gap: 14px;
+  padding-bottom: 8px;
+}
+.section-header.left-year .section-title {
+  font-size: 1.35em;
+  color: #0e6b58;
+  letter-spacing: .04em;
+  font-weight: bold;
+  text-shadow: 0 1px 1px rgba(0,0,0,.08);
+}
+.section-header .section-title {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+.year-tag {
+  background: linear-gradient(135deg, #e67e22, #d35400);
+  color: #fff;
+  padding: 4px 13px;
+  border-radius: 14px;
+  font-size: .82em;
+  font-weight: bold;
+  letter-spacing: .03em;
+  white-space: nowrap;
+  box-shadow: 0 1px 4px rgba(211,84,0,.3);
+  text-shadow: 0 1px 1px rgba(0,0,0,.15);
+}
+.detail-table { width: 100%; border-collapse: collapse; font-size: .9em; }
+.detail-table td {
+  padding: 7px 10px;
+  vertical-align: top;
+  border-bottom: 1px solid #eef2f6;
+  line-height: 1.65;
+}
+.detail-table td.label {
+  width: 30%;
+  color: #666;
+  font-weight: bold;
+  background: #f5f8fa;
+  white-space: nowrap;
+}
+.detail-table td.value { color: #333; }
+.detail-table td.empty { color: #bbb; font-style: italic; }
+.ratio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+  margin-top: 4px;
+}
+.ratio-item {
+  background: #fff;
+  border: 1px solid #e0e6ec;
+  border-radius: 6px;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: .9em;
+}
+.ratio-item .lbl { color: #666; }
+.ratio-item .val { font-weight: bold; color: #117a65; }
+.ratio-item .val.empty { color: #bbb; font-weight: normal; }
+.ratio-overall {
+  background: linear-gradient(135deg, #117a65, #1abc9c);
+  color: #fff;
+  font-weight: bold;
+  font-size: 1em;
+  padding: 8px 14px;
+  border-radius: 6px;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+.ratio-overall .val { color: #fff; font-size: 1.15em; margin-left: 8px; }
+
+.empty-state {
+  text-align: center;
+  color: #999;
+  padding: 40px 16px;
+  font-size: .95em;
+}
+.error-state {
+  text-align: center;
+  color: #c0392b;
+  background: #fff;
+  border: 1px solid #f5c6c6;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+  font-size: .9em;
+}
+
+.footer-note {
+  max-width: 1100px;
+  margin: 18px auto 0;
+  padding: 0 16px;
+  text-align: right;
+  font-size: .78em;
+  color: #999;
+}
+
+.to-top {
+  position: fixed;
+  right: 20px;
+  bottom: 24px;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #117a65, #1abc9c);
+  color: #fff;
+  font-size: 1.5em;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0,0,0,.28);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .25s, visibility .25s;
+  z-index: 500;
+}
+.to-top.show { opacity: .92; visibility: visible; }
+.to-top:hover { opacity: 1; filter: brightness(1.08); }
+
+@media (max-width: 700px) {
+  header h1 { font-size: 1.1em; }
+  .area-summary { display: none; }
+  .detail-table td.label { width: 38%; font-size: .85em; }
+  .tab { padding: 9px 14px; font-size: .85em; min-width: 0; }
+  .tabs-section { padding: 12px 10px; }
 }
 </style>
 </head>
@@ -92,16 +412,261 @@ header h1 .title-icon {
     <a href="index.html">🏠 教採ナビ トップへ</a>
   </div>
 </header>
-<div class="container">
-  <div class="coming">
-    <div class="icon">🛠️</div>
-    <h2>準備中</h2>
-    <p>
-      「自治体別・試験情報データベース」のコンテンツは現在準備中です。<br>
-      全国の自治体ごとの試験日程・倍率・出題傾向などを順次公開予定です。
-    </p>
+
+<!-- 地方タブ（最初から見える静的タブ） -->
+<div class="tabs-section">
+  <div class="tabs-label">▼ 地方を選択してください ▼</div>
+  <div class="tabs" id="tabs">
+    <button type="button" class="tab active" data-region="北海道・東北" onclick="selectRegion('北海道・東北')">北海道・東北<span class="count" data-count="北海道・東北"></span></button>
+    <button type="button" class="tab" data-region="関東" onclick="selectRegion('関東')">関東<span class="count" data-count="関東"></span></button>
+    <button type="button" class="tab" data-region="中部" onclick="selectRegion('中部')">中部<span class="count" data-count="中部"></span></button>
+    <button type="button" class="tab" data-region="近畿" onclick="selectRegion('近畿')">近畿<span class="count" data-count="近畿"></span></button>
+    <button type="button" class="tab" data-region="中国" onclick="selectRegion('中国')">中国<span class="count" data-count="中国"></span></button>
+    <button type="button" class="tab" data-region="四国" onclick="selectRegion('四国')">四国<span class="count" data-count="四国"></span></button>
+    <button type="button" class="tab" data-region="九州" onclick="selectRegion('九州')">九州<span class="count" data-count="九州"></span></button>
   </div>
 </div>
+
+<div class="filter-bar">
+  <div class="region-info" id="regionInfo">読込中…</div>
+  <input type="text" class="search-input" id="searchInput" placeholder="🔍 自治体名で絞り込み">
+</div>
+
+<div class="container" id="container">
+  <div class="empty-state">データを読み込んでいます…</div>
+</div>
+
+<div class="footer-note" id="footerNote"></div>
+
+<button id="toTop" class="to-top" aria-label="ページ上部へ" title="ページ上部へ">↑</button>
+
+<!-- データバンドル（file://でも読み込めるように <script>タグで読み込む） -->
+<script src="joho-jichitai-data.js"></script>
+
+<script>
+var STORAGE_KEY = 'kyosai_joho_jichitai';
+var currentRegion = '北海道・東北';
+var currentSearch = '';
+var DATA = { updatedAt: '', regions: [] };
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function findRegion(name) {
+  for (var i = 0; i < DATA.regions.length; i++) {
+    if (DATA.regions[i].name === name) return DATA.regions[i];
+  }
+  return null;
+}
+
+function updateTabCounts() {
+  var spans = document.querySelectorAll('#tabs .count');
+  for (var i = 0; i < spans.length; i++) {
+    var name = spans[i].getAttribute('data-count');
+    var r = findRegion(name);
+    spans[i].textContent = r ? r.members.length : 0;
+  }
+}
+
+function selectRegion(name) {
+  currentRegion = name;
+  var btns = document.querySelectorAll('#tabs .tab');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].classList.toggle('active', btns[i].getAttribute('data-region') === name);
+  }
+  renderRegion();
+}
+
+function renderRegion() {
+  var container = document.getElementById('container');
+  var info = document.getElementById('regionInfo');
+  var region = findRegion(currentRegion);
+  if (!region) {
+    if (DATA.regions.length === 0) {
+      container.innerHTML = '<div class="error-state">データを読み込めませんでした。<br><small>joho-jichitai-data.json がアップロードされているか、ブラウザでローカルファイルの読み込みが許可されているかご確認ください。</small></div>';
+      info.textContent = '';
+      return;
+    }
+    container.innerHTML = '<div class="empty-state">この地方のデータがありません</div>';
+    info.textContent = currentRegion;
+    return;
+  }
+  var members = region.members;
+  var kw = currentSearch.trim();
+  if (kw) {
+    members = members.filter(function(m) { return m.name && m.name.indexOf(kw) !== -1; });
+  }
+  info.textContent = currentRegion + '：' + members.length + ' 自治体' + (kw ? '（検索: ' + kw + '）' : '');
+  if (members.length === 0) {
+    container.innerHTML = '<div class="empty-state">該当する自治体がありません。</div>';
+    return;
+  }
+  container.innerHTML = members.map(function(m, i) { return cardHtml(m, i); }).join('');
+}
+
+function cardHtml(m, idx) {
+  var yearSchedule = (m.year_schedule || m.year || '').trim();
+  var yearRatio = (m.year_ratio || '').trim();
+  var date1 = m.date1 || '';
+  var ratio = m.ratio_all || '';
+  var summary = '';
+  if (date1) summary += '<span class="summary-pill">1次: ' + escapeHtml(date1.length > 18 ? date1.substring(0, 18) + '…' : date1) + '</span>';
+  if (ratio) summary += '<span class="summary-pill">倍率: ' + escapeHtml(ratio) + '</span>';
+  var body = '';
+  body += '<div class="detail-section">';
+  body += '<div class="section-header left-year">';
+  body += '<div class="section-title">📋 試験日程・内容</div>';
+  if (yearSchedule) body += '<div class="year-tag">📅 ' + escapeHtml(yearSchedule) + '年実施試験情報</div>';
+  body += '</div>';
+  body += '<table class="detail-table"><tbody>';
+  body += row('説明会等', m.explain);
+  body += row('出願要項の配布', m.distribute);
+  body += row('出願受付', m.apply);
+  body += row('1次試験 日程', m.date1);
+  body += row('1次試験 内容', m.content1);
+  body += row('1次試験 合格発表', m.result1);
+  body += row('2次試験 日程', m.date2);
+  body += row('2次試験 内容', m.content2);
+  body += row('最終合格発表', m.result);
+  body += '</tbody></table>';
+  body += '</div>';
+
+  body += '<div class="detail-section">';
+  body += '<div class="section-header left-year">';
+  body += '<div class="section-title">📊 競争倍率</div>';
+  if (yearRatio) body += '<div class="year-tag">📅 ' + escapeHtml(yearRatio) + '年実施試験情報</div>';
+  body += '</div>';
+  if (m.ratio_all) {
+    body += '<div class="ratio-overall">全体倍率 <span class="val">' + escapeHtml(m.ratio_all) + '</span></div>';
+  }
+  body += '<div class="ratio-grid">';
+  body += ratioItem('小学校', m.ratio_es);
+  body += ratioItem('中学校', m.ratio_jhs);
+  body += ratioItem('高等学校', m.ratio_hs);
+  body += ratioItem('特別支援学校', m.ratio_sn);
+  body += ratioItem('養護教諭', m.ratio_nurse);
+  body += ratioItem('栄養教諭', m.ratio_nutri);
+  body += '</div>';
+  body += '</div>';
+
+  return '<div class="area-card" id="area-' + idx + '">' +
+           '<div class="area-head" onclick="toggle(' + idx + ')">' +
+             '<span class="toggle-icon">▶</span>' +
+             '<span class="area-name">' + escapeHtml(m.name) + '</span>' +
+             '<span class="area-summary">' + summary + '</span>' +
+           '</div>' +
+           '<div class="area-body">' + body + '</div>' +
+         '</div>';
+}
+
+function row(label, value) {
+  if (!value || !String(value).trim()) {
+    return '<tr><td class="label">' + escapeHtml(label) + '</td><td class="empty">―</td></tr>';
+  }
+  return '<tr><td class="label">' + escapeHtml(label) + '</td><td class="value">' + escapeHtml(value).replace(/\n/g, '<br>') + '</td></tr>';
+}
+
+function ratioItem(label, value) {
+  var hasVal = value && String(value).trim();
+  return '<div class="ratio-item"><span class="lbl">' + escapeHtml(label) + '</span>' +
+         '<span class="val' + (hasVal ? '' : ' empty') + '">' + (hasVal ? escapeHtml(value) : '―') + '</span></div>';
+}
+
+function toggle(idx) {
+  var card = document.getElementById('area-' + idx);
+  if (!card) return;
+  card.classList.toggle('open');
+}
+
+document.getElementById('searchInput').addEventListener('input', function(e) {
+  currentSearch = e.target.value;
+  renderRegion();
+});
+
+function fmtDate(iso) {
+  try {
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    return d.getFullYear() + '/' + ('0'+(d.getMonth()+1)).slice(-2) + '/' + ('0'+d.getDate()).slice(-2);
+  } catch (e) { return ''; }
+}
+
+function applyData(data) {
+  if (!data) data = { updatedAt: '', regions: [] };
+  if (!Array.isArray(data.regions)) data.regions = [];
+  DATA = data;
+  updateTabCounts();
+  renderRegion();
+  var note = document.getElementById('footerNote');
+  if (data.updatedAt) {
+    var d = fmtDate(data.updatedAt) || data.updatedAt;
+    note.textContent = '最終更新: ' + d + ' ／ 出典: 各自治体の発表をもとに編集部で集計';
+  } else {
+    note.textContent = '出典: 各自治体の発表をもとに編集部で集計';
+  }
+}
+
+function loadStored() {
+  try {
+    var s = localStorage.getItem(STORAGE_KEY);
+    if (!s) return null;
+    return JSON.parse(s);
+  } catch (e) { return null; }
+}
+
+(function bootstrap() {
+  // 候補1: JSバンドル（file://でも動く）
+  var bundleData = (typeof JICHITAI_DATA !== 'undefined' && JICHITAI_DATA && JICHITAI_DATA.regions) ? JICHITAI_DATA : null;
+  // 候補2: localStorage（管理画面で編集された最新ローカルデータ）
+  var storedData = loadStored();
+
+  // 両方ある場合は updatedAt が新しい方（同じなら localStorage）を採用
+  // これにより、管理画面で保存した直後でも公開ページに即反映される
+  var chosen;
+  if (bundleData && storedData) {
+    var bd = bundleData.updatedAt || '';
+    var sd = storedData.updatedAt || '';
+    chosen = (sd >= bd) ? storedData : bundleData;
+  } else {
+    chosen = bundleData || storedData || { updatedAt: '', regions: [] };
+  }
+  applyData(chosen);
+
+  // localStorageが空のときだけバンドルでキャッシュ（管理画面のローカル編集を上書きしないように）
+  if (!storedData && bundleData) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(bundleData)); } catch (e) {}
+  }
+
+  // http(s):// 環境では、サーバの最新JSONも確認（より新しければ採用）
+  if (location.protocol !== 'file:') {
+    fetch('joho-jichitai-data.json', { cache: 'no-cache' })
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(data) {
+        if (!data || !data.regions) return;
+        var cd = (chosen && chosen.updatedAt) || '';
+        if (data.updatedAt && data.updatedAt > cd) {
+          applyData(data);
+          try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
+        }
+      })
+      .catch(function() {});
+  }
+})();
+
+(function() {
+  var btn = document.getElementById('toTop');
+  if (!btn) return;
+  window.addEventListener('scroll', function() {
+    if (window.pageYOffset > 300) btn.classList.add('show');
+    else btn.classList.remove('show');
+  });
+  btn.addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+</script>
+
 
 <a href="mypage.html" id="mypageFab" title="マイページ" aria-label="マイページ" style="position:fixed;top:12px;right:14px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.28);z-index:1000;">👤</a>
 </body>

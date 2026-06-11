@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>管理者画面 ─ 自治体別・試験情報データベース</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  background: #f0f2f5;
+  color: #333;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+header {
+  background: linear-gradient(135deg, #117a65, #1abc9c);
+  color: #fff;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+header h1 { font-size: 1.1em; letter-spacing: .04em; }
+.header-right { display: flex; gap: 8px; flex-wrap: wrap; }
+.header-btn {
+  padding: 6px 14px;
+  border: 1px solid rgba(255,255,255,.5);
+  border-radius: 6px;
+  background: transparent;
+  color: #fff;
+  font-size: .85em;
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: none;
+}
+.header-btn:hover { background: rgba(255,255,255,.15); }
+
+.container { max-width: 1000px; margin: 0 auto; padding: 20px 16px; }
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  padding: 22px 24px;
+  margin-bottom: 20px;
+}
+.card h2 {
+  font-size: 1.05em;
+  color: #117a65;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #d1f2eb;
+}
+.card .hint {
+  font-size: .82em;
+  color: #777;
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+.card .hint code {
+  background: #f5f5f5;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: .9em;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.btn {
+  padding: 9px 18px;
+  border: none;
+  border-radius: 6px;
+  font-size: .9em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btn:hover { opacity: .88; }
+.btn-save {
+  background: linear-gradient(135deg, #117a65, #1abc9c);
+  color: #fff;
+}
+.btn-secondary {
+  background: linear-gradient(135deg, #2e86c1, #1a5276);
+  color: #fff;
+}
+.btn-warn { background: #eee; color: #555; }
+.btn-danger {
+  background: #fff;
+  color: #c0392b;
+  border: 1px solid #c0392b;
+}
+.btn-danger:hover { background: #fdedec; }
+
+.btn-export {
+  border: 1px solid #2e86c1; color: #2e86c1; background: #fff;
+  padding: 8px 16px; font-weight: bold; font-size: .85em;
+  border-radius: 6px; cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-export:hover { background: #eaf2f8; }
+.btn-folder {
+  border: 1px solid #27ae60; color: #27ae60; background: #fff;
+  padding: 8px 16px; font-weight: bold; font-size: .85em;
+  border-radius: 6px; cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-folder:hover { background: #eafaf1; }
+.btn-import {
+  border: 1px solid #27ae60; color: #27ae60; background: #fff;
+  padding: 8px 16px; font-weight: bold; font-size: .85em;
+  border-radius: 6px; cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-import:hover { background: #eafaf1; }
+.btn-import input[type="file"] { display: none; }
+.btn-excel {
+  border: 1px solid #1a7f0f; color: #1a7f0f; background: #fff;
+  padding: 8px 16px; font-weight: bold; font-size: .85em;
+  border-radius: 6px; cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-excel:hover { background: #ecf7e9; }
+.btn-excel input[type="file"] { display: none; }
+
+.folder-status {
+  margin-top: 10px;
+  font-size: .8em;
+  color: #555;
+  min-height: 1.2em;
+}
+.folder-status code {
+  background: #fff;
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid #ddd;
+  word-break: break-all;
+}
+
+/* タブ */
+.tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.tab {
+  padding: 8px 16px;
+  border: 2px solid #1abc9c;
+  background: #fff;
+  color: #117a65;
+  border-radius: 20px;
+  font-size: .85em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+.tab.active {
+  background: linear-gradient(135deg, #117a65, #1abc9c);
+  color: #fff;
+  border-color: #117a65;
+}
+
+.area-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.area-row label {
+  font-size: .9em;
+  font-weight: bold;
+  color: #555;
+}
+.area-row select {
+  flex: 1;
+  min-width: 240px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: .95em;
+  font-family: inherit;
+  background: #fff;
+}
+.area-row select:focus {
+  outline: none;
+  border-color: #1abc9c;
+  box-shadow: 0 0 0 2px rgba(26,188,156,.2);
+}
+
+/* 編集フォーム */
+.field {
+  margin-bottom: 12px;
+}
+.field label {
+  display: block;
+  font-size: .85em;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 4px;
+}
+.field input[type="text"],
+.field textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: .9em;
+  font-family: inherit;
+  line-height: 1.6;
+}
+.field textarea { resize: vertical; min-height: 60px; }
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: #1abc9c;
+  box-shadow: 0 0 0 2px rgba(26,188,156,.2);
+}
+.fields-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 12px;
+}
+
+.actions {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #eee;
+}
+
+.count-info {
+  font-size: .85em;
+  color: #555;
+  padding: 8px 12px;
+  background: #f5f8fa;
+  border-radius: 6px;
+  border-left: 3px solid #1abc9c;
+  margin-bottom: 12px;
+}
+.count-info b { color: #117a65; }
+
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: #333;
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: .9em;
+  opacity: 0;
+  transition: all .3s;
+  z-index: 999;
+  pointer-events: none;
+}
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+@media (max-width: 600px) {
+  header { flex-wrap: wrap; }
+  .card { padding: 16px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>管理者画面（自治体別・試験情報データベース）</h1>
+  <div class="header-right">
+    <a href="admin-index.html" class="header-btn">管理者画面ホーム</a>
+    <a href="joho-jichitai.html" class="header-btn">ページを開く</a>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Excel取り込み -->
+  <div class="card">
+    <h2>Excelからの一括取り込み</h2>
+    <p class="hint">
+      Excel ファイル（例: <code>令和9年度教員採用試験一覧.xlsx</code>）を選ぶと、内容を読み込んで現在のデータを置き換えます。<br>
+      列構成：A列＝自治体名、B列＝説明会等、C列＝出願要項配布、D列＝出願受付、E列＝1次試験日程、F列＝1次試験内容、G列＝1次合格発表、H列＝2次試験日程、I列＝2次試験内容、J列＝最終合格発表、K〜Q列＝倍率（全体／小／中／高／特支／養護／栄養）
+    </p>
+    <div class="row">
+      <label class="btn-excel">
+        📥 Excel を読み込む（.xlsx）
+        <input type="file" accept=".xlsx,.xls" onchange="importExcel(event)">
+      </label>
+      <span id="excelStatus" style="font-size:.85em;color:#666;"></span>
+    </div>
+  </div>
+
+  <!-- JSON引き継ぎ -->
+  <div class="card">
+    <h2>データの引き継ぎ（JSON / JSバンドル）</h2>
+    <p class="hint">
+      <b>JSON</b>：他のコンテンツと同じ形式。一括書き出しにも含まれます。<br>
+      <b>JSバンドル</b>：<code>file://</code>でも読み込めるよう、ページが実際に参照しているデータ。
+    </p>
+    <div class="row">
+      <button class="btn-export" onclick="exportJson()">⬇ エクスポート（joho-jichitai-data.json）</button>
+      <button class="btn-export" onclick="exportJsBundle()">⬇ エクスポート（joho-jichitai-data.js）</button>
+      <label class="btn-import">
+        ⬆ インポート（JSON読み込み）
+        <input type="file" accept=".json,application/json" onchange="importJson(event)">
+      </label>
+    </div>
+    <div class="row" style="margin-top: 10px;">
+      <button class="btn-folder" onclick="exportFolder()">🗂 フォルダに直接書き出す（JSON＋JS）</button>
+      <span id="folderHint" style="font-size:.8em;color:#666;">※ Chrome/Edge デスクトップ版のみ</span>
+    </div>
+    <div id="folderStatus" class="folder-status"></div>
+  </div>
+
+  <!-- 自治体編集 -->
+  <div class="card">
+    <h2>自治体の編集</h2>
+    <div class="count-info">
+      総自治体数: <b id="totalCount">0</b> 件 ／ 最終更新: <b id="lastUpdated">―</b>
+    </div>
+
+    <div class="tabs" id="regionTabs"></div>
+
+    <div class="area-row">
+      <label for="areaSelect">自治体：</label>
+      <select id="areaSelect" onchange="selectArea(this.value)"></select>
+      <button class="btn btn-danger" onclick="deleteArea()" style="padding:6px 12px;font-size:.82em;">この自治体を削除</button>
+    </div>
+
+    <div id="editForm"></div>
+
+    <div class="actions row">
+      <button class="btn btn-save" onclick="saveArea()">この自治体を保存</button>
+      <button class="btn btn-secondary" onclick="newArea()">＋ 新規自治体を追加</button>
+      <button class="btn btn-warn" onclick="resetForm()">入力をリセット</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="joho-jichitai-data.js"></script>
+<script>
+var STORAGE_KEY = 'kyosai_joho_jichitai';
+var DB_NAME = 'kyosai_admin_db', STORE = 'handles', HANDLE_KEY = 'export_folder';
+
+var REGIONS = [
+  { name: '北海道・東北', areas: ['北海道','札幌市','青森県','岩手県','宮城県','仙台市','秋田県','山形県','福島県'] },
+  { name: '関東',     areas: ['茨城県','栃木県','群馬県','埼玉県','さいたま市','千葉県','千葉市','千葉県・千葉市','東京都','神奈川県','横浜市','川崎市','相模原市'] },
+  { name: '中部',     areas: ['新潟県','新潟市','富山県','石川県','福井県','山梨県','長野県','岐阜県','静岡県','静岡市','浜松市','愛知県','名古屋市'] },
+  { name: '近畿',     areas: ['三重県','滋賀県','京都府','京都市','大阪府','大阪市','堺市','豊能地区','兵庫県','神戸市','奈良県','和歌山県'] },
+  { name: '中国',     areas: ['鳥取県','島根県','岡山県','岡山市','広島県','広島市','広島県・広島市','山口県'] },
+  { name: '四国',     areas: ['徳島県','香川県','愛媛県','高知県'] },
+  { name: '九州',     areas: ['福岡県','福岡市','北九州市','佐賀県','長崎県','熊本県','熊本市','大分県','宮崎県','鹿児島県','沖縄県'] }
+];
+
+var FIELDS = [
+  { key: 'explain',      label: '①説明会等',                       multi: true  },
+  { key: 'distribute',   label: '②出願要項の配布',                 multi: false },
+  { key: 'apply',        label: '③出願受付',                       multi: false },
+  { key: 'date1',        label: '④1次試験 日程',                   multi: false },
+  { key: 'content1',     label: '⑤1次試験 内容',                   multi: true  },
+  { key: 'result1',      label: '⑥1次試験 合格発表',               multi: false },
+  { key: 'date2',        label: '⑦2次試験 日程',                   multi: false },
+  { key: 'content2',     label: '⑧2次試験 内容',                   multi: true  },
+  { key: 'result',       label: '⑨最終合格発表',                   multi: false }
+];
+var RATIO_FIELDS = [
+  { key: 'ratio_all',   label: '⑩競争倍率（全体）' },
+  { key: 'ratio_es',    label: '⑪競争倍率（小学校）' },
+  { key: 'ratio_jhs',   label: '⑫競争倍率（中学校）' },
+  { key: 'ratio_hs',    label: '⑬競争倍率（高等学校）' },
+  { key: 'ratio_sn',    label: '⑭競争倍率（特別支援学校）' },
+  { key: 'ratio_nurse', label: '⑮競争倍率（養護教諭）' },
+  { key: 'ratio_nutri', label: '⑯競争倍率（栄養教諭）' }
+];
+var ALL_KEYS = ['name','year','explain','distribute','apply','date1','content1','result1','date2','content2','result',
+                'ratio_all','ratio_es','ratio_jhs','ratio_hs','ratio_sn','ratio_nurse','ratio_nutri'];
+
+var DATA = null;        // { updatedAt, regions: [{name, members:[...]}] }
+var currentRegion = '北海道・東北';
+var currentArea = '';   // 自治体名
+var areaToRegion = {};  // 自治体名 → 地方名
+
+REGIONS.forEach(function(r) { r.areas.forEach(function(a) { areaToRegion[a] = r.name; }); });
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// === 初期化：JICHITAI_DATA → localStorage（無ければJICHITAI_DATA） ===
+function loadInitial() {
+  try {
+    var s = localStorage.getItem(STORAGE_KEY);
+    if (s) return JSON.parse(s);
+  } catch (e) {}
+  if (typeof JICHITAI_DATA !== 'undefined' && JICHITAI_DATA) {
+    return JSON.parse(JSON.stringify(JICHITAI_DATA));
+  }
+  return { updatedAt: '', regions: REGIONS.map(function(r) { return { name: r.name, members: [] }; }) };
+}
+
+function normalize(d) {
+  // 確実に 7地方の構造を持つよう正規化
+  var out = { updatedAt: (d && d.updatedAt) || '', regions: [] };
+  var by = {};
+  if (d && Array.isArray(d.regions)) {
+    d.regions.forEach(function(r) { by[r.name] = r.members || []; });
+  }
+  REGIONS.forEach(function(r) {
+    out.regions.push({ name: r.name, members: by[r.name] || [] });
+  });
+  return out;
+}
+
+function getRegion(name) {
+  for (var i = 0; i < DATA.regions.length; i++) {
+    if (DATA.regions[i].name === name) return DATA.regions[i];
+  }
+  return null;
+}
+
+function getMember(regionName, areaName) {
+  var r = getRegion(regionName);
+  if (!r) return null;
+  for (var i = 0; i < r.members.length; i++) {
+    if (r.members[i].name === areaName) return r.members[i];
+  }
+  return null;
+}
+
+function totalCount() {
+  return DATA.regions.reduce(function(a, r) { return a + r.members.length; }, 0);
+}
+
+// === レンダリング ===
+function renderTabs() {
+  var el = document.getElementById('regionTabs');
+  el.innerHTML = REGIONS.map(function(r) {
+    var n = (getRegion(r.name) || {members:[]}).members.length;
+    return '<button class="tab' + (r.name === currentRegion ? ' active' : '') + '" onclick="switchRegion(\'' + r.name + '\')">' +
+           escapeHtml(r.name) + ' (' + n + ')</button>';
+  }).join('');
+}
+
+function renderAreaSelect() {
+  var sel = document.getElementById('areaSelect');
+  var r = getRegion(currentRegion);
+  var opts = ['<option value="">― 自治体を選択 ―</option>'];
+  if (r) {
+    // 地方の標準並びを使用（未登録のものは末尾にある可能性）
+    var standard = REGIONS.filter(function(x) { return x.name === currentRegion; })[0].areas;
+    var existingNames = {};
+    r.members.forEach(function(m) { existingNames[m.name] = true; });
+    standard.forEach(function(a) {
+      if (existingNames[a]) {
+        opts.push('<option value="' + escapeHtml(a) + '"' + (a === currentArea ? ' selected' : '') + '>' + escapeHtml(a) + '</option>');
+      }
+    });
+    // 標準にない自治体（豊能地区などの不規則名）
+    r.members.forEach(function(m) {
+      if (standard.indexOf(m.name) === -1) {
+        opts.push('<option value="' + escapeHtml(m.name) + '"' + (m.name === currentArea ? ' selected' : '') + '>' + escapeHtml(m.name) + '（※）</option>');
+      }
+    });
+  }
+  sel.innerHTML = opts.join('');
+}
+
+function renderForm() {
+  var member = getMember(currentRegion, currentArea);
+  if (!currentArea || !member) {
+    document.getElementById('editForm').innerHTML =
+      '<p style="color:#999;font-size:.9em;padding:14px;background:#fafbfc;border-radius:6px;text-align:center;">' +
+      '上から自治体を選ぶか、「＋ 新規自治体を追加」で追加してください。</p>';
+    return;
+  }
+  var html = '';
+  // 自治体名
+  html += '<div class="field"><label>自治体名（必須）</label>' +
+          '<input type="text" id="f_name" value="' + escapeHtml(member.name) + '"></div>';
+  // 実施年（西暦4桁）
+  html += '<div class="field" style="max-width:240px;"><label>📅 実施年（西暦4桁）— 「○○年実施試験情報」として表示されます</label>' +
+          '<input type="text" id="f_year" value="' + escapeHtml(member.year || '') + '" placeholder="例: 2026"></div>';
+  // 試験スケジュール
+  FIELDS.forEach(function(f) {
+    var v = member[f.key] || '';
+    if (f.multi) {
+      html += '<div class="field"><label>' + f.label + '</label>' +
+              '<textarea id="f_' + f.key + '" rows="2">' + escapeHtml(v) + '</textarea></div>';
+    } else {
+      html += '<div class="field"><label>' + f.label + '</label>' +
+              '<input type="text" id="f_' + f.key + '" value="' + escapeHtml(v) + '"></div>';
+    }
+  });
+  // 倍率
+  html += '<div class="field"><label style="color:#117a65;">競争倍率</label>' +
+          '<div class="fields-grid">';
+  RATIO_FIELDS.forEach(function(f) {
+    var v = member[f.key] || '';
+    html += '<div class="field" style="margin:0;"><label style="font-size:.78em;">' + f.label + '</label>' +
+            '<input type="text" id="f_' + f.key + '" value="' + escapeHtml(v) + '"></div>';
+  });
+  html += '</div></div>';
+
+  document.getElementById('editForm').innerHTML = html;
+}
+
+function renderInfo() {
+  document.getElementById('totalCount').textContent = totalCount();
+  document.getElementById('lastUpdated').textContent = DATA.updatedAt || '―';
+}
+
+function renderAll() {
+  renderInfo();
+  renderTabs();
+  renderAreaSelect();
+  renderForm();
+}
+
+// === タブ・選択 ===
+function switchRegion(name) {
+  currentRegion = name;
+  currentArea = '';
+  renderAll();
+}
+
+function selectArea(name) {
+  currentArea = name;
+  renderForm();
+}
+
+function resetForm() {
+  renderForm();
+}
+
+// === 編集の保存 ===
+function readForm() {
+  var v = {};
+  v.name = (document.getElementById('f_name').value || '').trim();
+  ALL_KEYS.forEach(function(k) {
+    if (k === 'name') return;
+    var el = document.getElementById('f_' + k);
+    if (el) v[k] = (el.value || '').trim();
+  });
+  return v;
+}
+
+function saveArea() {
+  if (!currentArea) { showToast('自治体が選ばれていません'); return; }
+  var newData = readForm();
+  if (!newData.name) { showToast('自治体名は必須です'); return; }
+
+  // 元のmemberを取得
+  var oldRegion = getRegion(currentRegion);
+  var idx = -1;
+  for (var i = 0; i < oldRegion.members.length; i++) {
+    if (oldRegion.members[i].name === currentArea) { idx = i; break; }
+  }
+  if (idx < 0) { showToast('保存対象が見つかりません'); return; }
+
+  // 名前が変わった場合、所属地方も再判定
+  var newRegionName = areaToRegion[newData.name] || currentRegion;
+  if (newRegionName !== currentRegion) {
+    // 旧地方から削除、新地方に追加
+    oldRegion.members.splice(idx, 1);
+    var newRegion = getRegion(newRegionName);
+    newRegion.members.push(newData);
+    currentRegion = newRegionName;
+  } else {
+    oldRegion.members[idx] = newData;
+  }
+  currentArea = newData.name;
+  persist();
+  renderAll();
+  showToast('保存しました');
+}
+
+function newArea() {
+  var name = prompt('追加する自治体名を入力してください（例：東京都、横浜市）');
+  if (!name) return;
+  name = name.trim();
+  if (!name) return;
+  // 既存チェック
+  var region = areaToRegion[name] || currentRegion;
+  var r = getRegion(region);
+  if (r.members.some(function(m) { return m.name === name; })) {
+    showToast('「' + name + '」はすでに登録されています');
+    currentRegion = region; currentArea = name;
+    renderAll();
+    return;
+  }
+  var empty = { name: name };
+  ALL_KEYS.forEach(function(k) { if (k !== 'name') empty[k] = ''; });
+  r.members.push(empty);
+  currentRegion = region; currentArea = name;
+  persist();
+  renderAll();
+  showToast('「' + name + '」を追加しました');
+}
+
+function deleteArea() {
+  if (!currentArea) { showToast('自治体が選ばれていません'); return; }
+  if (!confirm('「' + currentArea + '」を削除します。よろしいですか？')) return;
+  var r = getRegion(currentRegion);
+  for (var i = 0; i < r.members.length; i++) {
+    if (r.members[i].name === currentArea) { r.members.splice(i, 1); break; }
+  }
+  currentArea = '';
+  persist();
+  renderAll();
+  showToast('削除しました');
+}
+
+function persist() {
+  DATA.updatedAt = new Date().toISOString().slice(0, 10);
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+  } catch (e) {
+    alert('localStorageへの保存に失敗しました: ' + (e && e.message));
+  }
+}
+
+// === Excel取り込み ===
+function importExcel(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  if (typeof XLSX === 'undefined') {
+    alert('SheetJS が読み込まれていません。ネット接続をご確認ください。');
+    event.target.value = '';
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+      var ws = wb.Sheets[wb.SheetNames[0]];
+      var rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '', raw: false });
+      if (!rows || rows.length < 2) throw new Error('データ行がありません');
+
+      if (!confirm('Excelの内容で全データを置き換えます。よろしいですか？\n（' + (rows.length - 1) + ' 行のデータを取り込みます）')) {
+        event.target.value = '';
+        return;
+      }
+
+      var newData = { updatedAt: new Date().toISOString().slice(0, 10), regions: REGIONS.map(function(r) { return { name: r.name, members: [] }; }) };
+      var unmatched = [];
+      var imported = 0;
+
+      for (var i = 1; i < rows.length; i++) {
+        var row = rows[i];
+        var name = (row[0] || '').toString().trim();
+        if (!name) continue;
+        var entry = { name: name };
+        ALL_KEYS.forEach(function(k, idx) { if (idx > 0) entry[k] = ''; });
+        // 列1-17を順にマッピング
+        var keys = ['name','explain','distribute','apply','date1','content1','result1','date2','content2','result',
+                    'ratio_all','ratio_es','ratio_jhs','ratio_hs','ratio_sn','ratio_nurse','ratio_nutri'];
+        for (var c = 0; c < keys.length; c++) {
+          var v = row[c];
+          entry[keys[c]] = (v === undefined || v === null) ? '' : String(v).trim();
+        }
+        var regionName = areaToRegion[name];
+        if (!regionName) {
+          unmatched.push(name);
+          continue;
+        }
+        for (var j = 0; j < newData.regions.length; j++) {
+          if (newData.regions[j].name === regionName) {
+            newData.regions[j].members.push(entry);
+            imported++;
+            break;
+          }
+        }
+      }
+
+      DATA = newData;
+      currentArea = '';
+      persist();
+      renderAll();
+      document.getElementById('excelStatus').textContent = imported + ' 件取り込み済み';
+      var msg = imported + ' 件を取り込みました';
+      if (unmatched.length > 0) msg += '（未割当: ' + unmatched.join(', ') + '）';
+      showToast(msg);
+    } catch (err) {
+      alert('読み込み失敗: ' + err.message);
+    }
+    event.target.value = '';
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// === JSON I/O ===
+function exportJson() {
+  var out = { updatedAt: DATA.updatedAt, regions: DATA.regions };
+  var blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
+  triggerDownload(blob, 'joho-jichitai-data.json');
+  showToast('joho-jichitai-data.json をダウンロード');
+}
+
+function exportJsBundle() {
+  var content = buildJsBundle();
+  var blob = new Blob([content], { type: 'application/javascript' });
+  triggerDownload(blob, 'joho-jichitai-data.js');
+  showToast('joho-jichitai-data.js をダウンロード');
+}
+
+function buildJsBundle() {
+  var out = { updatedAt: DATA.updatedAt, regions: DATA.regions };
+  return '// 自治体別・試験情報データベース データ（管理画面より自動生成）\n' +
+         'var JICHITAI_DATA = ' + JSON.stringify(out, null, 1) + ';\n';
+}
+
+function triggerDownload(blob, name) {
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+}
+
+function importJson(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      if (!data.regions) throw new Error('regions フィールドがありません');
+      if (!confirm('現在の内容を上書きします。よろしいですか？')) {
+        event.target.value = ''; return;
+      }
+      DATA = normalize(data);
+      currentArea = '';
+      persist();
+      renderAll();
+      showToast('インポートしました');
+    } catch (err) {
+      alert('読み込み失敗: ' + err.message);
+    }
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+// === フォルダ書き出し（JSON＋JS） ===
+function openDb() {
+  return new Promise(function(resolve, reject) {
+    var req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = function() { req.result.createObjectStore(STORE); };
+    req.onsuccess = function() { resolve(req.result); };
+    req.onerror = function() { reject(req.error); };
+  });
+}
+function getStoredHandle() {
+  return openDb().then(function(db) {
+    return new Promise(function(resolve) {
+      var tx = db.transaction(STORE, 'readonly');
+      var rq = tx.objectStore(STORE).get(HANDLE_KEY);
+      rq.onsuccess = function() { resolve(rq.result || null); };
+      rq.onerror = function() { resolve(null); };
+    });
+  });
+}
+function storeHandle(handle) {
+  return openDb().then(function(db) {
+    return new Promise(function(resolve) {
+      var tx = db.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).put(handle, HANDLE_KEY);
+      tx.oncomplete = function() { resolve(); };
+    });
+  });
+}
+function verifyPermission(handle) {
+  return handle.queryPermission({ mode: 'readwrite' }).then(function(p) {
+    if (p === 'granted') return true;
+    return handle.requestPermission({ mode: 'readwrite' }).then(function(q) { return q === 'granted'; });
+  });
+}
+function pickFolder() {
+  return window.showDirectoryPicker({ mode: 'readwrite' }).then(function(h) {
+    return storeHandle(h).then(function() { return h; });
+  });
+}
+function getFolder() {
+  if (!window.showDirectoryPicker) return Promise.reject(new Error('no-fsapi'));
+  return getStoredHandle().then(function(h) {
+    if (h) return verifyPermission(h).then(function(ok) { return ok ? h : pickFolder(); });
+    return pickFolder();
+  });
+}
+
+function exportFolder() {
+  var status = document.getElementById('folderStatus');
+  status.textContent = '書き出し準備中...';
+  if (!window.showDirectoryPicker) {
+    alert('お使いのブラウザは「フォルダに直接書き出す」機能に対応していません。\n\nChrome / Edge デスクトップ版でご利用ください。');
+    status.textContent = '';
+    return;
+  }
+  getFolder().then(function(dir) {
+    var out = { updatedAt: DATA.updatedAt, regions: DATA.regions };
+    var jsonContent = JSON.stringify(out, null, 2);
+    var jsContent = buildJsBundle();
+    return writeFile(dir, 'joho-jichitai-data.json', jsonContent)
+      .then(function() { return writeFile(dir, 'joho-jichitai-data.js', jsContent); })
+      .then(function() {
+        status.innerHTML = '✅ 保存先 <code>' + (dir.name || '(選択フォルダ)') + '</code> に joho-jichitai-data.json と joho-jichitai-data.js を書き出しました';
+        showToast('フォルダに書き出しました');
+      });
+  }).catch(function(e) {
+    if (e && e.message === 'no-fsapi') return;
+    status.textContent = '⚠ ' + (e.message || 'フォルダ書き出しに失敗（キャンセル？）');
+  });
+}
+
+function writeFile(dir, name, content) {
+  return dir.getFileHandle(name, { create: true })
+    .then(function(fh) { return fh.createWritable(); })
+    .then(function(w) { return w.write(content).then(function() { return w.close(); }); });
+}
+
+// === 起動時 ===
+(function init() {
+  DATA = normalize(loadInitial());
+  // 初期の自治体（最初の地方の最初のメンバー）
+  var first = getRegion(currentRegion);
+  if (first && first.members.length > 0) currentArea = first.members[0].name;
+  renderAll();
+})();
+</script>
+</body>
+</html>
