@@ -52,8 +52,7 @@ header h1 .title-icon { font-size: 1.1em; filter: drop-shadow(0 2px 3px rgba(0,0
 }
 .card h2 {
   font-size: 1.05em; color: #1e3799; margin-bottom: 14px;
-  padding: 0 0 10px 10px; border-bottom: 2px solid #dfe4f5;
-  border-left: 4px solid #3a7bd5;
+  padding-bottom: 10px; border-bottom: 2px solid #dfe4f5;
   display: flex; align-items: center; gap: 8px;
 }
 .note { font-size: .8em; color: #888; line-height: 1.7; margin: -4px 0 16px; }
@@ -94,32 +93,28 @@ header h1 .title-icon { font-size: 1.1em; filter: drop-shadow(0 2px 3px rgba(0,0
 .err { color: #c0392b; font-size: .85em; margin-top: 8px; min-height: 1em; }
 
 /* 成績ダッシュボード */
-.summary-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+.summary-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
 .summary-box {
-  flex: 1; min-width: 96px; background: #fff;
-  border: 1px solid #e3e8f3; border-top: 3px solid #3a7bd5;
-  border-radius: 10px; padding: 12px 10px; text-align: center;
-  box-shadow: 0 1px 4px rgba(30,55,153,.06);
+  flex: 1; min-width: 120px; background: #f5f8ff; border: 1px solid #dfe4f5;
+  border-radius: 10px; padding: 12px 14px; text-align: center;
 }
-.summary-box .lbl { font-size: .76em; color: #888; }
-.summary-box .num { font-size: 1.5em; font-weight: bold; color: #1e3799; line-height: 1.3; }
-.summary-box .num small { font-size: .5em; color: #999; font-weight: normal; }
+.summary-box .lbl { font-size: .78em; color: #777; }
+.summary-box .num { font-size: 1.5em; font-weight: bold; color: #1e3799; }
+.summary-box .num small { font-size: .5em; color: #888; font-weight: normal; }
 
-.sub-title { font-size: .9em; font-weight: bold; color: #34495e; margin: 18px 0 8px; padding-left: 2px; }
+.sub-title { font-size: .9em; font-weight: bold; color: #34495e; margin: 16px 0 8px; }
 .stat-table { width: 100%; border-collapse: collapse; font-size: .9em; }
 .stat-table th, .stat-table td {
-  padding: 9px 10px; border-bottom: 1px solid #eef2f6; text-align: left; vertical-align: top;
+  padding: 8px 10px; border-bottom: 1px solid #eef2f6; text-align: left;
 }
-.stat-table thead th { background: #f5f8fa; color: #666; font-size: .82em; font-weight: bold; border-bottom: 2px solid #e3e8f3; }
-.stat-table tbody tr:hover { background: #f9fbff; }
+.stat-table th { background: #f5f8fa; color: #555; font-size: .85em; }
 .stat-table td.num, .stat-table th.num { text-align: right; white-space: nowrap; }
-.stat-table td:first-child { font-weight: 600; color: #333; }
-.bar-wrap { background: #eef2f6; border-radius: 6px; height: 7px; overflow: hidden; margin-top: 5px; }
-.bar { height: 100%; background: linear-gradient(90deg, #3a7bd5, #1e3799); border-radius: 6px; }
+.bar-wrap { background: #eef2f6; border-radius: 6px; height: 8px; overflow: hidden; margin-top: 4px; }
+.bar { height: 100%; background: linear-gradient(90deg, #3a7bd5, #1e3799); }
 .rate-good { color: #1e7e34; font-weight: bold; }
 .rate-mid { color: #b8860b; font-weight: bold; }
 .rate-low { color: #c0392b; font-weight: bold; }
-.empty-stat { color: #999; font-size: .88em; padding: 18px 4px; text-align: center; background: #fafbfd; border-radius: 8px; }
+.empty-stat { color: #999; font-size: .88em; padding: 14px 4px; text-align: center; }
 
 /* 学習時間 */
 .study-tabs { display: flex; gap: 8px; margin: 8px 0 12px; }
@@ -178,20 +173,15 @@ header h1 .title-icon { font-size: 1.1em; filter: drop-shadow(0 2px 3px rgba(0,0
           <label for="rg_name">氏名</label>
           <input type="text" id="rg_name" placeholder="例: 山田 太郎" maxlength="50">
         </div>
-        <div class="field" id="rg_email_field" style="display:none;">
-          <label for="rg_email">メールアドレス</label>
-          <input type="email" id="rg_email" autocomplete="email" placeholder="例: you@example.com">
-          <div class="hint">ログインに使います。パスワード再設定にも必要です。</div>
-        </div>
         <div class="field">
           <label for="rg_user">ユーザー名（ID）</label>
           <input type="text" id="rg_user" autocomplete="username" placeholder="半角英数字・記号(_ . -) 3〜50文字">
-          <div class="hint" id="rg_user_hint">ログイン時に使うIDです。後から変更できません。</div>
+          <div class="hint">ログイン時に使うIDです。後から変更できません。</div>
         </div>
         <div class="field">
           <label for="rg_pw">パスワード</label>
           <input type="password" id="rg_pw" autocomplete="new-password" placeholder="4文字以上">
-          <div class="hint" id="rg_pw_hint">パスワードは暗号化（ハッシュ化）して保存され、元の文字列は保持されません。</div>
+          <div class="hint">パスワードは暗号化（ハッシュ化）して保存され、元の文字列は保持されません。</div>
         </div>
         <div class="field">
           <label for="rg_area">受験予定自治体</label>
@@ -273,11 +263,6 @@ header h1 .title-icon { font-size: 1.1em; filter: drop-shadow(0 2px 3px rgba(0,0
     </div>
 
     <div class="card">
-      <h2>📖 過去問演習</h2>
-      <div id="kakomonStats"></div>
-    </div>
-
-    <div class="card">
       <h2>🎯 クイズでお手軽演習</h2>
       <div id="quiz5Stats"></div>
     </div>
@@ -293,7 +278,6 @@ header h1 .title-icon { font-size: 1.1em; filter: drop-shadow(0 2px 3px rgba(0,0
 <div class="toast" id="toast"></div>
 
 <script>window.KYOSAI_TRACK_STUDY = false;</script>
-<script src="firebase-config.js"></script>
 <script src="userstats.js"></script>
 <script>
 /* ---------- 選択肢データ ---------- */
@@ -339,28 +323,6 @@ function switchAuth(which) {
   document.getElementById('registerForm').style.display = isLogin ? 'none' : '';
 }
 
-function isCloud() { return !!(KyosaiUser.cloudEnabled && KyosaiUser.cloudEnabled()); }
-function applyAuthMode() {
-  var cloud = isCloud();
-  var liLabel = document.querySelector('label[for="li_user"]');
-  if (liLabel) liLabel.textContent = cloud ? 'メールアドレス' : 'ユーザー名（ID）';
-  var li = document.getElementById('li_user');
-  if (li) {
-    li.type = cloud ? 'email' : 'text';
-    li.placeholder = cloud ? '例: you@example.com' : '例: yamada_taro';
-    li.setAttribute('autocomplete', cloud ? 'email' : 'username');
-  }
-  document.getElementById('rg_email_field').style.display = cloud ? '' : 'none';
-  var rgUserLabel = document.querySelector('label[for="rg_user"]');
-  if (rgUserLabel) rgUserLabel.textContent = cloud ? 'ユーザー名（表示名）' : 'ユーザー名（ID）';
-  var rgUserHint = document.getElementById('rg_user_hint');
-  if (rgUserHint) rgUserHint.textContent = cloud ? '画面に表示される名前です。' : 'ログイン時に使うIDです。後から変更できません。';
-  var rgPw = document.getElementById('rg_pw');
-  if (rgPw) rgPw.placeholder = cloud ? '6文字以上' : '4文字以上';
-  var rgPwHint = document.getElementById('rg_pw_hint');
-  if (rgPwHint) rgPwHint.textContent = cloud ? 'パスワードは6文字以上。安全に管理されます。' : 'パスワードは暗号化（ハッシュ化）して保存され、元の文字列は保持されません。';
-}
-
 function doLogin() {
   var u = document.getElementById('li_user').value;
   var p = document.getElementById('li_pw').value;
@@ -378,7 +340,6 @@ function doRegister() {
   errEl.textContent = '';
   KyosaiUser.register({
     username: document.getElementById('rg_user').value,
-    email: document.getElementById('rg_email').value,
     password: document.getElementById('rg_pw').value,
     name: document.getElementById('rg_name').value,
     area: document.getElementById('rg_area').value,
@@ -488,15 +449,6 @@ function renderMondaiStats() {
   el.innerHTML = summaryHtml(s.total) +
     '<div class="sub-title">📚 分野別</div>' + statTableHtml(s.byCategory, '分野', sortedCategoryKeys(s.byCategory));
 }
-function renderKakomonStats() {
-  var s = KyosaiUser.getStats('kakomon');
-  var el = document.getElementById('kakomonStats');
-  if (!s.total.answered) { el.innerHTML = '<div class="empty-stat">まだ解答記録がありません。<br>「過去問演習」を解くとここに集計されます。</div>'; return; }
-  var monthKeys = Object.keys(s.byMonth).sort();
-  el.innerHTML = summaryHtml(s.total) +
-    '<div class="sub-title">📚 分野別</div>' + statTableHtml(s.byCategory, '分野', sortedCategoryKeys(s.byCategory)) +
-    '<div class="sub-title">🗓 月別</div>' + statTableHtml(s.byMonth, '月', monthKeys);
-}
 
 function escapeHtml(s) {
   return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -521,24 +473,16 @@ function barChartSvg(data, targetSec) {
   var max = 0; data.forEach(function (d) { if (d.seconds > max) max = d.seconds; });
   if (targetSec && targetSec > max) max = targetSec;
   if (max <= 0) return '<div class="empty-stat">この期間の学習記録はまだありません。</div>';
-  var n = data.length, bw = 30, gap = 8, padL = 10, padR = 10, padT = 22, padB = 24, chartH = 130;
-  var W = padL + padR + n * bw + (n - 1) * gap, H = padT + chartH + padB, baseY = padT + chartH;
-  // 目盛り線（背面）と基準線
-  var grid = '';
-  for (var g = 1; g <= 3; g++) {
-    var gy = baseY - Math.round(chartH * g / 4);
-    grid += '<line x1="' + padL + '" y1="' + gy + '" x2="' + (W - padR) + '" y2="' + gy + '" stroke="#eef2f6" stroke-width="1"></line>';
-  }
-  grid += '<line x1="' + padL + '" y1="' + baseY + '" x2="' + (W - padR) + '" y2="' + baseY + '" stroke="#dfe4f5" stroke-width="1.5"></line>';
+  var n = data.length, bw = 34, gap = 9, padL = 8, padR = 8, padT = 22, padB = 24, chartH = 130;
+  var W = padL + padR + n * bw + (n - 1) * gap, H = padT + chartH + padB;
   var bars = data.map(function (d, i) {
     var x = padL + i * (bw + gap);
     var h = Math.round((d.seconds / max) * chartH);
-    if (d.seconds > 0 && h < 3) h = 3;
     var y = padT + (chartH - h);
     var top = fmtDurShort(d.seconds);
     var s = '<rect x="' + x + '" y="' + y + '" width="' + bw + '" height="' + h + '" rx="4" fill="url(#sbar)"></rect>';
     if (top) s += '<text x="' + (x + bw / 2) + '" y="' + (y - 5) + '" text-anchor="middle" font-size="10" fill="#1e3799">' + top + '</text>';
-    s += '<text x="' + (x + bw / 2) + '" y="' + (baseY + 15) + '" text-anchor="middle" font-size="10" fill="#777">' + escapeHtml(d.label) + '</text>';
+    s += '<text x="' + (x + bw / 2) + '" y="' + (padT + chartH + 16) + '" text-anchor="middle" font-size="10" fill="#777">' + escapeHtml(d.label) + '</text>';
     return s;
   }).join('');
   var targetLine = '';
@@ -550,7 +494,7 @@ function barChartSvg(data, targetSec) {
   }
   return '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" preserveAspectRatio="xMidYMid meet" style="max-width:100%;height:auto;display:block;">' +
     '<defs><linearGradient id="sbar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a7bd5"/><stop offset="1" stop-color="#1e3799"/></linearGradient></defs>' +
-    grid + bars + targetLine + '</svg>';
+    bars + targetLine + '</svg>';
 }
 function switchStudy(range) {
   studyRange = range;
@@ -590,7 +534,6 @@ function renderStudy() {
 function render() {
   var user = KyosaiUser.getCurrentUser();
   updateGreeting();
-  applyAuthMode();
   if (user) {
     document.getElementById('authView').style.display = 'none';
     document.getElementById('dashView').style.display = '';
@@ -599,10 +542,7 @@ function render() {
     document.getElementById('pf_area').value = user.area || '';
     document.getElementById('pf_school').value = user.schoolType || '';
     document.getElementById('pf_subject').value = user.subject || '';
-    document.getElementById('pf_target').value = user.dailyTargetMin || '';
     renderStudy();
-    renderWeekday();
-    renderKakomonStats();
     renderQuiz5Stats();
     renderMondaiStats();
   } else {
@@ -625,9 +565,6 @@ function render() {
   ['li_user', 'li_pw'].forEach(function (id) {
     document.getElementById(id).addEventListener('keydown', function (e) { if (e.key === 'Enter') doLogin(); });
   });
-
-  // クラウド（Firebase）が設定済みなら有効化。認証状態が変わるたびに再描画。
-  KyosaiUser.initCloud(render);
 
   render();
 })();
